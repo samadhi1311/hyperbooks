@@ -1,7 +1,7 @@
 'use client';
 
-import { Section } from '@/components/layout';
-import { H2, H3, P } from '@/components/typography';
+import { Section } from '@/components/ui/layout';
+import { H2, H3, P } from '@/components/ui/typography';
 import { Badge } from '@/components/ui/badge';
 import FlickeringGrid from '@/components/ui/flickering-grid';
 import { MagicCard } from '@/components/ui/magic-card';
@@ -12,7 +12,12 @@ export default function Pricing() {
 	const { theme } = useTheme();
 	return (
 		<Section>
-			<H2>Pricing</H2>
+			<div className='flex flex-col items-center gap-4 py-8' id='pricing'>
+				<H2>Flexible Plans to Fit Every Business.</H2>
+				<P className='max-w-2xl text-center text-neutral-600 dark:text-neutral-400'>
+					Plans that grow with you! Start free, upgrade when you&apos;re ready, and get all the tools to keep your business thriving.
+				</P>
+			</div>
 
 			<div className='grid w-full grid-cols-1 gap-8 py-16 lg:grid-cols-3'>
 				<MagicCard className='cursor-pointer flex-col items-center justify-center' gradientColor={theme === 'dark' ? '#202020' : '#dfdfdf'}>
