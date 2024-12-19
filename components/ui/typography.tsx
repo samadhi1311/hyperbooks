@@ -21,16 +21,16 @@ function H3({ children, className }: Readonly<{ children: React.ReactNode; class
 
 function P({ children, className, variant = 'base' }: Readonly<{ children: React.ReactNode; className?: string; variant?: 'sm' | 'base' | 'lg' }>) {
 	const variants = {
-		sm: 'text-sm font-medium',
+		sm: 'text-sm',
 		base: 'text-base',
 		lg: 'text-lg font-medium',
 	}[variant];
 	return <p className={cn(variants, className)}>{children}</p>;
 }
 
-function A({ children, href }: Readonly<{ children: React.ReactNode; href: string }>) {
+function A({ children, href, className }: Readonly<{ children: React.ReactNode; href: string; className?: string }>) {
 	return (
-		<NextLink href={href} className='transition-colors duration-300 hover:text-foreground/60'>
+		<NextLink href={href} className={cn('transition-colors duration-300 hover:text-foreground/60', className)}>
 			{children}
 		</NextLink>
 	);
