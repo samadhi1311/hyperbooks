@@ -1,7 +1,7 @@
 'use client';
 
-import { Section } from '@/components/layout';
-import { H2 } from '@/components/typography';
+import { Section } from '@/components/ui/layout';
+import { H2, P } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 import { PaletteIcon, PaintbrushIcon, CloudUploadIcon, Share2Icon, MonitorSmartphoneIcon, SparklesIcon } from 'lucide-react';
 
@@ -65,7 +65,12 @@ export default function Features() {
 
 	return (
 		<Section>
-			<H2>Features</H2>
+			<div className='flex flex-col items-center gap-4 py-8' id='features'>
+				<H2>Everything You Need to Create Professional Invoices.</H2>
+				<P className='max-w-2xl text-center text-neutral-600 dark:text-neutral-400'>
+					Say goodbye to boring invoices! With customizable templates, cloud storage, and more, we make invoicing fun and effortless—just the way it should be.
+				</P>
+			</div>
 			<div className='relative z-10 mx-auto grid grid-cols-1 py-16 md:grid-cols-2 lg:grid-cols-3'>
 				{features.map((feature, index) => (
 					<Feature key={feature.title} {...feature} index={index} />
