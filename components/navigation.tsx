@@ -10,7 +10,7 @@ import { Badge } from './ui/badge';
 
 export default function Navigation() {
 	return (
-		<header className='fixed top-0 z-50 w-full px-8 py-4 backdrop-blur-md'>
+		<header className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 backdrop-blur-md'>
 			<nav className='mx-auto flex max-w-screen-2xl items-center justify-between gap-4'>
 				<span>
 					<A href='#'>Home</A>
