@@ -1,10 +1,12 @@
 'use client';
 
-import { User2Icon } from 'lucide-react';
+import { MenuIcon, User2Icon } from 'lucide-react';
 import { ModeToggle } from './theme-toggle';
 import Link from 'next/link';
 import { A } from './typography';
 import { Button } from './ui/button';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Badge } from './ui/badge';
 
 export default function Navigation() {
 	return (
@@ -14,20 +16,59 @@ export default function Navigation() {
 					<A href='#'>Home</A>
 				</span>
 
-				<span className='space-x-12'>
+				<span className='hidden space-x-12 md:inline'>
 					<A href='#'>Templates</A>
 					<A href='#'>Features</A>
 					<A href='#'>Pricing</A>
 				</span>
 
-				<span className='flex items-center gap-4'>
+				<span className='hidden items-center gap-4 md:flex'>
 					<ModeToggle />
 					<Link href='#'>
-						<Button>
+						<Button size='sm'>
 							<User2Icon className='size-5' />
 							Login
 						</Button>
 					</Link>
+				</span>
+
+				<span className='inline md:hidden'>
+					<Sheet>
+						<SheetTrigger asChild>
+							<Button variant='outline' size='icon'>
+								<MenuIcon className='size-5' />
+							</Button>
+						</SheetTrigger>
+						<SheetContent className='flex flex-col items-center justify-around'>
+							<SheetHeader>
+								<SheetTitle className='flex flex-col items-center gap-2'>
+									<Badge className='w-fit'>Early Access</Badge>
+									Invoice Generator
+								</SheetTitle>
+								<SheetDescription asChild></SheetDescription>
+							</SheetHeader>
+
+							<div className='flex flex-col items-center gap-8'>
+								<A href='#'>Templates</A>
+								<A href='#'>Features</A>
+								<A href='#'>Pricing</A>
+							</div>
+
+							<div className='flex flex-col gap-8'></div>
+
+							<SheetFooter>
+								<div className='flex w-full flex-col gap-8'>
+									<Link href='#'>
+										<Button size='sm' className='w-full'>
+											<User2Icon className='size-5' />
+											Login
+										</Button>
+									</Link>
+									<ModeToggle />
+								</div>
+							</SheetFooter>
+						</SheetContent>
+					</Sheet>
 				</span>
 			</nav>
 		</header>
