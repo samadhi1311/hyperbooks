@@ -19,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 	return (
 		<html lang='en'>
 			<body className={`${sans.className} antialiased`}>
-				<ThemeProvider attribute='class' enableSystem defaultTheme='system'>
+				<ThemeProvider attribute='class' enableSystem defaultTheme='dark'>
 					<Navigation />
 					{children}
 				</ThemeProvider>
