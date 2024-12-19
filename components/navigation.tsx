@@ -3,7 +3,7 @@
 import { MenuIcon, User2Icon } from 'lucide-react';
 import { ModeToggle } from './theme-toggle';
 import Link from 'next/link';
-import { A } from './typography';
+import { A } from './ui/typography';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from './ui/badge';
@@ -13,19 +13,19 @@ export default function Navigation() {
 		<header className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 backdrop-blur-md'>
 			<nav className='mx-auto flex max-w-screen-2xl items-center justify-between gap-4'>
 				<span>
-					<A href='#'>Home</A>
+					<A href='#'>hyperbooks.</A>
 				</span>
 
 				<span className='hidden space-x-12 md:inline'>
 					<A href='#'>Templates</A>
-					<A href='#'>Features</A>
-					<A href='#'>Pricing</A>
+					<A href='#features'>Features</A>
+					<A href='#pricing'>Pricing</A>
 				</span>
 
 				<span className='hidden items-center gap-4 md:flex'>
 					<ModeToggle />
 					<Link href='#'>
-						<Button size='sm'>
+						<Button variant='outline'>
 							<User2Icon className='size-5' />
 							Login
 						</Button>
@@ -59,7 +59,7 @@ export default function Navigation() {
 							<SheetFooter>
 								<div className='flex w-full flex-col gap-8'>
 									<Link href='#'>
-										<Button size='sm' className='w-full'>
+										<Button variant='outline' className='w-full'>
 											<User2Icon className='size-5' />
 											Login
 										</Button>
