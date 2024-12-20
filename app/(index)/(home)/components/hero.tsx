@@ -16,9 +16,9 @@ export default function Hero() {
 					<div className='mx-auto w-fit rounded-full border border-border bg-background px-2 py-1 text-sm'>
 						<AnimatedShinyText className='inline-flex items-center justify-center gap-2 px-4 py-1'>
 							<span>
-								<FlaskConicalIcon className='size-4 text-neutral-600/70 dark:text-neutral-400/70' />
+								<FlaskConicalIcon className='size-4 text-muted-foreground/70' />
 							</span>
-							<hr className='mx-2 h-4 w-px shrink-0 bg-neutral-400/70 dark:bg-neutral-700/70' />
+							<hr className='mx-2 h-4 w-px shrink-0 bg-muted-foreground/50' />
 							Early Access
 						</AnimatedShinyText>
 					</div>
@@ -34,7 +34,7 @@ export default function Hero() {
 						<MousePointerClickIcon className='ml-2 size-5' />
 					</RainbowButton>
 					<span>
-						<P variant='sm' className='font-normal text-neutral-400 dark:text-neutral-600'>
+						<P variant='sm' className='font-normal text-muted-foreground'>
 							No credit card required.
 						</P>
 					</span>
