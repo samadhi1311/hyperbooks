@@ -24,7 +24,7 @@ export default function Footer() {
 
 						<div className='mx-auto grid w-full max-w-lg grid-cols-2 md:gap-16'>
 							<div className='space-y-4'>
-								<P variant='sm' className='text-neutral-600 dark:text-neutral-400'>
+								<P variant='sm' className='text-muted-foreground'>
 									Main Links
 								</P>
 
@@ -37,7 +37,7 @@ export default function Footer() {
 							</div>
 
 							<div className='space-y-4'>
-								<P variant='sm' className='text-neutral-600 dark:text-neutral-400'>
+								<P variant='sm' className='text-muted-foreground'>
 									Important Links
 								</P>
 
@@ -50,7 +50,7 @@ export default function Footer() {
 							</div>
 						</div>
 
-						<div className='dark:text-neutral-400'>
+						<div className='text-muted-foreground'>
 							<P>
 								&copy; 2024{' '}
 								<A
