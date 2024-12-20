@@ -13,18 +13,18 @@ export default function Navigation() {
 		<header className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 backdrop-blur-md'>
 			<nav className='mx-auto flex max-w-screen-2xl items-center justify-between gap-4'>
 				<span>
-					<A href='#'>hyperbooks.</A>
+					<A href='/'>hyperbooks.</A>
 				</span>
 
 				<span className='hidden space-x-12 md:inline'>
-					<A href='#'>Templates</A>
-					<A href='#features'>Features</A>
-					<A href='#pricing'>Pricing</A>
+					<A href='/#'>Templates</A>
+					<A href='/#features'>Features</A>
+					<A href='/#pricing'>Pricing</A>
 				</span>
 
 				<span className='hidden items-center gap-4 md:flex'>
 					<ModeToggle />
-					<Link href='#'>
+					<Link href='/login'>
 						<Button variant='outline'>
 							<User2Icon className='size-5' />
 							Login
@@ -49,16 +49,16 @@ export default function Navigation() {
 							</SheetHeader>
 
 							<div className='flex flex-col items-center gap-8'>
-								<A href='#'>Templates</A>
-								<A href='#'>Features</A>
-								<A href='#'>Pricing</A>
+								<A href='/#'>Templates</A>
+								<A href='/#'>Features</A>
+								<A href='/#'>Pricing</A>
 							</div>
 
 							<div className='flex flex-col gap-8'></div>
 
 							<SheetFooter>
 								<div className='flex w-full flex-col gap-8'>
-									<Link href='#'>
+									<Link href='/login'>
 										<Button variant='outline' className='w-full'>
 											<User2Icon className='size-5' />
 											Login
