@@ -39,7 +39,7 @@ export default function Navigation() {
 								<MenuIcon className='size-5' />
 							</Button>
 						</SheetTrigger>
-						<SheetContent className='flex flex-col items-center justify-around'>
+						<SheetContent side='left' className='flex flex-col items-center justify-around'>
 							<SheetHeader>
 								<SheetTitle className='flex flex-col items-center gap-2'>
 									<Badge className='w-fit'>Early Access</Badge>
