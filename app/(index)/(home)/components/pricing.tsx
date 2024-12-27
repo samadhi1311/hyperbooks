@@ -57,11 +57,11 @@ export default function Pricing() {
 							LKR 700 <span className='text-base'>per month</span>
 						</H3>
 						<P variant='sm'>For small and medium businesses.</P>
-						<P className='pt-8'>Everything from Starter plus,</P>
+						<P className='pt-8'>Everything from Starter, plus</P>
 						<ul className='ml-4 space-y-2 py-4'>
 							<li className='flex items-center gap-2'>
 								<CheckCircle2Icon className='size-5 text-emerald-500' />
-								<P>1000 invoices per month</P>
+								<P>300 invoices per month</P>
 							</li>
 							<li className='flex items-center gap-2'>
 								<CheckCircle2Icon className='size-5 text-emerald-500' />
@@ -90,20 +90,20 @@ export default function Pricing() {
 				</MagicCard>
 				<MagicCard className='cursor-pointer flex-col items-center justify-center' gradientColor={theme === 'dark' ? '#202020' : '#dfdfdf'}>
 					<div className='p-8'>
-						<Badge>Enterprise</Badge>
+						<Badge>Ultimate</Badge>
 						<H3 className='mb-2 mt-6 text-2xl md:text-3xl'>
 							LKR 2400 <span className='text-base'>per month</span>
 						</H3>
 						<P variant='sm'>Take the ultimate control over your invoices.</P>
-						<P className='pt-8'>Everything from Pro plus,</P>
+						<P className='pt-8'>Everything from Pro, plus</P>
 						<ul className='ml-4 space-y-2 py-4'>
 							<li className='flex items-center gap-2'>
 								<CheckCircle2Icon className='size-5 text-emerald-500' />
-								<P>Unlimited invoices per month</P>
+								<P>3000 invoices per month</P>
 							</li>
 							<li className='flex items-center gap-2'>
 								<CheckCircle2Icon className='size-5 text-emerald-500' />
-								<P>Unlimited Custom templates</P>
+								<P>10 Custom templates</P>
 							</li>
 							<li className='flex items-center gap-2'>
 								<CheckCircle2Icon className='size-5 text-emerald-500' />
