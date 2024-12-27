@@ -1,7 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { Page, Section } from '@/components/ui/layout';
+import { PageWrapper, Section } from '@/components/ui/layout';
 import { Label } from '@/components/ui/label';
 import { H2, P } from '@/components/ui/typography';
 import GridPattern from '@/components/ui/grid-pattern';
@@ -12,7 +12,7 @@ import { LogInIcon } from 'lucide-react';
 
 export default function Login() {
 	return (
-		<Page>
+		<PageWrapper>
 			<Section variant='main' className='relative grid h-svh w-full place-items-center'>
 				<form className='mx-auto flex w-full max-w-md flex-col gap-16 rounded-lg border border-border bg-background/50 p-12 shadow backdrop-blur'>
 					<div className='flex flex-col items-center gap-2 text-center'>
@@ -27,7 +27,7 @@ export default function Login() {
 						<div className='grid gap-2'>
 							<div className='flex items-center'>
 								<Label htmlFor='password'>Password</Label>
-								<a href='#' className='ml-auto text-sm underline-offset-4 hover:underline'>
+								<a href='#' className='ml-auto text-sm text-muted-foreground underline-offset-4 hover:underline'>
 									Forgot your password?
 								</a>
 							</div>
@@ -39,7 +39,7 @@ export default function Login() {
 							</IconButton>
 						</div>
 					</div>
-					<div className='text-center text-sm'>
+					<div className='text-center text-sm text-muted-foreground'>
 						Don&apos;t have an account?{' '}
 						<Link href='/signup' className='underline underline-offset-4'>
 							Sign up
@@ -65,6 +65,6 @@ export default function Login() {
 					className={cn('-z-50 [mask-image:radial-gradient(circle_at_50%_0,white_0,transparent_50%)] skew-y-12')}
 				/>
 			</Section>
-		</Page>
+		</PageWrapper>
 	);
 }
