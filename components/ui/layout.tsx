@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 
-function Page({ children, className }: { children: React.ReactNode; className?: string }) {
+function PageWrapper({ children, className }: { children: React.ReactNode; className?: string }) {
 	return <main className={cn('max-w-screen-2xl mx-auto px-8 min-h-svh', className)}>{children}</main>;
 }
 
@@ -14,4 +14,4 @@ function Section({ children, className, variant = 'normal' }: { children: React.
 	return <section className={cn(variants, className)}>{children}</section>;
 }
 
-export { Page, Section };
+export { PageWrapper, Section };
