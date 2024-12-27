@@ -1,7 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { Page, Section } from '@/components/ui/layout';
+import { PageWrapper, Section } from '@/components/ui/layout';
 import { Label } from '@/components/ui/label';
 import { H2, P } from '@/components/ui/typography';
 import GridPattern from '@/components/ui/grid-pattern';
@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 export default function SignUp() {
 	return (
-		<Page>
+		<PageWrapper>
 			<Section variant='main' className='relative grid h-svh w-full place-items-center'>
 				<form className='mx-auto flex w-full max-w-md flex-col gap-16 rounded-lg border border-border bg-background/50 p-12 shadow backdrop-blur'>
 					<div className='flex flex-col items-center gap-2 text-center'>
@@ -25,12 +25,8 @@ export default function SignUp() {
 							<Input id='email' type='email' placeholder='name@example.com' required />
 						</div>
 						<div className='grid gap-2'>
-							<div className='flex items-center'>
-								<Label htmlFor='password'>Password</Label>
-								<a href='#' className='ml-auto text-sm underline-offset-4 hover:underline'>
-									Forgot your password?
-								</a>
-							</div>
+							<Label htmlFor='password'>Password</Label>
+
 							<Input id='password' type='password' required />
 						</div>
 
@@ -40,7 +36,7 @@ export default function SignUp() {
 							</IconButton>
 						</div>
 					</div>
-					<div className='text-center text-sm'>
+					<div className='text-center text-sm text-muted-foreground'>
 						Already have an account?{' '}
 						<Link href='/login' className='underline underline-offset-4'>
 							Sign up
@@ -66,6 +62,6 @@ export default function SignUp() {
 					className={cn('-z-50 [mask-image:radial-gradient(circle_at_50%_0,white_0,transparent_50%)] skew-y-12')}
 				/>
 			</Section>
-		</Page>
+		</PageWrapper>
 	);
 }
