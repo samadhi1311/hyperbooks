@@ -22,8 +22,10 @@ export default function Hero() {
 							Early Access
 						</AnimatedShinyText>
 					</div>
-					<H1 variant='hero'>Your Invoicing, Simplified.</H1>
-					<P variant='lg' className='mx-auto max-w-md'>
+					<H1 variant='hero' className='bg-gradient-to-b from-black via-black to-neutral-500 bg-clip-text py-1.5 text-transparent dark:from-white dark:via-white dark:to-neutral-500'>
+						Your Invoicing, Simplified.
+					</H1>
+					<P variant='lg' className='mx-auto max-w-md text-muted-foreground'>
 						Create, manage, and export professional invoices in seconds—anytime, anywhere.
 					</P>
 				</div>
