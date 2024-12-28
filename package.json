@@ -13,7 +13,6 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@ballerine/react-pdf-toolkit": "^1.2.54",
 		"@hookform/resolvers": "^3.9.1",
 		"@radix-ui/react-avatar": "^1.1.2",
 		"@radix-ui/react-collapsible": "^1.1.2",
@@ -23,7 +22,8 @@
 		"@radix-ui/react-separator": "^1.1.1",
 		"@radix-ui/react-slot": "^1.1.1",
 		"@radix-ui/react-tooltip": "^1.1.6",
-		"@react-pdf/renderer": "^4.1.5",
+		"@radix-ui/react-visually-hidden": "^1.1.1",
+		"@react-pdf/renderer": "^4.1.6",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"firebase": "^11.1.0",
@@ -33,21 +33,20 @@
 		"next-themes": "^0.4.4",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-hook-form": "^7.54.1",
-		"react-pdf-tailwind": "^2.3.0",
-		"tailwind-merge": "^2.5.5",
+		"react-hook-form": "^7.54.2",
+		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
 		"zod": "^3.24.1"
 	},
 	"devDependencies": {
-		"@eslint/eslintrc": "^3",
-		"@types/node": "^20",
-		"@types/react": "^18",
-		"@types/react-dom": "^18",
-		"eslint": "^9",
+		"@eslint/eslintrc": "^3.2.0",
+		"@types/node": "^20.17.10",
+		"@types/react": "^18.3.18",
+		"@types/react-dom": "^18.3.5",
+		"eslint": "^9.17.0",
 		"eslint-config-next": "15.1.1",
-		"postcss": "^8",
-		"tailwindcss": "^3.4.1",
-		"typescript": "^5"
+		"postcss": "^8.4.49",
+		"tailwindcss": "^3.4.17",
+		"typescript": "^5.7.2"
 	}
 }
