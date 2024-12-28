@@ -13,6 +13,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@ballerine/react-pdf-toolkit": "^1.2.54",
 		"@hookform/resolvers": "^3.9.1",
 		"@radix-ui/react-avatar": "^1.1.2",
 		"@radix-ui/react-collapsible": "^1.1.2",
@@ -25,6 +26,7 @@
 		"@react-pdf/renderer": "^4.1.5",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"firebase": "^11.1.0",
 		"lucide-react": "^0.468.0",
 		"motion": "^11.15.0",
 		"next": "15.1.3",
