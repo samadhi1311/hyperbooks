@@ -7,10 +7,15 @@ import { A } from './ui/typography';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from './ui/badge';
+import { motion } from 'motion/react';
 
 export default function Navigation() {
 	return (
-		<header className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 backdrop-blur-md'>
+		<motion.header
+			className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 opacity-0 backdrop-blur-md'
+			initial={{ y: -100, opacity: 0 }}
+			animate={{ y: 0, opacity: 1 }}
+			transition={{ duration: 1, ease: [0.215, 0.61, 0.355, 1], delay: 1.5 }}>
 			<nav className='mx-auto flex max-w-screen-2xl items-center justify-between gap-4'>
 				<span>
 					<A href='/'>hyperbooks.</A>
@@ -71,6 +76,6 @@ export default function Navigation() {
 					</Sheet>
 				</span>
 			</nav>
-		</header>
+		</motion.header>
 	);
 }
