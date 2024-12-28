@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 
 const sans = Inter({
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 			<body className={`${sans.className} antialiased`}>
 				<ThemeProvider attribute='class' defaultTheme='dark'>
 					{children}
+					<Toaster />
 				</ThemeProvider>
 			</body>
 		</html>
