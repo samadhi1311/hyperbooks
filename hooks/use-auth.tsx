@@ -38,7 +38,14 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			const userCredentials = await signInWithEmailAndPassword(auth, email, password);
-			return userCredentials.user;
+			if (userCredentials.user.uid) {
+				toast({
+					variant: 'success',
+					title: 'You are logged in successfully.',
+					description: `Welcome back to hyperbooks. Let's pick up from where you left off.`,
+				});
+				return userCredentials.user;
+			}
 		} catch (error) {
 			if (error instanceof FirebaseError) {
 				toast({
@@ -56,6 +63,11 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			await signOut(auth);
+			toast({
+				variant: 'default',
+				title: 'See you next time.',
+				description: 'You are logged out successfully. Hoping to see you again.',
+			});
 		} catch (error) {
 			if (error instanceof FirebaseError) {
 				toast({
@@ -73,6 +85,13 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+			if (userCredentials.user.uid) {
+				toast({
+					variant: 'success',
+					title: 'You are signed up successfully.',
+					description: `Welcome to hyperbooks. Let's start invoicing.`,
+				});
+			}
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
@@ -92,6 +111,14 @@ const useAuth = () => {
 		try {
 			const provider = new GoogleAuthProvider();
 			const userCredentials = await signInWithPopup(auth, provider);
+			if (userCredentials.user.uid) {
+				toast({
+					variant: 'success',
+					title: 'You are logged in successfully.',
+					description: `Welcome to hyperbooks. Let's get started.`,
+				});
+			}
+
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
@@ -109,6 +136,11 @@ const useAuth = () => {
 	const passwordReset = async (email: string) => {
 		try {
 			await sendPasswordResetEmail(auth, email);
+			toast({
+				variant: 'success',
+				title: 'Password reset email sent.',
+				description: 'Please check your email for password reset instructions.',
+			});
 		} catch (error) {
 			if (error instanceof FirebaseError) {
 				toast({
