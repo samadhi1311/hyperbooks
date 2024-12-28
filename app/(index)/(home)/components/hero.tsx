@@ -1,19 +1,34 @@
 'use client';
 
 import { Section } from '@/components/ui/layout';
-import { H1, P } from '@/components/ui/typography';
+import { P } from '@/components/ui/typography';
 import AnimatedShinyText from '@/components/ui/animated-shiny-text';
 import GridPattern from '@/components/ui/grid-pattern';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { cn } from '@/lib/utils';
 import { FlaskConicalIcon, MousePointerClickIcon } from 'lucide-react';
+import { stagger, useAnimate } from 'motion/react';
+import { useEffect } from 'react';
 
 export default function Hero() {
+	const [scope, animate] = useAnimate();
+	const description = 'Your Invoicing, Simplified.'.split('');
+
+	useEffect(() => {
+		function intro() {
+			animate('.hyperreal-hero-bg', { opacity: [0, 1] }, { duration: 1 });
+			animate('.hyperbooks-hero', { opacity: [0, 1] }, { duration: 2, delay: 1.5 });
+			animate('.hyperbooks-hero-title', { y: [75, 0] }, { duration: 0.8, ease: [0.215, 0.61, 0.355, 1], delay: stagger(0.035) });
+		}
+
+		intro();
+	}, []);
+
 	return (
-		<Section className='relative grid h-svh w-full place-items-center'>
+		<Section ref={scope} className='relative grid h-svh w-full place-items-center'>
 			<div className='space-y-16 text-center'>
-				<div className='space-y-8'>
-					<div className='mx-auto w-fit rounded-full border border-border bg-background px-2 py-1 text-sm'>
+				<div className='flex flex-col gap-8'>
+					<div className='hyperbooks-hero mx-auto w-fit rounded-full border border-border bg-background px-2 py-1 text-sm opacity-0'>
 						<AnimatedShinyText className='inline-flex items-center justify-center gap-2 px-4 py-1'>
 							<span>
 								<FlaskConicalIcon className='size-4 text-muted-foreground/70' />
@@ -22,15 +37,20 @@ export default function Hero() {
 							Early Access
 						</AnimatedShinyText>
 					</div>
-					<H1 variant='hero' className='bg-gradient-to-b from-black via-black to-neutral-500 bg-clip-text py-1.5 text-transparent dark:from-white dark:via-white dark:to-neutral-500'>
-						Your Invoicing, Simplified.
-					</H1>
-					<P variant='lg' className='mx-auto max-w-md text-muted-foreground'>
+
+					<h1 className='overflow-clip text-5xl font-semibold leading-none tracking-tighter text-foreground md:text-7xl'>
+						{description.map((char, index) => (
+							<span key={index} className='hyperbooks-hero-title inline-block overflow-clip whitespace-pre py-1.5'>
+								{char}
+							</span>
+						))}
+					</h1>
+					<P variant='lg' className='hyperbooks-hero mx-auto max-w-md text-muted-foreground opacity-0'>
 						Create, manage, and export professional invoices in seconds—anytime, anywhere.
 					</P>
 				</div>
 
-				<div className='group mt-8 flex flex-col items-center gap-8'>
+				<div className='hyperbooks-hero group mt-8 flex flex-col items-center gap-8 opacity-0'>
 					<RainbowButton className='w-fit'>
 						Get Started
 						<MousePointerClickIcon className='ml-2 size-5' />
@@ -43,7 +63,7 @@ export default function Hero() {
 				</div>
 			</div>
 
-			<img className='absolute top-0 -z-50 -translate-y-1/2 saturate-150 dark:saturate-100' src='/bg-gradient.png' width={1000} height={1000} alt='back bg' />
+			<img className='hyperreal-hero-bg absolute top-0 -z-50 -translate-y-1/2 opacity-0 saturate-150 dark:saturate-100' src='/bg-gradient.png' width={1000} height={1000} alt='back bg' />
 
 			<GridPattern
 				squares={[
@@ -58,7 +78,7 @@ export default function Hero() {
 				height={48}
 				x={-1}
 				y={-1}
-				className={cn('-z-50 [mask-image:radial-gradient(circle_at_50%_0,white_0,transparent_50%)] skew-y-12')}
+				className={cn('-z-50 hyperreal-hero-bg [mask-image:radial-gradient(circle_at_50%_0,white_0,transparent_50%)] skew-y-12 opacity-0')}
 			/>
 		</Section>
 	);
