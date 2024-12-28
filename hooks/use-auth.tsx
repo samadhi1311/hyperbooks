@@ -2,23 +2,26 @@ import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '@/firebase.config';
+import { useToast } from '@/hooks/use-toast';
 
 const generateAuthErrorMessages = (error: FirebaseError) => {
 	switch (error?.code) {
 		case 'auth/invalid-credential':
-			return 'Invalid email and/or password.';
+			return 'It seems like you have entered an invalid email and/or password. Please recheck your credentials.';
 		case 'auth/user-not-found':
-			return 'User not found.';
+			return 'It seems like the user not found. Make sure you have created an account first';
 		case 'auth/email-already-in-use':
-			return 'Email already in use.';
+			return 'The email entered is already in use. You should try to Login instead.';
 		case 'auth/null-user':
-			return 'No user is logged in.';
+			return 'It seems like you are not logged in. Please log in first.';
 		default:
-			return 'An error occured.';
+			return 'It seems like an unexpected error occurred in our end. Please try again or contact us.';
 	}
 };
 
 const useAuth = () => {
+	const { toast } = useToast();
+
 	const [user, setUser] = useState<User | null>(null);
 	const [authLoading, setAuthLoading] = useState(true);
 
@@ -38,9 +41,12 @@ const useAuth = () => {
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
-				generateAuthErrorMessages(error);
+				toast({
+					variant: 'destructive',
+					title: 'An error occured.',
+					description: generateAuthErrorMessages(error),
+				});
 			}
-			console.error(error);
 		} finally {
 			setAuthLoading(false);
 		}
@@ -52,9 +58,12 @@ const useAuth = () => {
 			await signOut(auth);
 		} catch (error) {
 			if (error instanceof FirebaseError) {
-				generateAuthErrorMessages(error);
+				toast({
+					variant: 'destructive',
+					title: 'An error occured.',
+					description: generateAuthErrorMessages(error),
+				});
 			}
-			console.error(error);
 		} finally {
 			setAuthLoading(false);
 		}
@@ -67,9 +76,12 @@ const useAuth = () => {
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
-				generateAuthErrorMessages(error);
+				toast({
+					variant: 'destructive',
+					title: 'An error occured.',
+					description: generateAuthErrorMessages(error),
+				});
 			}
-			console.error(error);
 		} finally {
 			setAuthLoading(false);
 		}
@@ -83,9 +95,12 @@ const useAuth = () => {
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
-				generateAuthErrorMessages(error);
+				toast({
+					variant: 'destructive',
+					title: 'An error occured.',
+					description: generateAuthErrorMessages(error),
+				});
 			}
-			console.error(error);
 		} finally {
 			setAuthLoading(false);
 		}
@@ -96,9 +111,12 @@ const useAuth = () => {
 			await sendPasswordResetEmail(auth, email);
 		} catch (error) {
 			if (error instanceof FirebaseError) {
-				generateAuthErrorMessages(error);
+				toast({
+					variant: 'destructive',
+					title: 'An error occured.',
+					description: generateAuthErrorMessages(error),
+				});
 			}
-			console.error(error);
 		}
 	};
 
