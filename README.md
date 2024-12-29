@@ -16,7 +16,7 @@
 2. Create a seperate <a href="https://hyperbooks.hyperreal.cloud/app">workplace</a> (20%)
 3. Create identical templates in TailwindCSS and @react-pdf/renderer. (50%)
 4. Create a brand identity. (60%)
-5. Implement authentication. (0%)
+5. Implement authentication. (60%)
 6. Implement database. (0%)
 7. Implement Cloud Storage. (0%)
 8. Implement payment processing. (0%)
