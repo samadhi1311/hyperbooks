@@ -7,19 +7,9 @@ import { InvoiceData } from '@/lib/types';
 import templates, { TemplateKey } from '@/templates';
 import { Document } from '@react-pdf/renderer';
 import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import PDFRenderer from '@/components/render-pdf';
 
 export default function PdfPage() {
-	const PDFViewer = dynamic(() => import('@react-pdf/renderer').then((mod) => mod.PDFViewer), {
-		ssr: false,
-		loading: () => <p>Loading...</p>,
-	});
-
-	const PDFDownloadLink = dynamic(() => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink), {
-		ssr: false,
-		loading: () => <p>Loading...</p>,
-	});
-
 	const [template, setTemplate] = useState<TemplateKey>('minimal');
 
 	const [invoiceData, setInvoiceData] = useState<InvoiceData>({
@@ -105,15 +95,13 @@ export default function PdfPage() {
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<PDFDownloadLink document={<Document>{SelectedRenderer(invoiceData)}</Document>} fileName='invoice.pdf' className='btn btn-primary mt-4'>
-				Export PDF
-			</PDFDownloadLink>
+
 			<div className='mt-16 grid grid-cols-2 gap-8'>
 				<SelectedTemplate data={invoiceData} onEdit={handleNestedInputChange} onArrayEdit={handleArrayChange} onImageEdit={(field) => handleImageChange(field, handleNestedInputChange)} />
 
-				<PDFViewer className='h-full w-full' showToolbar={false}>
+				<PDFRenderer>
 					<Document>{SelectedRenderer(invoiceData)}</Document>
-				</PDFViewer>
+				</PDFRenderer>
 			</div>
 		</PageWrapper>
 	);
