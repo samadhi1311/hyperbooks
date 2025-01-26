@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { FlaskConicalIcon, MousePointerClickIcon } from 'lucide-react';
 import { stagger, useAnimate } from 'motion/react';
 import { useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Hero() {
 	const [scope, animate] = useAnimate();
@@ -66,10 +67,12 @@ export default function Hero() {
 				</div>
 
 				<div className='hyperbooks-hero group mt-8 flex flex-col items-center gap-8 opacity-0'>
-					<RainbowButton className='w-fit'>
-						Get Started
-						<MousePointerClickIcon className='ml-2 size-5' />
-					</RainbowButton>
+					<Link href='/app'>
+						<RainbowButton className='w-fit'>
+							Get Started
+							<MousePointerClickIcon className='ml-2 size-5' />
+						</RainbowButton>
+					</Link>
 					<span>
 						<P variant='sm' className='font-normal text-muted-foreground'>
 							No credit card required.
