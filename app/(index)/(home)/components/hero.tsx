@@ -21,7 +21,9 @@ export default function Hero() {
 			animate('.hyperbooks-hero-title', { y: [75, 0] }, { duration: 0.8, ease: [0.215, 0.61, 0.355, 1], delay: stagger(0.035) });
 		}
 
-		intro();
+		setTimeout(() => {
+			intro();
+		}, 3000);
 	}, []);
 
 	return (
