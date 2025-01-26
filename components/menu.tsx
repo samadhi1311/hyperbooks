@@ -13,7 +13,7 @@ import { InvoiceData } from '@/lib/types';
 export default function Menu() {
 	const { invoiceData, resetInvoiceData } = useInvoiceStore();
 	const { selectedTemplate } = useTemplateStore();
-	const { addDocument, loading, error } = useFirestoreAdd<Partial<InvoiceData>>();
+	const { addInvoice, loading, error } = useFirestoreAdd<Partial<InvoiceData>>();
 	const { toast } = useToast();
 
 	const handleExportPDF = async () => {
@@ -46,7 +46,7 @@ export default function Menu() {
 	};
 
 	const handleUpload = async () => {
-		const docRef = await addDocument(invoiceData);
+		const docRef = await addInvoice(invoiceData);
 
 		if (docRef) {
 			toast({
