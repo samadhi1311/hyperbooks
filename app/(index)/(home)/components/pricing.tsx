@@ -12,7 +12,7 @@ export default function Pricing() {
 	const { theme } = useTheme();
 	return (
 		<Section>
-			<div className='flex flex-col items-center gap-4 py-8' id='pricing'>
+			<div className='flex scroll-my-16 flex-col items-center gap-4 py-8' id='pricing'>
 				<H2>Flexible Plans to Fit Every Business.</H2>
 				<P className='max-w-2xl text-center text-muted-foreground'>
 					Plans that grow with you! Start free, upgrade when you&apos;re ready, and get all the tools to keep your business thriving.
