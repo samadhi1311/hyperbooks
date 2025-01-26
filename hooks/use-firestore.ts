@@ -10,12 +10,12 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 
-	const addDocument = async (data: T, customDocId?: string) => {
+	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
 				title: 'Authentication Error',
-				description: 'You must be logged in to add a document.',
+				description: 'You must be logged in to add an invoice.',
 			});
 			return null;
 		}
@@ -24,14 +24,14 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userCollectionRef = collection(db, user.uid);
+			const userCollectionRef = collection(db, 'users', user.uid, 'invoices');
 
 			const docRef = customDocId ? await setDoc(doc(userCollectionRef, customDocId), data) : await addDoc(userCollectionRef, data);
 
 			toast({
 				variant: 'success',
-				title: 'Document Added',
-				description: 'Document successfully added to Firestore.',
+				title: 'Invoice Added',
+				description: 'Invoice successfully added to Firestore.',
 			});
 
 			return docRef;
@@ -40,7 +40,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Adding Document',
+				title: 'Error Adding Invoice',
 				description: error.message,
 			});
 			return null;
@@ -49,5 +49,44 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addDocument, loading, error };
+	const updateUserProfile = async (profileData: T) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to update profile.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+
+			await setDoc(userDocRef, profileData, { merge: true });
+
+			toast({
+				variant: 'success',
+				title: 'Profile Updated',
+				description: 'Profile successfully updated in Firestore.',
+			});
+
+			return userDocRef;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Updating Profile',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, updateUserProfile, loading, error };
 };
