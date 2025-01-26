@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 html {
-	scrollbar-color: rgba(122, 122, 122, 0.4) rgba(0, 0, 0, 0);
-	scrollbar-width: thin;
+	scrollbar-width: none;
 }
 
 body {
@@ -109,4 +108,30 @@ body {
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+.editor-dark * {
+	background-color: transparent;
+	color-scheme: dark;
+}
+
+.editor-light * {
+	background-color: transparent;
+	color-scheme: light;
+}
+
+.editable {
+	width: '100%';
+	cursor: pointer;
+	outline: 1px dashed transparent;
+	outline-offset: 2px;
+}
+
+.editable:hover {
+	outline: 1px dashed hsla(0, 0%, 50%, 0.8);
+	border-radius: 4px;
+}
+
+input.editor[type='number'] {
+	text-align: right;
 }
