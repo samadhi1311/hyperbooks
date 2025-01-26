@@ -65,7 +65,7 @@ export default function Features() {
 
 	return (
 		<Section>
-			<div className='flex flex-col items-center gap-4 py-8' id='features'>
+			<div className='flex scroll-my-16 flex-col items-center gap-4 py-8' id='features'>
 				<H2>Everything You Need to Create Professional Invoices.</H2>
 				<P className='max-w-2xl text-center text-muted-foreground'>
 					Say goodbye to boring invoices! With customizable templates, cloud storage, and more, we make invoicing fun and effortless—just the way it should be.
