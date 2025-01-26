@@ -1,28 +1,3 @@
-// type invoiceData = {
-// 	company: {
-// 		name: string;
-// 		address: string[];
-// 		email: string;
-// 		phone: string;
-// 		website: string;
-// 	};
-
-// 	biller: {
-// 		name: string;
-// 		address: string[];
-// 		phone: string;
-// 	};
-
-// 	date: string;
-
-// 	items: {
-// 		name: string;
-// 		quantity: number;
-// 		price: number;
-// 		total: number;
-// 	}[];
-// };
-
 type InvoiceData = {
 	company: {
 		name: string;
@@ -32,29 +7,24 @@ type InvoiceData = {
 		website: string;
 		logo: string;
 	};
+	items: { description: string; quantity: number | undefined; amount: number | undefined }[];
+	discount: number;
+	tax: number;
 };
 
-type companyData = {
-	name: string;
-	address: string[];
-	email: string;
-	phone: string;
-	website: string;
+const placeholders = {
+	company: {
+		name: 'Company Name',
+		address: ['Address Line 1', 'Address Line 2', 'City'],
+		email: 'Company Email',
+		phone: 'Phone number',
+		website: 'Website',
+	},
+	item: {
+		description: 'Item description',
+		quantity: 'Quantity',
+		amount: 'Price',
+	},
 };
 
-type billerData = {
-	name: string;
-	address: string[];
-	phone: string;
-};
-
-type InvoiceItemsData = {
-	items: {
-		name: string;
-		quantity: number;
-		price: number;
-		total: number;
-	}[];
-};
-
-export { type InvoiceData, type companyData, type billerData, type InvoiceItemsData };
+export { type InvoiceData, placeholders };
