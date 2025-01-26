@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
+import Splash from '@/components/splash';
 
 const sans = Inter({
 	variable: '--font-sans',
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 		<html lang='en'>
 			<body className={`${sans.className} antialiased`}>
 				<ThemeProvider attribute='class' defaultTheme='dark'>
+					<Splash />
 					{children}
 					<Toaster />
 				</ThemeProvider>
