@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 
 function PageWrapper({ children, className }: { children: React.ReactNode; className?: string }) {
-	return <main className={cn('max-w-screen-2xl mx-auto px-8 min-h-svh', className)}>{children}</main>;
+	return <main className={cn('max-w-screen-2xl w-full mx-auto px-8 2xl:px-0 min-h-svh', className)}>{children}</main>;
 }
 
 function Section({ children, className, variant = 'normal', ref }: { children: React.ReactNode; className?: string; variant?: 'normal' | 'main'; ref?: React.Ref<HTMLDivElement> }) {
