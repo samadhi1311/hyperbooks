@@ -18,7 +18,10 @@ export default function Navigation() {
 			transition={{ duration: 1, ease: [0.215, 0.61, 0.355, 1], delay: 1.5 }}>
 			<nav className='mx-auto flex max-w-screen-2xl items-center justify-between gap-4'>
 				<span>
-					<A href='/'>hyperbooks.</A>
+					<A href='/' className='flex items-center gap-2'>
+						<img src='/logo.svg' className='size-5' alt='hyperbooks Logo' />
+						hyperbooks.
+					</A>
 				</span>
 
 				<span className='hidden space-x-12 md:inline'>
