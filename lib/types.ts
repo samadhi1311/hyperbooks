@@ -12,6 +12,15 @@ type InvoiceData = {
 	tax: number;
 };
 
+type ProfileData = {
+	name: string;
+	email: string;
+	phone: string;
+	address?: string[];
+	website?: string;
+	logo?: string;
+};
+
 const placeholders = {
 	company: {
 		name: 'Company Name',
@@ -27,4 +36,4 @@ const placeholders = {
 	},
 };
 
-export { type InvoiceData, placeholders };
+export { type InvoiceData, type ProfileData, placeholders };
