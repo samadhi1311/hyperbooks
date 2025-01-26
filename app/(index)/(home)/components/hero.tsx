@@ -15,15 +15,28 @@ export default function Hero() {
 	const description = 'Your Invoicing, Simplified.'.split('');
 
 	useEffect(() => {
+		const hasAnimated = sessionStorage.getItem('heroAnimated');
+
 		function intro() {
 			animate('.hyperreal-hero-bg', { opacity: [0, 1] }, { duration: 1 });
 			animate('.hyperbooks-hero', { opacity: [0, 1] }, { duration: 2, delay: 1.5 });
 			animate('.hyperbooks-hero-title', { y: [75, 0] }, { duration: 0.8, ease: [0.215, 0.61, 0.355, 1], delay: stagger(0.035) });
+			sessionStorage.setItem('heroAnimated', 'true');
 		}
 
-		setTimeout(() => {
-			intro();
-		}, 3000);
+		setTimeout(
+			() => {
+				if (!hasAnimated) {
+					intro();
+				} else {
+					// Immediately show elements without animation
+					animate('.hyperreal-hero-bg', { opacity: 1 }, { duration: 0 });
+					animate('.hyperbooks-hero', { opacity: 1 }, { duration: 0 });
+					animate('.hyperbooks-hero-title', { y: 0 }, { duration: 0 });
+				}
+			},
+			hasAnimated ? 0 : 3000
+		);
 	}, []);
 
 	return (
