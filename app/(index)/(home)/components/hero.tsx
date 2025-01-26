@@ -20,7 +20,7 @@ export default function Hero() {
 		function intro() {
 			animate('.hyperreal-hero-bg', { opacity: [0, 1] }, { duration: 1 });
 			animate('.hyperbooks-hero', { opacity: [0, 1] }, { duration: 2, delay: 1.5 });
-			animate('.hyperbooks-hero-title', { y: [75, 0] }, { duration: 0.8, ease: [0.215, 0.61, 0.355, 1], delay: stagger(0.035) });
+			animate('.hyperbooks-hero-title', { y: [75, 0], opacity: [0, 1] }, { duration: 0.8, ease: [0.215, 0.61, 0.355, 1], delay: stagger(0.035) });
 			sessionStorage.setItem('heroAnimated', 'true');
 		}
 
@@ -30,9 +30,9 @@ export default function Hero() {
 					intro();
 				} else {
 					// Immediately show elements without animation
-					animate('.hyperreal-hero-bg', { opacity: 1 }, { duration: 0 });
-					animate('.hyperbooks-hero', { opacity: 1 }, { duration: 0 });
-					animate('.hyperbooks-hero-title', { y: 0 }, { duration: 0 });
+					animate('.hyperreal-hero-bg', { opacity: 1 }, { duration: 1 });
+					animate('.hyperbooks-hero', { opacity: 1 }, { duration: 1 });
+					animate('.hyperbooks-hero-title', { y: 0, opacity: 1 }, { duration: 1 });
 				}
 			},
 			hasAnimated ? 0 : 3000
@@ -55,7 +55,7 @@ export default function Hero() {
 
 					<h1 className='overflow-clip text-5xl font-semibold leading-none tracking-tighter text-foreground md:text-7xl'>
 						{description.map((char, index) => (
-							<span key={index} className='hyperbooks-hero-title inline-block overflow-clip whitespace-pre py-1.5'>
+							<span key={index} className='hyperbooks-hero-title inline-block overflow-clip whitespace-pre py-1.5 opacity-0'>
 								{char}
 							</span>
 						))}
