@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, ChevronRight } from 'lucide-react';
+import { BookOpen, ChevronRight, LayoutListIcon, PlusCircleIcon, SwatchBookIcon } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,6 +19,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collap
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { UserMenu } from './user-menu';
+import { P } from './ui/typography';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
@@ -33,54 +34,38 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton size='lg' asChild>
-							<a href='#'>
-								<div className='flex aspect-square size-8 items-center justify-center rounded-md bg-foreground/5 text-sidebar-primary-foreground'>
-									<img src='/logo-mono.svg' alt='hyperbooks Logo' width={24} height={24} className='size-5' />
-								</div>
-								<div className='grid flex-1 text-left text-sm leading-tight'>
-									<span className='truncate'>hyperbooks.</span>
-									<span className='truncate text-xs'>Pro</span>
-								</div>
-							</a>
-						</SidebarMenuButton>
+						<P>hyperbooks.</P>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>Navigation</SidebarGroupLabel>
+					<SidebarGroupLabel>Invoices</SidebarGroupLabel>
 					<SidebarMenu>
-						<Collapsible defaultOpen className='group/collapsible'>
-							<SidebarMenuItem>
-								<CollapsibleTrigger asChild>
-									<SidebarMenuButton asChild>
-										<span>
-											<BookOpen />
-											Invoices
-											<ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
-											<span className='sr-only'>Toggle</span>
-										</span>
-									</SidebarMenuButton>
-								</CollapsibleTrigger>
-
-								<CollapsibleContent>
-									<SidebarMenuSub>
-										<SidebarMenuSubItem>
-											<SidebarMenuSubButton className={pathname === '/app/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
-												<Link href='/app/invoices/create'>Create</Link>
-											</SidebarMenuSubButton>
-										</SidebarMenuSubItem>
-
-										<SidebarMenuSubItem>
-											<SidebarMenuSubButton className={pathname === '/app/invoices/recent' ? 'bg-sidebar-accent/50' : ''} asChild>
-												<span>Recent</span>
-											</SidebarMenuSubButton>
-										</SidebarMenuSubItem>
-									</SidebarMenuSub>
-								</CollapsibleContent>
-							</SidebarMenuItem>
-						</Collapsible>
+						<SidebarMenuItem>
+							<SidebarMenuButton className={pathname === '/app/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/app/invoices/create' className='flex items-center gap-3'>
+									<PlusCircleIcon />
+									Create
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuButton className={pathname === '/app/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/app/invoices/templates' className='flex items-center gap-3'>
+									<SwatchBookIcon />
+									Templates
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuButton className={pathname === '/app/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/app/invoices/templates' className='flex items-center gap-3'>
+									<LayoutListIcon />
+									History
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
 
 						<Collapsible defaultOpen className='group/collapsible mt-4'>
 							<SidebarMenuItem>
