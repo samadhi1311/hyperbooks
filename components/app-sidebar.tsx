@@ -1,25 +1,12 @@
 'use client';
 
-import { BookOpen, ChevronRight, LayoutListIcon, PlusCircleIcon, SwatchBookIcon } from 'lucide-react';
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarFooter,
-	SidebarGroup,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-	SidebarMenuSub,
-	SidebarMenuSubButton,
-	SidebarMenuSubItem,
-} from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { LayoutListIcon, PlusCircleIcon, SwatchBookIcon } from 'lucide-react';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { UserMenu } from './user-menu';
 import { P } from './ui/typography';
+import { Card, CardContent } from './ui/card';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
@@ -29,7 +16,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<P>hyperbooks.</P>
+						<Card className=''>
+							<CardContent className='flex h-full items-center justify-center p-6'>
+								<img src='/logo.svg' alt='hyperreal logo' className='mr-2 size-5' />
+								<P className='font-medium tracking-tight'>hyperbooks.</P>
+							</CardContent>
+						</Card>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
@@ -61,43 +53,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-
-						<Collapsible defaultOpen className='group/collapsible mt-4'>
-							<SidebarMenuItem>
-								<CollapsibleTrigger asChild>
-									<SidebarMenuButton asChild>
-										<span>
-											<BookOpen />
-											Templates
-											<ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
-											<span className='sr-only'>Toggle</span>
-										</span>
-									</SidebarMenuButton>
-								</CollapsibleTrigger>
-
-								<CollapsibleContent>
-									<SidebarMenuSub>
-										<SidebarMenuSubItem>
-											<SidebarMenuSubButton className={pathname === '/app/templates/create' ? 'bg-sidebar-accent/50' : ''} asChild>
-												<Link href='/app/templates/create'>Create</Link>
-											</SidebarMenuSubButton>
-										</SidebarMenuSubItem>
-
-										<SidebarMenuSubItem>
-											<SidebarMenuSubButton className={pathname === '/app/templates/my' ? 'bg-sidebar-accent/50' : ''} asChild>
-												<span>My designs</span>
-											</SidebarMenuSubButton>
-										</SidebarMenuSubItem>
-
-										<SidebarMenuSubItem>
-											<SidebarMenuSubButton className={pathname === '/app/templates/browse' ? 'bg-sidebar-accent/50' : ''} asChild>
-												<span>Browse</span>
-											</SidebarMenuSubButton>
-										</SidebarMenuSubItem>
-									</SidebarMenuSub>
-								</CollapsibleContent>
-							</SidebarMenuItem>
-						</Collapsible>
 					</SidebarMenu>
 				</SidebarGroup>
 			</SidebarContent>
