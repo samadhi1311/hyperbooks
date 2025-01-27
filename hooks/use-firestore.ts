@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { doc, setDoc, addDoc, collection, WithFieldValue, DocumentData } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, WithFieldValue, DocumentData, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +49,41 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
+	const getUserProfile = async () => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to get profile data.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+			const userDoc = await getDoc(userDocRef);
+
+			if (userDoc.exists()) {
+				return userDoc.data() as T;
+			}
+			return null;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Getting Profile',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const updateUserProfile = async (profileData: T) => {
 		if (!user) {
 			toast({
@@ -88,5 +123,5 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, updateUserProfile, loading, error };
+	return { addInvoice, getUserProfile, updateUserProfile, loading, error };
 };
