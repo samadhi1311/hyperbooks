@@ -2,6 +2,7 @@
 <br />
 
 # hyperbooks. - Your Invoicing, Simplified.
+
 'hyperbooks.' let's you create, manage, and export professional invoices in seconds—anytime, anywhere.
 
 ### Main Tech Stack
@@ -15,7 +16,7 @@
 ### Road Map
 
 1. Create a landing website. (90%)
-2. Create a seperate <a href="https://hyperbooks.hyperreal.cloud/app">workplace</a> (70%)
+2. Create a seperate <a href="https://hyperbooks.hyperreal.cloud/dashboard">workplace</a> (70%)
 3. Create identical templates in CSS and @react-pdf/renderer. (50%)
 4. Create a brand identity. (80%)
 5. Implement authentication. (100%)

@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
-	const active = pathname.replace('/app', '');
+	const active = pathname.replace('/dashboard', '');
 	const path = active.split('/');
 	return (
 		<ProtectedRoute>
@@ -27,7 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 										<span key={index} className={path[index] === '' ? 'hidden' : 'flex items-center justify-center gap-2'}>
 											<BreadcrumbItem>
 												<BreadcrumbLink asChild>
-													<Link href={index === 1 ? '/app' : `/app${path.slice(0, index + 1).join('/')}`} className='capitalize'>
+													<Link href={index === 1 ? '/dashboard' : `/dashboard${path.slice(0, index + 1).join('/')}`} className='capitalize'>
 														{item}
 													</Link>
 												</BreadcrumbLink>

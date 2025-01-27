@@ -39,7 +39,7 @@ export default function Navigation() {
 			);
 		} else {
 			return (
-				<Link href='/app'>
+				<Link href='/dashboard'>
 					<Button variant='outline' className='flex items-center gap-3'>
 						<SquareDashedMousePointerIcon className='scale-x-[-1]' />
 						Dashboard

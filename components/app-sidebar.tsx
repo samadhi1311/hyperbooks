@@ -30,24 +30,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupLabel>Invoices</SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/app/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/app/invoices/create' className='flex items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/invoices/create' className='flex items-center gap-3'>
 									<PlusCircleIcon />
 									Create
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/app/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/app/invoices/templates' className='flex items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/invoices/templates' className='flex items-center gap-3'>
 									<SwatchBookIcon />
 									Templates
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/app/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/app/invoices/templates' className='flex items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/invoices/templates' className='flex items-center gap-3'>
 									<LayoutListIcon />
 									History
 								</Link>

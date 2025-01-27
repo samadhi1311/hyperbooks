@@ -67,7 +67,7 @@ export default function Hero() {
 				</div>
 
 				<div className='hyperbooks-hero group mt-8 flex flex-col items-center gap-8 opacity-0'>
-					<Link href='/app'>
+					<Link href='/dashboard'>
 						<RainbowButton className='w-fit'>
 							Get Started
 							<MousePointerClickIcon className='ml-2 size-5' />
