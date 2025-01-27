@@ -12,18 +12,18 @@
 
 ### Road Map
 
-1. Create a landing website. (80%)
-2. Create a seperate <a href="https://hyperbooks.hyperreal.cloud/app">workplace</a> (20%)
-3. Create identical templates in TailwindCSS and @react-pdf/renderer. (50%)
-4. Create a brand identity. (60%)
-5. Implement authentication. (60%)
-6. Implement database. (0%)
-7. Implement Cloud Storage. (0%)
+1. Create a landing website. (90%)
+2. Create a seperate <a href="https://hyperbooks.hyperreal.cloud/app">workplace</a> (60%)
+3. Create identical templates in CSS and @react-pdf/renderer. (50%)
+4. Create a brand identity. (80%)
+5. Implement authentication. (100%)
+6. Implement database. (80%)
+7. Implement Cloud Storage. (80%)
 8. Implement payment processing. (0%)
 
 ### Important Notes
 
-1. Use 'pt' unit for best scale tranfer between preview and render.
+1. Use 'pt' units for best scale tranfer between preview and render.
 2. Use PNPM and NodeJS for dev environment.
 
 <br />
