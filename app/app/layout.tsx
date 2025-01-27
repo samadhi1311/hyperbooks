@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbS
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
@@ -25,8 +26,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 									{path.map((item, index) => (
 										<span key={index} className={path[index] === '' ? 'hidden' : 'flex items-center justify-center gap-2'}>
 											<BreadcrumbItem>
-												<BreadcrumbLink href={index === 1 ? '/app' : `/app${path.slice(0, index + 1).join('/')}`} className='capitalize'>
-													{item}
+												<BreadcrumbLink asChild>
+													<Link href={index === 1 ? '/app' : `/app${path.slice(0, index + 1).join('/')}`} className='capitalize'>
+														{item}
+													</Link>
 												</BreadcrumbLink>
 											</BreadcrumbItem>
 											<BreadcrumbSeparator className={index === path.length - 1 ? 'hidden' : 'hidden md:block'} style={path.length < 1 ? { opacity: 0 } : { opacity: 1 }} />
