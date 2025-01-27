@@ -23,11 +23,6 @@ import { P } from './ui/typography';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
-	const user = {
-		name: 'Samadhi Gunasinghe',
-		email: 'samadhi@example.com',
-		avatar: 'https://github.com/samadhi1311.png',
-	};
 
 	return (
 		<Sidebar variant='inset' {...props}>
@@ -107,7 +102,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
-				<UserMenu user={user} />
+				<UserMenu />
 			</SidebarFooter>
 		</Sidebar>
 	);
