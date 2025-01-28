@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 type InvoiceData = {
 	company: {
 		name: string;
@@ -10,6 +12,7 @@ type InvoiceData = {
 	items: { description: string; quantity: number | undefined; amount: number | undefined }[];
 	discount: number;
 	tax: number;
+	createdAt?: Timestamp;
 };
 
 type ProfileData = {

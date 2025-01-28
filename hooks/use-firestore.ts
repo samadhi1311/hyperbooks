@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { doc, setDoc, addDoc, collection, WithFieldValue, DocumentData, getDoc } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -25,8 +25,8 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 
 		try {
 			const userCollectionRef = collection(db, 'users', user.uid, 'invoices');
-
-			const docRef = customDocId ? await setDoc(doc(userCollectionRef, customDocId), data) : await addDoc(userCollectionRef, data);
+			const dataWithTimestamp = { ...data, createdAt: Timestamp.now() };
+			const docRef = customDocId ? await setDoc(doc(userCollectionRef, customDocId), dataWithTimestamp) : await addDoc(userCollectionRef, dataWithTimestamp);
 
 			toast({
 				variant: 'success',
