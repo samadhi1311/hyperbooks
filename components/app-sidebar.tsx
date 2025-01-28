@@ -31,31 +31,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton className={pathname === '/dashboard' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard' className='flex h-full items-center gap-3'>
 									<RocketIcon />
 									Dashboard
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/create' className='flex h-full items-center gap-3'>
 									<PlusCircleIcon />
 									Create
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/invoices/templates' className='flex h-full items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/templates' className='flex h-full items-center gap-3'>
 									<SwatchBookIcon />
 									Templates
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/invoices/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/invoices/templates' className='flex h-full items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/history' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/history' className='flex h-full items-center gap-3'>
 									<LayoutListIcon />
 									History
 								</Link>
