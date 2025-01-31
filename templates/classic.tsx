@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Button } from '@/components/ui/button';
-import { InvoiceData, placeholders } from '@/lib/types';
+import { InvoiceData, placeholders, ProfileData } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet } from '@react-pdf/renderer';
 import { PlusCircleIcon } from 'lucide-react';
 
 const styles = StyleSheet.create({
 	page: {
 		padding: '16pt',
-		backgroundColor: '#ff0000',
+		backgroundColor: '#afafaf',
 		color: '#252525',
 		lineHeight: '1',
 		fontSize: '12pt',
@@ -122,26 +122,25 @@ const styles = StyleSheet.create({
 
 export const ClassicTemplate = ({
 	data,
+	profile,
 	onEdit,
 	onArrayEdit,
-	onImageEdit,
 }: {
 	data: InvoiceData;
+	profile: ProfileData;
 	onEdit: (field: keyof InvoiceData | string, value: any) => void;
 	onArrayEdit: (path: string, index: number, value: any, field?: string) => void;
-	onImageEdit: (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-	const { company, items } = data;
+	const { billedTo, items } = data;
 
 	return (
 		<div className='editor-light' style={{ ...styles.page, width: '595pt', height: '842pt', borderStyle: 'dashed', borderWidth: '1pt', borderColor: '#afafaf', borderRadius: '12pt' }}>
 			{/* Header */}
 			<div style={styles.header}>
-				<img src={company.logo} className='editable' alt='hyperbooks Logo' style={styles.logo} onClick={() => document.getElementById('logoInput')?.click()} />
-				<input className='editable' id='logoInput' type='file' accept='image/png, image/jpeg' style={{ display: 'none' }} onChange={onImageEdit('company.logo')} />
+				<img src={profile.logo} className='editable' alt='hyperbooks Logo' style={styles.logo} />
 				<div style={styles.company}>
-					<input className='editable' style={styles.name} value={company.name} placeholder={placeholders.company.name} onChange={(e) => onEdit('company.name', e.target.value)} />
-					{company.address.map((line, index) => (
+					<input className='editable' style={styles.name} value={profile.name} placeholder={placeholders.company.name} onChange={(e) => onEdit('company.name', e.target.value)} />
+					{profile.address?.map((line, index) => (
 						<input
 							className='editable'
 							key={index}
@@ -149,6 +148,23 @@ export const ClassicTemplate = ({
 							value={line ?? ''}
 							placeholder={placeholders.company.address[index]}
 							onChange={(e) => onArrayEdit('company.address', index, e.target.value)}
+						/>
+					))}
+				</div>
+			</div>
+
+			{/* BilledTo */}
+			<div style={styles.header}>
+				<div style={styles.company}>
+					<input className='editable' style={styles.name} value={billedTo.name} placeholder={placeholders.company.name} onChange={(e) => onEdit('billedTo.name', e.target.value)} />
+					{billedTo.address?.map((line, index) => (
+						<input
+							className='editable'
+							key={index}
+							style={styles.address}
+							value={line ?? ''}
+							placeholder={placeholders.company.address[index]}
+							onChange={(e) => onArrayEdit('billedTo.address', index, e.target.value)}
 						/>
 					))}
 				</div>
@@ -222,8 +238,8 @@ export const ClassicTemplate = ({
 };
 
 // PDF View
-export const renderClassicTemplate = (data: InvoiceData) => {
-	const { company, items } = data;
+export const renderClassicTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData }) => {
+	const { billedTo, items } = data;
 
 	Font.register({
 		family: 'Inter',
@@ -239,11 +255,24 @@ export const renderClassicTemplate = (data: InvoiceData) => {
 	});
 	return (
 		<Page size='A4' style={styles.page}>
+			{/* Header */}
 			<View style={styles.header}>
-				<Image src={company.logo} style={styles.logo} />
+				<Image src={profile.logo} style={styles.logo} />
 				<View style={styles.company}>
-					<Text style={styles.name}>{company.name}</Text>
-					{company.address.map((line, index) => (
+					<Text style={styles.name}>{profile.name}</Text>
+					{profile.address?.map((line, index) => (
+						<Text style={styles.address} key={index}>
+							{line}
+						</Text>
+					))}
+				</View>
+			</View>
+
+			{/* Billed To */}
+			<View style={styles.header}>
+				<View style={styles.company}>
+					<Text style={styles.name}>{billedTo.name}</Text>
+					{billedTo.address?.map((line, index) => (
 						<Text style={styles.address} key={index}>
 							{line}
 						</Text>

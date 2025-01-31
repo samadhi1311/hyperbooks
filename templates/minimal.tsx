@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Button } from '@/components/ui/button';
-import { InvoiceData, placeholders } from '@/lib/types';
+import { InvoiceData, placeholders, ProfileData } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet } from '@react-pdf/renderer';
 import { PlusCircleIcon } from 'lucide-react';
 
@@ -22,8 +22,15 @@ const styles = StyleSheet.create({
 		color: 'black',
 		padding: '16pt',
 		display: 'flex',
-		flexDirection: 'row',
+		flexDirection: 'column',
 		borderRadius: '12pt',
+		width: '100%',
+	},
+	headerRow: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		alignItems: 'center',
 		width: '100%',
 	},
 	logo: {
@@ -31,21 +38,54 @@ const styles = StyleSheet.create({
 		height: '96pt',
 		borderRadius: '8pt',
 	},
-	company: {
+	profile: {
 		marginLeft: '16pt',
 		display: 'flex',
 		flexDirection: 'column',
 		gap: '2pt',
 		backgroundColor: 'transparent',
 	},
-	name: {
+	profileTextMain: {
 		fontSize: '20pt',
 		fontWeight: 'bold',
 		backgroundColor: 'transparent',
 	},
-	address: {
+	profileTextSecondary: {
 		fontSize: '12pt',
 		backgroundColor: 'transparent',
+	},
+	billedTo: {
+		marginTop: '16pt',
+		display: 'flex',
+		flexDirection: 'column',
+		gap: '2pt',
+		backgroundColor: 'transparent',
+	},
+	billedToRow: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	billedField: {
+		display: 'flex',
+		flexDirection: 'row',
+		gap: '4pt',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		width: '100%',
+	},
+	billedTextMain: {
+		fontSize: '12pt',
+		fontWeight: 'bold',
+		backgroundColor: 'transparent',
+	},
+	billedTextSecondary: {
+		fontSize: '12pt',
+		backgroundColor: 'transparent',
+	},
+	icon: {
+		width: '12pt',
+		height: '12pt',
 	},
 	items: {
 		marginTop: '32pt',
@@ -122,35 +162,72 @@ const styles = StyleSheet.create({
 
 export const MinimalTemplate = ({
 	data,
+	profile,
 	onEdit,
 	onArrayEdit,
-	onImageEdit,
 }: {
 	data: InvoiceData;
-	onEdit: (field: keyof InvoiceData | string, value: any) => void;
+	profile: ProfileData;
+	onEdit: (field: keyof InvoiceData | string | keyof ProfileData, value: any) => void;
 	onArrayEdit: (path: string, index: number, value: any, field?: string) => void;
-	onImageEdit: (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-	const { company, items } = data;
+	const { billedTo, items } = data;
 
 	return (
 		<div className='editor-light' style={{ ...styles.page, width: '595pt', height: '842pt', borderStyle: 'dashed', borderWidth: '1pt', borderColor: '#afafaf', borderRadius: '12pt' }}>
 			{/* Header */}
 			<div style={styles.header}>
-				<img src={company.logo} className='editable' alt='hyperbooks Logo' style={styles.logo} onClick={() => document.getElementById('logoInput')?.click()} />
-				<input className='editable' id='logoInput' type='file' accept='image/png, image/jpeg' style={{ display: 'none' }} onChange={onImageEdit('company.logo')} />
-				<div style={styles.company}>
-					<input className='editable' style={styles.name} value={company.name} placeholder={placeholders.company.name} onChange={(e) => onEdit('company.name', e.target.value)} />
-					{company.address.map((line, index) => (
+				<div style={styles.headerRow}>
+					<img src={profile.logo} className='editable' alt='hyperbooks Logo' style={styles.logo} />
+					<div style={styles.profile}>
+						<p className='editable' style={styles.profileTextMain}>
+							{profile.name ?? placeholders.company.name}
+						</p>
+						{profile.address?.map((line, index) => (
+							<p className='editable' key={index} style={styles.profileTextSecondary}>
+								{line ?? placeholders.company.address[index]}
+							</p>
+						))}
+					</div>
+				</div>
+
+				{/* BilledTo */}
+				<div style={styles.billedToRow}>
+					<div style={styles.billedTo}>
+						<input className='editable' defaultValue={'Billed to:'} />
+
 						<input
 							className='editable'
-							key={index}
-							style={styles.address}
-							value={line ?? ''}
-							placeholder={placeholders.company.address[index]}
-							onChange={(e) => onArrayEdit('company.address', index, e.target.value)}
+							style={styles.billedTextMain}
+							value={billedTo.name}
+							placeholder={placeholders.billedTo.name}
+							onChange={(e) => onEdit('billedTo.name', e.target.value)}
 						/>
-					))}
+
+						{billedTo.address?.map((line, index) => (
+							<input
+								className='editable'
+								key={index}
+								style={styles.billedTextSecondary}
+								value={line ?? ''}
+								placeholder={placeholders.billedTo.address[index]}
+								onChange={(e) => onArrayEdit('billedTo.address', index, e.target.value)}
+							/>
+						))}
+					</div>
+					<div style={styles.billedTo}>
+						<div style={styles.billedField}>
+							<img src='/template-data/icons/at-sign.png' style={styles.icon} />
+							<input
+								className='editable'
+								type='email'
+								style={styles.billedTextSecondary}
+								value={billedTo.email}
+								placeholder={placeholders.billedTo.email}
+								onChange={(e) => onEdit('billedTo.email', e.target.value)}
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -222,8 +299,8 @@ export const MinimalTemplate = ({
 };
 
 // PDF View
-export const renderMinimalTemplate = (data: InvoiceData) => {
-	const { company, items } = data;
+export const renderMinimalTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData }) => {
+	const { billedTo, items } = data;
 
 	Font.register({
 		family: 'Inter',
@@ -239,12 +316,25 @@ export const renderMinimalTemplate = (data: InvoiceData) => {
 	});
 	return (
 		<Page size='A4' style={styles.page}>
+			{/* Header */}
 			<View style={styles.header}>
-				<Image src={company.logo} style={styles.logo} />
-				<View style={styles.company}>
-					<Text style={styles.name}>{company.name}</Text>
-					{company.address.map((line, index) => (
-						<Text style={styles.address} key={index}>
+				<Image src={profile.logo} style={styles.logo} />
+				<View style={styles.profile}>
+					<Text style={styles.profileTextMain}>{profile.name}</Text>
+					{profile.address?.map((line, index) => (
+						<Text style={styles.profileTextSecondary} key={index}>
+							{line}
+						</Text>
+					))}
+				</View>
+			</View>
+
+			{/* Billed To */}
+			<View style={styles.header}>
+				<View style={styles.billedTo}>
+					<Text style={styles.billedTextMain}>{billedTo.name}</Text>
+					{billedTo.address?.map((line, index) => (
+						<Text style={styles.billedTextSecondary} key={index}>
 							{line}
 						</Text>
 					))}
