@@ -3,6 +3,7 @@ import { doc, setDoc, addDoc, collection, WithFieldValue, DocumentData, getDoc, 
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { ProfileData } from '@/lib/types';
 
 export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
@@ -67,7 +68,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 			const userDoc = await getDoc(userDocRef);
 
 			if (userDoc.exists()) {
-				return userDoc.data() as T;
+				return userDoc.data() as ProfileData;
 			}
 			return null;
 		} catch (err) {
