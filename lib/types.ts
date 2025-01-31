@@ -1,13 +1,11 @@
 import { Timestamp } from 'firebase/firestore';
 
 type InvoiceData = {
-	company: {
+	billedTo: {
 		name: string;
-		address: string[];
-		email: string;
-		phone: string;
-		website: string;
-		logo: string;
+		address?: string[];
+		email?: string;
+		phone?: string;
 	};
 	items: { description: string; quantity: number | undefined; amount: number | undefined }[];
 	discount: number;
@@ -31,6 +29,12 @@ const placeholders = {
 		email: 'Company Email',
 		phone: 'Phone number',
 		website: 'Website',
+	},
+	billedTo: {
+		name: 'Recipient Name',
+		address: ['Address Line 1', 'Address Line 2', 'City'],
+		email: 'Recipient Email',
+		phone: 'Phone number',
 	},
 	item: {
 		description: 'Item description',
