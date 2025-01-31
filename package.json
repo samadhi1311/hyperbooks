@@ -25,6 +25,7 @@
 		"@radix-ui/react-tooltip": "^1.1.6",
 		"@radix-ui/react-visually-hidden": "^1.1.1",
 		"@react-pdf/renderer": "^4.1.6",
+		"@tanstack/react-table": "^8.20.6",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"compressorjs": "^1.2.1",
