@@ -5,20 +5,27 @@ import templates, { TemplateKey } from '@/templates';
 import { useTemplateStore } from '@/store/use-templates';
 import { useInvoiceStore } from '@/store/use-invoice';
 import Menu from '@/components/menu';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Loader from '@/components/ui/loader';
+import { useFirestoreAdd } from '@/hooks/use-firestore';
+import { ProfileData } from '@/lib/types';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function CreateInvoice() {
+	const { user, authLoading } = useAuth();
+	const { getUserProfile } = useFirestoreAdd();
 	const { selectedTemplate } = useTemplateStore();
 
+	const [profile, setProfile] = useState<ProfileData | null>(null);
+
 	// Replace useState with Zustand store
-	const { invoiceData, updateInvoiceData, updateCompanyData, updateItemData, addItem } = useInvoiceStore();
+	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem } = useInvoiceStore();
 
 	// Modify existing handlers to use Zustand methods
 	const handleNestedInputChange = (path: string, value: string) => {
 		const keys = path.split('.');
-		if (keys[0] === 'company') {
-			updateCompanyData({ [keys[1]]: value });
+		if (keys[0] === 'billedTo') {
+			updateBilledToData({ [keys[1]]: value });
 		} else {
 			updateInvoiceData({ [keys[0]]: value });
 		}
@@ -33,31 +40,24 @@ export default function CreateInvoice() {
 				// Update existing item
 				updateItemData(index, { [field || 'description']: value });
 			}
-		} else if (path === 'company.address') {
-			const newAddress = [...invoiceData.company.address];
+		} else if (path === 'billedTo.address') {
+			const newAddress = invoiceData.billedTo.address ? [...invoiceData.billedTo.address] : [];
 			newAddress[index] = value;
-			updateCompanyData({ address: newAddress });
+			updateBilledToData({ address: newAddress });
 		}
 	};
 
-	const handleImageChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			const file = event.target.files[0];
-			const reader = new FileReader();
-
-			reader.onload = () => {
-				if (reader.result) {
-					if (field === 'company.logo') {
-						updateCompanyData({ logo: reader.result.toString() });
-					}
-				}
+	useEffect(() => {
+		if (user?.uid) {
+			const fetchProfile = async () => {
+				const profileData = await getUserProfile();
+				setProfile(profileData);
 			};
-
-			reader.readAsDataURL(file);
+			fetchProfile();
 		}
-	};
+	}, [authLoading]);
 
-	if (!selectedTemplate) return null;
+	if (!selectedTemplate || !profile?.name) return <Loader />;
 
 	const SelectedTemplate = templates[selectedTemplate as TemplateKey].component;
 
@@ -67,7 +67,7 @@ export default function CreateInvoice() {
 				<Menu />
 
 				<Suspense fallback={<Loader />}>
-					<SelectedTemplate data={invoiceData} onEdit={handleNestedInputChange} onArrayEdit={handleArrayChange} onImageEdit={handleImageChange} />
+					<SelectedTemplate profile={profile} data={invoiceData} onEdit={handleNestedInputChange} onArrayEdit={handleArrayChange} />
 				</Suspense>
 			</div>
 		</PageWrapper>
