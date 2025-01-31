@@ -5,7 +5,7 @@ import { InvoiceData } from '@/lib/types';
 interface InvoiceStore {
 	invoiceData: InvoiceData;
 	updateInvoiceData: (updates: Partial<InvoiceData>) => void;
-	updateCompanyData: (updates: Partial<InvoiceData['company']>) => void;
+	updateBilledToData: (updates: Partial<InvoiceData['billedTo']>) => void;
 	updateItemData: (index: number, updates: Partial<InvoiceData['items'][0]>) => void;
 	addItem: (item?: InvoiceData['items'][0]) => void;
 	removeItem: (index: number) => void;
@@ -13,13 +13,11 @@ interface InvoiceStore {
 }
 
 const defaultInvoiceData: InvoiceData = {
-	company: {
+	billedTo: {
 		name: '',
 		address: ['', '', ''],
 		email: '',
 		phone: '',
-		website: '',
-		logo: '/bg-gradient.png',
 	},
 	items: [],
 	discount: 0,
@@ -36,11 +34,11 @@ export const useInvoiceStore = create<InvoiceStore>()(
 					invoiceData: { ...state.invoiceData, ...updates },
 				})),
 
-			updateCompanyData: (updates) =>
+			updateBilledToData: (updates) =>
 				set((state) => ({
 					invoiceData: {
 						...state.invoiceData,
-						company: { ...state.invoiceData.company, ...updates },
+						billedTo: { ...state.invoiceData.billedTo, ...updates },
 					},
 				})),
 
