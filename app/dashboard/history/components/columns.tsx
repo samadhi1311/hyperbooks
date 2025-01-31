@@ -56,9 +56,7 @@ export const columns: ColumnDef<InvoiceData>[] = [
 	},
 	{
 		id: 'actions',
-		cell: ({ row }) => {
-			const invoice = row.original;
-
+		cell: () => {
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
