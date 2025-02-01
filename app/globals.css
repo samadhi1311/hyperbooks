@@ -135,3 +135,30 @@ body {
 input.editor[type='number'] {
 	text-align: right;
 }
+
+.input-wrapper {
+	position: relative;
+	display: inline-block;
+}
+
+.input-wrapper input {
+	padding-left: 24px; /* Space for prefix */
+	padding-right: 24px; /* Space for suffix */
+}
+
+.input-wrapper .prefix,
+.input-wrapper .suffix {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #666;
+	pointer-events: none;
+}
+
+.input-wrapper .prefix {
+	left: 8px;
+}
+
+.input-wrapper .suffix {
+	right: 8px;
+}
