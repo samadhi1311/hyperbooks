@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { doc, setDoc, addDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileData } from '@/lib/types';
+import { useProfileStore } from '@/store/use-profile';
 
 export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
 	const { toast } = useToast();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
+
+	const { setProfile } = useProfileStore();
 
 	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
@@ -25,9 +28,24 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userCollectionRef = collection(db, 'users', user.uid, 'invoices');
+			const batch = writeBatch(db);
+			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
+			const userStatsRef = doc(db, 'users', user.uid); // User's main doc
 			const dataWithTimestamp = { ...data, createdAt: Timestamp.now() };
-			const docRef = customDocId ? await setDoc(doc(userCollectionRef, customDocId), dataWithTimestamp) : await addDoc(userCollectionRef, dataWithTimestamp);
+
+			// Add the invoice
+			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
+
+			batch.set(invoiceRef, dataWithTimestamp);
+
+			// Update user stats
+			batch.update(userStatsRef, {
+				totalInvoiceCount: increment(1),
+				totalIncome: increment(data.total),
+			});
+
+			// Commit all writes at once
+			await batch.commit();
 
 			toast({
 				variant: 'success',
@@ -35,7 +53,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 				description: 'Invoice successfully added to Firestore.',
 			});
 
-			return docRef;
+			return invoiceRef;
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
@@ -68,7 +86,9 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 			const userDoc = await getDoc(userDocRef);
 
 			if (userDoc.exists()) {
-				return userDoc.data() as ProfileData;
+				const profileData = userDoc.data() as ProfileData;
+				setProfile(profileData);
+				return profileData;
 			}
 			return null;
 		} catch (err) {
