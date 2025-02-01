@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment } from 'firebase/firestore';
+import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment, getDocs, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +13,21 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 	const [error, setError] = useState<Error | null>(null);
 
 	const { setProfile } = useProfileStore();
+
+	const cleanupOldRecords = async (userId: string) => {
+		const last30DaysRef = collection(db, 'users', userId, 'last30DaysInvoices');
+
+		// Query all records ordered by date
+		const snapshot = await getDocs(query(last30DaysRef, orderBy('date'), limit(31)));
+
+		if (snapshot.docs.length > 30) {
+			// Get the oldest record (31st)
+			const oldestDoc = snapshot.docs[0];
+
+			// Delete the oldest document
+			await deleteDoc(oldestDoc.ref);
+		}
+	};
 
 	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
@@ -30,12 +45,18 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		try {
 			const batch = writeBatch(db);
 			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
-			const userStatsRef = doc(db, 'users', user.uid); // User's main doc
+			const userStatsRef = doc(db, 'users', user.uid);
+
+			// Get today's date as YYYY-MM-DD
+			const today = new Date();
+			const dateKey = today.toISOString().split('T')[0]; // e.g., "2025-02-01"
+
+			// Reference for today's total in last30DaysInvoices
+			const todayTotalRef = doc(db, 'users', user.uid, 'last30DaysInvoices', dateKey);
+
+			// Add the invoice to invoices collection
 			const dataWithTimestamp = { ...data, createdAt: Timestamp.now() };
-
-			// Add the invoice
 			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
-
 			batch.set(invoiceRef, dataWithTimestamp);
 
 			// Update user stats
@@ -44,8 +65,26 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 				totalIncome: increment(data.total),
 			});
 
-			// Commit all writes at once
+			// Update daily total in last30DaysInvoices
+			const todayTotalSnap = await getDoc(todayTotalRef);
+			if (todayTotalSnap.exists()) {
+				// If today's total exists, increment it
+				batch.update(todayTotalRef, {
+					totalAmount: increment(data.total),
+				});
+			} else {
+				// Otherwise, create a new entry
+				batch.set(todayTotalRef, {
+					date: dateKey,
+					totalAmount: data.total,
+				});
+			}
+
+			// Commit batch updates
 			await batch.commit();
+
+			// Step 3: Maintain only 30 days of data (Cleanup Old Data)
+			await cleanupOldRecords(user.uid);
 
 			toast({
 				variant: 'success',
