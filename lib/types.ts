@@ -11,6 +11,7 @@ type InvoiceData = {
 	discount: number;
 	tax: number;
 	createdAt?: Timestamp;
+	total: number;
 };
 
 type ProfileData = {
@@ -41,6 +42,8 @@ const placeholders = {
 		quantity: 'Quantity',
 		amount: 'Price',
 	},
+	tax: 'Tax',
+	discount: 'Discount',
 };
 
 export { type InvoiceData, type ProfileData, placeholders };

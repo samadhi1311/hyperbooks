@@ -22,6 +22,14 @@ const defaultInvoiceData: InvoiceData = {
 	items: [],
 	discount: 0,
 	tax: 0,
+	total: 0,
+};
+
+const calculateTotal = (invoiceData: InvoiceData) => {
+	const subtotal = invoiceData.items.reduce((sum, item) => sum + (item.quantity || 0) * (item.amount || 0), 0);
+	const discountAmount = (subtotal * invoiceData.discount) / 100;
+	const taxAmount = ((subtotal - discountAmount) * invoiceData.tax) / 100;
+	return subtotal - discountAmount + taxAmount;
 };
 
 export const useInvoiceStore = create<InvoiceStore>()(
@@ -30,47 +38,46 @@ export const useInvoiceStore = create<InvoiceStore>()(
 			invoiceData: defaultInvoiceData,
 
 			updateInvoiceData: (updates) =>
-				set((state) => ({
-					invoiceData: { ...state.invoiceData, ...updates },
-				})),
+				set((state) => {
+					const updatedInvoice = { ...state.invoiceData, ...updates };
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
 
 			updateBilledToData: (updates) =>
-				set((state) => ({
-					invoiceData: {
+				set((state) => {
+					const updatedInvoice = {
 						...state.invoiceData,
 						billedTo: { ...state.invoiceData.billedTo, ...updates },
-					},
-				})),
+					};
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
 
 			updateItemData: (index, updates) =>
 				set((state) => {
 					const newItems = [...state.invoiceData.items];
 					newItems[index] = { ...newItems[index], ...updates };
-					return {
-						invoiceData: {
-							...state.invoiceData,
-							items: newItems,
-						},
-					};
+					const updatedInvoice = { ...state.invoiceData, items: newItems };
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
 				}),
 
 			addItem: (item = { description: '', quantity: undefined, amount: undefined }) =>
-				set((state) => ({
-					invoiceData: {
+				set((state) => {
+					const updatedInvoice = {
 						...state.invoiceData,
 						items: [...state.invoiceData.items, item],
-					},
-				})),
+					};
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
 
 			removeItem: (index) =>
-				set((state) => ({
-					invoiceData: {
+				set((state) => {
+					const updatedInvoice = {
 						...state.invoiceData,
 						items: state.invoiceData.items.filter((_, i) => i !== index),
-					},
-				})),
+					};
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
 
-			// New reset method
 			resetInvoiceData: () => set({ invoiceData: defaultInvoiceData }),
 		}),
 		{
