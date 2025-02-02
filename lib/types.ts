@@ -21,6 +21,8 @@ type ProfileData = {
 	address?: string[];
 	website?: string;
 	logo?: string;
+	totalIncome?: number;
+	totalInvoiceCount?: number;
 };
 
 const placeholders = {
