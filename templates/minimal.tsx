@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { InvoiceData, placeholders, ProfileData } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
-import { PlusCircleIcon } from 'lucide-react';
+import { PlusCircleIcon, XCircleIcon } from 'lucide-react';
 
 const styles = StyleSheet.create({
 	page: {
@@ -125,8 +125,10 @@ const styles = StyleSheet.create({
 		textAlign: 'right',
 	},
 	itemdesc: {
-		width: '50%',
 		textAlign: 'left',
+		display: 'flex',
+		flexDirection: 'row',
+		gap: '8pt',
 	},
 	itemqty: {
 		width: '10%',
@@ -146,6 +148,12 @@ const styles = StyleSheet.create({
 		backgroundColor: '#252525',
 		color: '#ffffff',
 		fontSize: '10pt',
+	},
+	removebutton: {
+		backgroundColor: '#ffffff',
+		color: '#a65858',
+		width: '26pt',
+		height: '24pt',
 	},
 	total: {
 		display: 'flex',
@@ -184,11 +192,13 @@ const styles = StyleSheet.create({
 export const MinimalTemplate = ({
 	data,
 	profile,
+	removeItem,
 	onEdit,
 	onArrayEdit,
 }: {
 	data: InvoiceData;
 	profile: ProfileData;
+	removeItem: (index: number) => void;
 	onEdit: (field: keyof InvoiceData | string | keyof ProfileData, value: any) => void;
 	onArrayEdit: (path: string, index: number, value: any, field?: string) => void;
 }) => {
@@ -279,6 +289,9 @@ export const MinimalTemplate = ({
 						{items.map((item, index) => (
 							<tr key={index} style={styles.trow}>
 								<td style={styles.itemdesc}>
+									<Button variant='outline' size='icon' style={styles.removebutton} className='shadow-md hover:shadow-xl' onClick={() => removeItem(index)}>
+										<XCircleIcon />
+									</Button>
 									<input
 										style={{ width: '100%' }}
 										className='editable'
