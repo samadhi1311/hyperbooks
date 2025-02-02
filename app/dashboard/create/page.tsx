@@ -18,10 +18,8 @@ export default function CreateInvoice() {
 
 	const [profile, setProfile] = useState<ProfileData | null>(null);
 
-	// Replace useState with Zustand store
-	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem } = useInvoiceStore();
+	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem, removeItem } = useInvoiceStore();
 
-	// Modify existing handlers to use Zustand methods
 	const handleNestedInputChange = (path: string, value: string) => {
 		const keys = path.split('.');
 		if (keys[0] === 'billedTo') {
@@ -67,7 +65,7 @@ export default function CreateInvoice() {
 				<Menu />
 
 				<Suspense fallback={<Loader />}>
-					<SelectedTemplate profile={profile} data={invoiceData} onEdit={handleNestedInputChange} onArrayEdit={handleArrayChange} />
+					<SelectedTemplate profile={profile} data={invoiceData} removeItem={removeItem} onEdit={handleNestedInputChange} onArrayEdit={handleArrayChange} />
 				</Suspense>
 			</div>
 		</PageWrapper>
