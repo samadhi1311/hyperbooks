@@ -8,8 +8,13 @@ import useFirestorePagination from '@/hooks/use-pagination';
 import { useAuth } from '@/hooks/use-auth';
 import Loader from '@/components/ui/loader';
 import { InvoiceData } from '@/lib/types';
+import { useState } from 'react';
 
 export default function History() {
+	const [expandedRow, setExpandedRow] = useState<string | null>(null);
+	const toggleRow = (rowId: string) => {
+		setExpandedRow(expandedRow === rowId ? null : rowId);
+	};
 	const { user, authLoading } = useAuth();
 	const { documents, loading, error } = useFirestorePagination({
 		userId: user?.uid || '',
@@ -26,7 +31,7 @@ export default function History() {
 		<PageWrapper>
 			<Section>
 				<H2 className='mb-4'>History</H2>
-				<DataTable columns={columns} data={data} />
+				<DataTable columns={columns({ expandedRow, toggleRow })} data={data} />
 			</Section>
 		</PageWrapper>
 	);
