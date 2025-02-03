@@ -6,15 +6,34 @@ import Revenue from './revenue';
 import Invoices from './invoices';
 import Outstanding from './outstanding';
 import Recent from './recent';
-
-export const description =
-	'An application shell with a header and main content area. The header has a navbar, a search input and and a user nav dropdown. The user nav is toggled by a button with an avatar image.';
+import { useAuth } from '@/hooks/use-auth';
+import { useFirestoreAdd } from '@/hooks/use-firestore';
+import { useEffect } from 'react';
+import { useProfileStore } from '@/store/use-profile';
+import Loader from '@/components/ui/loader';
 
 export const iframeHeight = '825px';
 
 export const containerClassName = 'h-full w-full';
 
 export default function Dashboard() {
+	const { user, authLoading } = useAuth();
+	const { getUserProfile } = useFirestoreAdd();
+	const { setProfile } = useProfileStore();
+
+	useEffect(() => {
+		if (user?.uid) {
+			const fetchProfile = async () => {
+				const profileData = await getUserProfile();
+				if (profileData) {
+					setProfile(profileData);
+				}
+			};
+			fetchProfile();
+		}
+	}, [authLoading]);
+
+	if (authLoading) return <Loader />;
 	return (
 		<div className='flex min-h-screen w-full flex-col'>
 			<main className='flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8'>
@@ -25,7 +44,7 @@ export default function Dashboard() {
 					<Outstanding />
 				</div>
 				<div className='grid gap-4 md:gap-8 xl:grid-cols-2 2xl:grid-cols-3'>
-					<div className='xl:col-span-2' x-chunk='dashboard-01-chunk-4'>
+					<div className='xl:col-span-2'>
 						<Chart />
 					</div>
 					<Recent />
