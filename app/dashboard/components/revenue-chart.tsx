@@ -8,6 +8,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
+import NumberFlow from '@number-flow/react';
 
 export default function Chart() {
 	const { user } = useAuth();
@@ -42,7 +43,7 @@ export default function Chart() {
 
 	const chartConfig = {
 		revenue: {
-			label: 'Revenue: LKR ',
+			label: 'Revenue',
 			color: 'hsl(var(--chart-1))',
 		},
 	} satisfies ChartConfig;
@@ -58,7 +59,12 @@ export default function Chart() {
 					<BarChart accessibilityLayer data={chartData}>
 						<CartesianGrid vertical={false} />
 						<XAxis dataKey='date' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
-						<ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+						<ChartTooltip
+							cursor={false}
+							formatter={(value) => <NumberFlow value={value as number} className='text-base' prefix='LKR ' />}
+							labelClassName='text-base font-medium'
+							content={<ChartTooltipContent className='px-4 py-2' nameKey='revenue' />}
+						/>
 						<Bar dataKey='revenue' fill='var(--color-revenue)' radius={8} />
 					</BarChart>
 				</ChartContainer>
