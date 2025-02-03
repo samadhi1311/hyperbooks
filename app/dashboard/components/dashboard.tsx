@@ -18,11 +18,11 @@ export const containerClassName = 'h-full w-full';
 
 export default function Dashboard() {
 	const { user, authLoading } = useAuth();
-	const { getUserProfile } = useFirestoreAdd();
-	const { setProfile } = useProfileStore();
+	const { getUserProfile, loading } = useFirestoreAdd();
+	const { setProfile, profile } = useProfileStore();
 
 	useEffect(() => {
-		if (user?.uid) {
+		if (user?.uid && profile === null) {
 			const fetchProfile = async () => {
 				const profileData = await getUserProfile();
 				if (profileData) {
@@ -33,7 +33,7 @@ export default function Dashboard() {
 		}
 	}, [authLoading]);
 
-	if (authLoading) return <Loader />;
+	if (authLoading || loading) return <Loader />;
 	return (
 		<div className='flex min-h-screen w-full flex-col'>
 			<main className='flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8'>
