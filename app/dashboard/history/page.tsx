@@ -16,12 +16,12 @@ export default function History() {
 		setExpandedRow(expandedRow === rowId ? null : rowId);
 	};
 	const { user, authLoading } = useAuth();
-	const { documents, loading, error } = useFirestorePagination({
+	const { documents, loading, error, fetchNextPage, hasMore } = useFirestorePagination({
 		userId: user?.uid || '',
-		pageSize: 10,
+		pageSize: 2,
 	});
 
-	if (authLoading || loading) return <Loader />;
+	if (authLoading) return <Loader />;
 	if (!user) return <Loader />;
 	if (error) return <div>Error: {error}</div>;
 
@@ -31,7 +31,7 @@ export default function History() {
 		<PageWrapper>
 			<Section>
 				<H2 className='mb-4'>History</H2>
-				<DataTable columns={columns({ expandedRow, toggleRow })} data={data} />
+				<DataTable columns={columns({ expandedRow, toggleRow })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} />
 			</Section>
 		</PageWrapper>
 	);

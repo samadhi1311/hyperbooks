@@ -3,13 +3,17 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Loader2Icon } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	hasMore: boolean;
+	fetchNextPage: () => void;
+	loading: boolean;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage, loading }: DataTableProps<TData, TValue>) {
 	const table = useReactTable({
 		data,
 		columns,
@@ -52,11 +56,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 				</Table>
 			</div>
 			<div className='flex items-center justify-end space-x-2 py-4'>
-				<Button variant='outline' size='sm' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-					Previous
-				</Button>
-				<Button variant='outline' size='sm' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-					Next
+				<Button variant='outline' size='sm' onClick={fetchNextPage} disabled={!hasMore || loading}>
+					{loading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : 'Load More'}
 				</Button>
 			</div>
 		</div>
