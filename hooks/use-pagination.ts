@@ -29,34 +29,9 @@ const useFirestorePagination = ({ userId, pageSize = 10 }: UseFirestorePaginatio
 	const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(null);
 	const [hasMore, setHasMore] = useState(true);
 
-	const collectionPath = `users/${userId}/invoices`;
-
-	// Initialize from session storage
 	useEffect(() => {
-		const sessionDocs = sessionStorage.getItem(`${collectionPath}-docs`);
-		const sessionPage = sessionStorage.getItem(`${collectionPath}-page`);
-		const sessionLastDoc = sessionStorage.getItem(`${collectionPath}-lastDoc`);
-
-		if (sessionDocs && sessionPage && sessionLastDoc) {
-			setDocuments(JSON.parse(sessionDocs));
-			setCurrentPage(parseInt(sessionPage));
-			setLastVisible(JSON.parse(sessionLastDoc));
-		} else {
-			// Initial fetch if no session data
-			fetchInitialData();
-		}
-	}, [userId]); // Changed dependency to userId
-
-	// Save to session storage whenever documents change
-	useEffect(() => {
-		if (documents.length > 0) {
-			sessionStorage.setItem(`${collectionPath}-docs`, JSON.stringify(documents));
-			sessionStorage.setItem(`${collectionPath}-page`, currentPage.toString());
-			if (lastVisible) {
-				sessionStorage.setItem(`${collectionPath}-lastDoc`, JSON.stringify(lastVisible));
-			}
-		}
-	}, [documents, currentPage, lastVisible, collectionPath]);
+		fetchInitialData();
+	}, [userId]);
 
 	const fetchInitialData = async () => {
 		if (!userId) return;
@@ -75,7 +50,7 @@ const useFirestorePagination = ({ userId, pageSize = 10 }: UseFirestorePaginatio
 			}));
 
 			setDocuments(docs);
-			setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+			setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
 			setHasMore(querySnapshot.docs.length === pageSize);
 			setCurrentPage(1);
 		} catch (err) {
@@ -101,8 +76,11 @@ const useFirestorePagination = ({ userId, pageSize = 10 }: UseFirestorePaginatio
 				...doc.data(),
 			}));
 
-			setDocuments([...documents, ...newDocs]);
-			setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+			// Avoid duplicates by using a Set
+			const uniqueDocs = [...new Map([...documents, ...newDocs].map((doc) => [doc.id, doc])).values()];
+
+			setDocuments(uniqueDocs);
+			setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
 			setHasMore(querySnapshot.docs.length === pageSize);
 			setCurrentPage(currentPage + 1);
 		} catch (err) {
@@ -117,9 +95,6 @@ const useFirestorePagination = ({ userId, pageSize = 10 }: UseFirestorePaginatio
 		setLastVisible(null);
 		setCurrentPage(1);
 		setHasMore(true);
-		sessionStorage.removeItem(`${collectionPath}-docs`);
-		sessionStorage.removeItem(`${collectionPath}-page`);
-		sessionStorage.removeItem(`${collectionPath}-lastDoc`);
 		fetchInitialData();
 	};
 
