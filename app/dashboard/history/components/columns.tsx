@@ -2,11 +2,13 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { ChevronRightIcon, MoreHorizontal } from 'lucide-react';
-import { InvoiceData } from '@/lib/types';
+import { InvoiceData, ProfileData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { P } from '@/components/ui/typography';
 import { motion, AnimatePresence } from 'motion/react';
+import templates, { TemplateKey } from '@/templates';
+import { Document, pdf } from '@react-pdf/renderer';
 
 const expandAnimation = {
 	initial: { height: 0, opacity: 0 },
@@ -40,7 +42,19 @@ const ExpandableRow = ({ isOpen, children }: { isOpen: boolean; children: React.
 	</div>
 );
 
-export const columns = ({ expandedRow, toggleRow }: { expandedRow: string | null; toggleRow: (rowId: string) => void }): ColumnDef<InvoiceData>[] => [
+export const columns = ({
+	expandedRow,
+	toggleRow,
+	profile,
+	selectedTemplate,
+	toast,
+}: {
+	expandedRow: string | null;
+	toggleRow: (rowId: string) => void;
+	profile: ProfileData;
+	selectedTemplate: TemplateKey;
+	toast: any;
+}): ColumnDef<InvoiceData>[] => [
 	{
 		accessorKey: 'id',
 		header: '#',
@@ -133,7 +147,40 @@ export const columns = ({ expandedRow, toggleRow }: { expandedRow: string | null
 	},
 	{
 		id: 'actions',
-		cell: () => {
+		cell: ({ row }) => {
+			const handleExportPDF = async () => {
+				try {
+					const invoicePayload = {
+						data: row.original,
+						profile: profile as ProfileData,
+					};
+					const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
+					const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
+
+					const blob = await pdf(pdfDoc).toBlob();
+
+					const link = document.createElement('a');
+					link.href = URL.createObjectURL(blob);
+					link.download = 'invoice.pdf';
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+					URL.revokeObjectURL(link.href);
+					toast({
+						variant: 'default',
+						title: 'Invoice Ready to Share!',
+						description: `PDF created successfully! You're just one step away from getting paid.`,
+					});
+				} catch (error) {
+					toast({
+						variant: 'destructive',
+						title: 'An error occurred.',
+						description: error as string,
+					});
+					console.error('Error exporting PDF:', error);
+				}
+			};
+
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -144,7 +191,7 @@ export const columns = ({ expandedRow, toggleRow }: { expandedRow: string | null
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align='end'>
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem onClick={() => window.print()}>Print Invoice</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => handleExportPDF()}>Print Invoice</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>View Details</DropdownMenuItem>
 						<DropdownMenuItem>Download PDF</DropdownMenuItem>
