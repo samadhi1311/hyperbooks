@@ -39,7 +39,7 @@ export default function Menu() {
 			toast({
 				variant: 'default',
 				title: 'Invoice Ready to Share!',
-				description: `PDF created successfully! You're one step closer to getting paid.`,
+				description: `PDF created successfully! You're just one step away from getting paid.`,
 			});
 		} catch (error) {
 			toast({
