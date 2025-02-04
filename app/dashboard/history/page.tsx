@@ -9,6 +9,9 @@ import { useAuth } from '@/hooks/use-auth';
 import Loader from '@/components/ui/loader';
 import { InvoiceData } from '@/lib/types';
 import { useState } from 'react';
+import { useProfileStore } from '@/store/use-profile';
+import { useTemplateStore } from '@/store/use-templates';
+import { useToast } from '@/hooks/use-toast';
 
 export default function History() {
 	const [expandedRow, setExpandedRow] = useState<string | null>(null);
@@ -18,11 +21,12 @@ export default function History() {
 	const { user, authLoading } = useAuth();
 	const { documents, loading, error, fetchNextPage, hasMore } = useFirestorePagination({
 		userId: user?.uid || '',
-		pageSize: 2,
+		pageSize: 10,
 	});
-
-	if (authLoading) return <Loader />;
-	if (!user) return <Loader />;
+	const { profile } = useProfileStore();
+	const { selectedTemplate } = useTemplateStore();
+	const { toast } = useToast();
+	if (authLoading || !user || !profile) return <Loader />;
 	if (error) return <div>Error: {error}</div>;
 
 	const data = documents as InvoiceData[];
@@ -31,7 +35,7 @@ export default function History() {
 		<PageWrapper>
 			<Section>
 				<H2 className='mb-4'>History</H2>
-				<DataTable columns={columns({ expandedRow, toggleRow })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} />
+				<DataTable columns={columns({ expandedRow, toggleRow, profile, selectedTemplate, toast })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} />
 			</Section>
 		</PageWrapper>
 	);
