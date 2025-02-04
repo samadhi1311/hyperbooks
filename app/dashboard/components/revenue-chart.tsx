@@ -39,15 +39,14 @@ export default function Chart() {
 		getLast30DaysInvoices();
 	}, [user]);
 
-	if (!chartData.length) return null;
-
 	const chartConfig = {
 		revenue: {
 			label: 'Revenue',
-			color: 'hsl(var(--chart-1))',
+			color: 'hsl(var(--chart-2))',
 		},
 	} satisfies ChartConfig;
 
+	if (!chartData.length) return null;
 	return (
 		<Card>
 			<CardHeader>
