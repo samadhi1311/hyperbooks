@@ -109,7 +109,12 @@ export default function Profile() {
 			}
 
 			if (user && currentUser) {
-				const address = values.address?.split(', ').map((a) => a.trim());
+				// Split the address by commas, trim extra spaces, and save as an array
+				const address = values.address
+					?.split(',') // Split by commas
+					.map((part) => part.trim()) // Trim any extra spaces around parts
+					.filter((part) => part.length > 0); // Remove empty parts
+
 				const data = {
 					username: values.username,
 					name: values.name,
@@ -119,6 +124,7 @@ export default function Profile() {
 					website: values.website,
 					logo: values.logo,
 				};
+
 				await updateProfile(data);
 				setProfile(data);
 				updateUser(currentUser, { displayName: values.username });
@@ -234,13 +240,14 @@ export default function Profile() {
 								<FormItem>
 									<FormLabel>Address</FormLabel>
 									<FormControl>
-										<Textarea placeholder='Street Address, City' {...field} onChange={(e) => field.onChange(e.target.value.split('\n'))} />
+										<Textarea placeholder='Street Address, City' {...field} />
 									</FormControl>
-									<FormDescription>(Optional) Your business address one line per address line. Recommended to keep at 3 lines.</FormDescription>
+									<FormDescription>(Optional) Your business address, separate parts by commas.</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
 						<FormField
 							control={form.control}
 							name='website'
