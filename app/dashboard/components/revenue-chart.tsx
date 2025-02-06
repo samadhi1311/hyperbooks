@@ -25,10 +25,14 @@ export default function Chart() {
 
 				// Convert Firestore data into chart format
 				const formattedData = Array.from({ length: 30 }, (_, i) => {
-					const dateKey = format(subDays(new Date(), 29 - i), 'yyyy-MM-dd');
+					const currentDay = new Date();
+					const targetDay = subDays(currentDay, 29 - i); // Get the exact date for this index
+					const dateKey = format(targetDay, 'yyyy-MM-dd'); // Use targetDay here
+
+					// Ensure data is placed on the right date
 					return {
-						date: format(subDays(new Date(), 29 - i), 'MMM dd'), // Format as 'Jan 01', 'Jan 02', etc.
-						revenue: last30DaysInvoices[dateKey] || 0, // Default to 0 if no data
+						date: format(targetDay, 'MMM dd'), // Format the date as 'MMM dd' (e.g., Feb 07)
+						revenue: last30DaysInvoices[dateKey] || 0,
 					};
 				});
 
@@ -46,27 +50,32 @@ export default function Chart() {
 		},
 	} satisfies ChartConfig;
 
-	if (!chartData.length) return null;
 	return (
-		<Card>
+		<Card className='h-full'>
 			<CardHeader>
 				<CardTitle>Statistics</CardTitle>
 				<CardDescription>Your revenue in the last 30 days</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<ChartContainer config={chartConfig}>
-					<BarChart accessibilityLayer data={chartData}>
-						<CartesianGrid vertical={false} />
-						<XAxis dataKey='date' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
-						<ChartTooltip
-							cursor={false}
-							formatter={(value) => <NumberFlow value={value as number} className='text-base' prefix='LKR ' />}
-							labelClassName='text-base font-medium'
-							content={<ChartTooltipContent className='px-4 py-2' nameKey='revenue' />}
-						/>
-						<Bar dataKey='revenue' fill='var(--color-revenue)' radius={8} />
-					</BarChart>
-				</ChartContainer>
+			<CardContent className='h-full'>
+				{chartData.length > 0 ? (
+					<ChartContainer config={chartConfig}>
+						<BarChart accessibilityLayer data={chartData}>
+							<CartesianGrid vertical={false} />
+							<XAxis dataKey='date' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
+							<ChartTooltip
+								cursor={false}
+								formatter={(value) => <NumberFlow value={value as number} className='text-base' prefix='LKR ' />}
+								labelClassName='text-base font-medium'
+								content={<ChartTooltipContent className='px-4 py-2' nameKey='revenue' />}
+							/>
+							<Bar dataKey='revenue' fill='var(--color-revenue)' radius={0} />
+						</BarChart>
+					</ChartContainer>
+				) : (
+					<div className='flex h-full items-center justify-center'>
+						<p className='text-sm text-muted-foreground'>No data available for the last 30 days.</p>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);
