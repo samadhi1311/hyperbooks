@@ -8,9 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { useAuth } from '@/hooks/use-auth';
-import { useFirestoreAdd } from '@/hooks/use-firestore';
+import { useFirestore } from '@/hooks/use-firestore';
 import { ProfileData } from '@/lib/types';
-import { storage } from '@/firebase.config';
+import { auth, storage } from '@/firebase.config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Compressor from 'compressorjs';
 import { ChangeEvent, useState } from 'react';
@@ -18,18 +18,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { CircleCheckIcon, ImagePlusIcon, Loader2Icon, SendHorizonalIcon, XCircleIcon } from 'lucide-react';
 import { H2 } from '@/components/ui/typography';
+import { Separator } from '@/components/ui/separator';
+import { updateProfile as updateUser } from 'firebase/auth';
+import { useProfileStore } from '@/store/use-profile';
 
 export default function Profile() {
 	const { user } = useAuth();
-	const { updateUserProfile, loading } = useFirestoreAdd<ProfileData>();
+	const currentUser = auth.currentUser;
+	const { updateProfile, loading } = useFirestore<ProfileData>();
+	const { profile, setProfile } = useProfileStore();
 	const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
 	const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
 
 	const formSchema = z.object({
+		username: z.string().min(2, { message: 'Username must be at least 2 characters' }).max(50),
 		name: z.string().min(2, { message: 'Name must be at least 2 characters' }).max(50),
 		email: z.string().email({ message: 'Invalid email address' }),
 		phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, { message: 'Invalid phone number' }),
-		address: z.array(z.string().max(100)).optional(),
+		address: z.string().max(100).optional(),
 		website: z.string().url({ message: 'Invalid website URL' }).optional(),
 		logo: z.string().optional(),
 	});
@@ -37,11 +43,12 @@ export default function Profile() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: '',
-			email: user?.email || '',
-			phone: '',
-			address: [''],
-			website: '',
+			username: user?.displayName || '',
+			name: profile?.name || '',
+			email: profile?.email || '',
+			phone: profile?.phone || '',
+			address: profile?.address?.join(', ') || '',
+			website: profile?.website || '',
 			logo: '',
 		},
 	});
@@ -96,19 +103,34 @@ export default function Profile() {
 			setUploadStatus('uploading');
 			if (selectedImage) {
 				const logoUrl = await handleImageUpload();
-				if (logoUrl) {
-					values.logo = logoUrl;
-				}
+				if (logoUrl) values.logo = logoUrl;
+			} else {
+				delete values.logo; // Prevents overwriting logo when not updating
 			}
 
-			if (user) {
-				await updateUserProfile(values);
+			if (user && currentUser) {
+				const address = values.address?.split(', ').map((a) => a.trim());
+				const data = {
+					username: values.username,
+					name: values.name,
+					email: values.email,
+					phone: values.phone,
+					address,
+					website: values.website,
+					logo: values.logo,
+				};
+				await updateProfile(data);
+				setProfile(data);
+				updateUser(currentUser, { displayName: values.username });
 			}
+
 			setUploadStatus('success');
 		} catch (error) {
 			console.error('Submission error:', error);
 		}
 	}
+
+	if (!currentUser) return null;
 
 	return (
 		<PageWrapper>
@@ -118,10 +140,27 @@ export default function Profile() {
 					<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
 						<FormField
 							control={form.control}
+							name='username'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Username</FormLabel>
+									<FormControl>
+										<Input placeholder='Your Username Name' {...field} />
+									</FormControl>
+									<FormDescription>We will only use this username to personally identify you.</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<Separator />
+
+						<FormField
+							control={form.control}
 							name='name'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>Business Name</FormLabel>
 									<FormControl>
 										<Input placeholder='Your Business Name' {...field} />
 									</FormControl>
@@ -144,6 +183,8 @@ export default function Profile() {
 												src={URL.createObjectURL(selectedImage)}
 												alt='Preview'
 											/>
+										) : profile?.logo ? (
+											<img src={profile.logo} alt='Preview' className='h-full w-full object-cover' />
 										) : (
 											<div className='z-10 flex items-center justify-center gap-2'>
 												<ImagePlusIcon className='size-5' />
@@ -193,12 +234,7 @@ export default function Profile() {
 								<FormItem>
 									<FormLabel>Address</FormLabel>
 									<FormControl>
-										<Textarea
-											placeholder='Street Address, City, State, Zip'
-											{...field}
-											value={field.value?.join('\n') || ''}
-											onChange={(e) => field.onChange(e.target.value.split('\n'))}
-										/>
+										<Textarea placeholder='Street Address, City' {...field} onChange={(e) => field.onChange(e.target.value.split('\n'))} />
 									</FormControl>
 									<FormDescription>(Optional) Your business address one line per address line. Recommended to keep at 3 lines.</FormDescription>
 									<FormMessage />
