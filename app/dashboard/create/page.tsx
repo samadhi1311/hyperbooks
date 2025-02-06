@@ -7,13 +7,13 @@ import { useInvoiceStore } from '@/store/use-invoice';
 import Menu from '@/components/menu';
 import { Suspense, useEffect, useState } from 'react';
 import Loader from '@/components/ui/loader';
-import { useFirestoreAdd } from '@/hooks/use-firestore';
+import { useFirestore } from '@/hooks/use-firestore';
 import { ProfileData } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
 
 export default function CreateInvoice() {
 	const { user, authLoading } = useAuth();
-	const { getUserProfile } = useFirestoreAdd();
+	const { getProfile } = useFirestore();
 	const { selectedTemplate } = useTemplateStore();
 
 	const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -48,7 +48,7 @@ export default function CreateInvoice() {
 	useEffect(() => {
 		if (user?.uid) {
 			const fetchProfile = async () => {
-				const profileData = await getUserProfile();
+				const profileData = await getProfile();
 				setProfile(profileData);
 			};
 			fetchProfile();
