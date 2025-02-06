@@ -33,29 +33,36 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			const userDocRef = doc(db, 'users', user.uid);
 			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
 
-			// Get today's date
-			const today = new Date();
-			const dateKey = today.toISOString().split('T')[0];
-			const monthKey = today.toISOString().slice(0, 7);
+			// Get today's date in local timezone using createdAt timestamp
+			const createdAt = Timestamp.now(); // Firestore timestamp
+			const createdAtDate = createdAt.toDate(); // Convert to JS Date
+			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // Format to 'YYYY-MM-DD'
+			const monthKey = createdAtDate.toISOString().slice(0, 7); // Keep the same format for the month
 
-			// Fetch existing analytics data before batch
+			// Fetch existing analytics data before batch or create the document
 			const userDocSnap = await getDoc(userDocRef);
-			const userData = userDocSnap.exists() ? userDocSnap.data() : {};
+			if (!userDocSnap.exists()) {
+				await setDoc(userDocRef, { totalInvoiceCount: 0, totalIncome: 0, last30DaysInvoices: {}, monthlyIncome: {}, totalOutstandingCount: 0, totalOutstandingAmount: 0 });
+			}
+			const userData = (await getDoc(userDocRef)).data() || {};
 
 			// Prepare invoice data
-			const dataWithTimestamp = { ...data, complete: false, createdAt: Timestamp.now() };
+			const dataWithTimestamp = { ...data, complete: false, createdAt }; // Store Firestore timestamp directly
 			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
+
+			// Round the total amount to avoid floating-point precision issues
+			const roundedTotal = Math.round(data.total * 100) / 100; // Round to 2 decimal places
 
 			// Prepare updated analytics data
 			const last30DaysData = { ...(userData.last30DaysInvoices || {}) };
-			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + data.total;
+			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + roundedTotal;
 
 			// Keep only the last 30 days
 			const sortedKeys = Object.keys(last30DaysData).sort();
 			if (sortedKeys.length > 30) delete last30DaysData[sortedKeys[0]];
 
 			const monthlyIncomeData = { ...(userData.monthlyIncome || {}) };
-			monthlyIncomeData[monthKey] = (monthlyIncomeData[monthKey] || 0) + data.total;
+			monthlyIncomeData[monthKey] = (monthlyIncomeData[monthKey] || 0) + roundedTotal;
 
 			// Start batch
 			const batch = writeBatch(db);
@@ -65,6 +72,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				totalIncome: increment(data.total),
 				last30DaysInvoices: last30DaysData,
 				monthlyIncome: monthlyIncomeData,
+				totalOutstandingCount: increment(1),
+				totalOutstandingAmount: increment(roundedTotal),
 			});
 
 			// Commit batch updates
