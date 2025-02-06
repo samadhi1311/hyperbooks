@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ChevronRightIcon, MoreHorizontal } from 'lucide-react';
+import { ChevronRightIcon, CircleCheckIcon, CircleXIcon, DownloadIcon, MoreHorizontal, Trash2Icon } from 'lucide-react';
 import { InvoiceData, ProfileData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -48,12 +48,16 @@ export const columns = ({
 	profile,
 	selectedTemplate,
 	toast,
+	deleteInvoice,
+	updateStatus,
 }: {
 	expandedRow: string | null;
 	toggleRow: (rowId: string) => void;
 	profile: ProfileData;
 	selectedTemplate: TemplateKey;
 	toast: any;
+	deleteInvoice: (invoiceId: string) => void;
+	updateStatus: (invoiceId: string, status: boolean) => void;
 }): ColumnDef<InvoiceData>[] => [
 	{
 		accessorKey: 'id',
@@ -132,7 +136,7 @@ export const columns = ({
 		cell: ({ row }) => `${row.getValue('tax')}%`,
 	},
 	{
-		id: 'total',
+		accessorKey: 'total',
 		header: () => <div className='text-right'>Total</div>,
 		cell: ({ row }) => {
 			const items = row.getValue('items') as InvoiceData['items'];
@@ -142,7 +146,29 @@ export const columns = ({
 
 			const total = subtotal * (1 - discount / 100) * (1 + tax / 100);
 
-			return <div className='text-right font-medium'>${total.toFixed(2)}</div>;
+			return <div className='text-right font-medium'>LKR {total.toFixed(2)}</div>;
+		},
+	},
+	{
+		accessorKey: 'complete',
+		header: () => <div className='text-center'>Status</div>,
+		cell: ({ row }) => {
+			const status = row.getValue('complete') as boolean;
+			return (
+				<div className='flex justify-center'>
+					{status ? (
+						<span className='flex items-center gap-3'>
+							<CircleCheckIcon className='text-emerald-500' />
+							Completed
+						</span>
+					) : (
+						<span className='flex items-center gap-3'>
+							<CircleXIcon className='text-orange-500' />
+							Incomplete
+						</span>
+					)}
+				</div>
+			);
 		},
 	},
 	{
@@ -191,10 +217,20 @@ export const columns = ({
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align='end'>
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem onClick={() => handleExportPDF()}>Print Invoice</DropdownMenuItem>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>View Details</DropdownMenuItem>
-						<DropdownMenuItem>Download PDF</DropdownMenuItem>
+						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={() => updateStatus(row.original.id!, !row.original.complete)}>
+							{row.original.complete === false ? <CircleCheckIcon className='text-emerald-500' /> : <CircleXIcon className='text-orange-500' />}
+							Mark as {row.original.complete === false ? 'Complete' : 'Incomplete'}
+						</DropdownMenuItem>
+						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={() => handleExportPDF()}>
+							<DownloadIcon />
+							Download PDF
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={() => deleteInvoice(row.original.id!)}>
+							<Trash2Icon />
+							Delete Record
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);
