@@ -209,6 +209,38 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
+	const updateStatus = async (invoiceId: string, status: boolean) => {
+		try {
+			if (!user) {
+				toast({
+					variant: 'destructive',
+					title: 'Authentication Error',
+					description: 'You must be logged in to get User data.',
+				});
+				return null;
+			}
+
+			if (user.uid) {
+				const invoiceRef = doc(collection(db, 'users', user.uid, 'invoices'), invoiceId);
+				updateDoc(invoiceRef, {
+					complete: status,
+				});
+				toast({
+					variant: 'default',
+					title: 'Status Updated!',
+					description: `Invoice status has been updated as ${status ? 'completed' : 'incomplete'}.`,
+				});
+			}
+		} catch (error) {
+			console.error('Error updating status:', error);
+			toast({
+				variant: 'destructive',
+				title: 'An error occurred.',
+				description: error as string,
+			});
+		}
+	};
+
 	const deleteInvoice = async (invoiceId: string) => {
 		if (!user) {
 			toast({
@@ -245,5 +277,5 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, loading, error };
+	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, updateStatus, loading, error };
 };
