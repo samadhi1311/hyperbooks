@@ -1,5 +1,22 @@
 import { Timestamp } from 'firebase/firestore';
 
+type Tier = 'starter' | 'pro' | 'ultimate';
+
+type SubscriptionStatus = 'active' | 'paused' | 'cancelled';
+
+type UserData = {
+	id: string;
+	name: string;
+	planId: string;
+	email: string;
+	tier: Tier;
+	subscriptionId?: string;
+	subscriptionStatus?: SubscriptionStatus;
+	validUntil?: Date;
+	totalIncome?: number;
+	totalInvoiceCount?: number;
+};
+
 type InvoiceData = {
 	billedTo: {
 		name: string;
@@ -21,8 +38,6 @@ type ProfileData = {
 	address?: string[];
 	website?: string;
 	logo?: string;
-	totalIncome?: number;
-	totalInvoiceCount?: number;
 };
 
 const placeholders = {
@@ -48,4 +63,4 @@ const placeholders = {
 	discount: 'Discount',
 };
 
-export { type InvoiceData, type ProfileData, placeholders };
+export { type InvoiceData, type ProfileData, type UserData, type Tier, type SubscriptionStatus, placeholders };
