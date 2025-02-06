@@ -6,7 +6,7 @@ import { Document, pdf } from '@react-pdf/renderer';
 import templates, { TemplateKey } from '@/templates';
 import { useTemplateStore } from '@/store/use-templates';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestoreAdd } from '@/hooks/use-firestore';
+import { useFirestore } from '@/hooks/use-firestore';
 import { InvoiceData, ProfileData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
 
@@ -14,7 +14,7 @@ export default function Menu() {
 	const { invoiceData, resetInvoiceData } = useInvoiceStore();
 	const { selectedTemplate } = useTemplateStore();
 	const { profile } = useProfileStore();
-	const { addInvoice, loading, error } = useFirestoreAdd<Partial<InvoiceData>>();
+	const { addInvoice, loading, error } = useFirestore<Partial<InvoiceData>>();
 	const { toast } = useToast();
 
 	const invoicePayload = {
