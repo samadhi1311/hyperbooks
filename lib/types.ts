@@ -14,7 +14,10 @@ type UserData = {
 	subscriptionStatus?: SubscriptionStatus;
 	validUntil?: Date;
 	totalIncome?: number;
+	totalRevenue?: number;
 	totalInvoiceCount?: number;
+	totalOutstandingCount?: number;
+	totalOutstandingAmount?: number;
 };
 
 type InvoiceData = {
