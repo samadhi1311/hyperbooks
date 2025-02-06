@@ -3,8 +3,9 @@ import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestam
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { ProfileData } from '@/lib/types';
+import { ProfileData, UserData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
+import { useUserStore } from '@/store/use-user';
 
 export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
@@ -13,6 +14,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 	const [error, setError] = useState<Error | null>(null);
 
 	const { setProfile } = useProfileStore();
+	const { setUser } = useUserStore();
 
 	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
@@ -32,12 +34,13 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
 			const userDocRef = doc(db, 'users', user.uid);
 
-			// Get today's date as YYYY-MM-DD
+			// Get today's date
 			const today = new Date();
-			const dateKey = today.toISOString().split('T')[0]; // Example: "2025-02-01"
+			const dateKey = today.toISOString().split('T')[0]; // "2025-02-01"
+			const monthKey = today.toISOString().slice(0, 7); // "2025-02"
 
 			// Add the invoice
-			const dataWithTimestamp = { ...data, createdAt: Timestamp.now() };
+			const dataWithTimestamp = { ...data, complete: false, createdAt: Timestamp.now() };
 			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
 			batch.set(invoiceRef, dataWithTimestamp);
 
@@ -47,21 +50,27 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 				totalIncome: increment(data.total),
 			});
 
-			// Fetch the last 30 days data
+			// Fetch existing analytics data
 			const userDocSnap = await getDoc(userDocRef);
-			const last30DaysData = userDocSnap.exists() ? userDocSnap.data()?.last30DaysInvoices || {} : {};
+			const userData = userDocSnap.exists() ? userDocSnap.data() : {};
 
-			// Update today's total
+			// Update last 30 days income
+			const last30DaysData = userData.last30DaysInvoices || {};
 			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + data.total;
 
-			// Ensure only the latest 30 days are stored
+			// Keep only the last 30 days
 			const sortedKeys = Object.keys(last30DaysData).sort();
-			if (sortedKeys.length > 30) {
-				delete last30DaysData[sortedKeys[0]]; // Remove the oldest day
-			}
+			if (sortedKeys.length > 30) delete last30DaysData[sortedKeys[0]];
 
-			// Save the updated last30DaysInvoices object
-			await updateDoc(userDocRef, { last30DaysInvoices: last30DaysData });
+			// Update all-time monthly income
+			const monthlyIncomeData = userData.monthlyIncome || {};
+			monthlyIncomeData[monthKey] = (monthlyIncomeData[monthKey] || 0) + data.total;
+
+			// Save updated data
+			await updateDoc(userDocRef, {
+				last30DaysInvoices: last30DaysData,
+				monthlyIncome: monthlyIncomeData,
+			});
 
 			// Commit batch updates
 			await batch.commit();
@@ -87,7 +96,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	const getUserProfile = async () => {
+	const getProfile = async () => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
@@ -101,7 +110,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
+			const userDocRef = doc(db, 'users', user.uid, 'profile', user.uid);
 			const userDoc = await getDoc(userDocRef);
 
 			if (userDoc.exists()) {
@@ -124,7 +133,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	const updateUserProfile = async (profileData: T) => {
+	const updateProfile = async (profileData: T) => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
@@ -138,7 +147,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
+			const userDocRef = doc(db, 'users', user.uid, 'profile', user.uid);
 
 			await setDoc(userDocRef, profileData, { merge: true });
 
@@ -163,5 +172,42 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getUserProfile, updateUserProfile, loading, error };
+	const getUser = async () => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to get User data.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+			const userDoc = await getDoc(userDocRef);
+
+			if (userDoc.exists()) {
+				const userData = userDoc.data() as UserData;
+				setUser(userData);
+				return userData;
+			}
+			return null;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Getting Profile',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, getProfile, updateProfile, getUser, loading, error };
 };
