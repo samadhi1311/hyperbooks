@@ -18,6 +18,7 @@ type UserData = {
 };
 
 type InvoiceData = {
+	id?: string;
 	billedTo: {
 		name: string;
 		address?: string[];
@@ -29,6 +30,7 @@ type InvoiceData = {
 	tax: number;
 	createdAt?: Timestamp;
 	total: number;
+	complete?: boolean;
 };
 
 type ProfileData = {
