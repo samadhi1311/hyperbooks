@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -209,5 +209,41 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getProfile, updateProfile, getUser, loading, error };
+	const deleteInvoice = async (invoiceId: string) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to delete invoice.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const invoiceDocRef = doc(db, 'users', user.uid, 'invoices', invoiceId);
+
+			await deleteDoc(invoiceDocRef);
+
+			toast({
+				variant: 'success',
+				title: 'Invoice Deleted',
+				description: 'Invoice successfully deleted from Firestore.',
+			});
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Deleting Invoice',
+				description: error.message,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, loading, error };
 };
