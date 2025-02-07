@@ -1,13 +1,12 @@
 import { NextRequest } from 'next/server';
 import admin from 'firebase-admin';
-import { Environment, LogLevel, Paddle, PaddleOptions } from '@paddle/paddle-node-sdk';
+import { Environment, LogLevel, Paddle, PaddleOptions, SubscriptionActivatedEvent } from '@paddle/paddle-node-sdk';
 import { CustomerCreatedEvent, CustomerUpdatedEvent, EventEntity, EventName, SubscriptionCreatedEvent, SubscriptionUpdatedEvent } from '@paddle/paddle-node-sdk';
 import { getFirestore } from 'firebase-admin/firestore';
 
 if (!admin.apps.length) {
 	admin.initializeApp({
 		credential: admin.credential.cert({
-			// Firebase Admin SDK credentials (from Firebase Console)
 			projectId: process.env.FIREBASE_PROJECT_ID,
 			privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
 			clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
@@ -34,49 +33,66 @@ class ProcessWebhook {
 	private firestore = getFirestore();
 
 	async processEvent(eventData: EventEntity) {
+		console.log(`Processing Event: ${eventData.eventType}`);
+
 		switch (eventData.eventType) {
 			case EventName.SubscriptionCreated:
 			case EventName.SubscriptionUpdated:
+			case EventName.SubscriptionActivated:
 				await this.updateSubscriptionData(eventData);
 				break;
 			case EventName.CustomerCreated:
 			case EventName.CustomerUpdated:
 				await this.updateCustomerData(eventData);
 				break;
+			default:
+				console.warn(`Unhandled event type: ${eventData.eventType}`);
 		}
 	}
 
-	private async updateSubscriptionData(eventData: SubscriptionCreatedEvent | SubscriptionUpdatedEvent) {
+	private async updateSubscriptionData(eventData: SubscriptionCreatedEvent | SubscriptionUpdatedEvent | SubscriptionActivatedEvent) {
 		try {
-			const subscriptionRef = this.firestore.collection('subscriptions').doc(eventData.data.id.toString());
+			if (!eventData.data) {
+				throw new Error('Missing eventData.data in webhook payload');
+			}
 
-			// Upsert subscription data
+			console.log('Updating subscription:', eventData.data.id);
+
+			const subscriptionRef = this.firestore.collection('subscriptions').doc((eventData.data.customData as { email: string; user_id: string }).user_id.toString());
+
 			await subscriptionRef.set(
 				{
 					subscription_status: eventData.data.status,
-					price_id: eventData.data.items[0].price?.id ?? '',
-					product_id: eventData.data.items[0].price?.productId ?? '',
-					scheduled_change: eventData.data.scheduledChange?.effectiveAt,
+					price_id: eventData.data.items?.[0]?.price?.id ?? '',
+					product_id: eventData.data.items?.[0]?.price?.productId ?? '',
+					scheduled_change: eventData.data.scheduledChange?.effectiveAt ?? null,
 					customer_id: eventData.data.customerId,
 					updated_at: new Date(),
+					email: (eventData.data.customData as { email: string; user_id: string }).email,
+					user_id: (eventData.data.customData as { email: string; user_id: string }).user_id,
 				},
 				{ merge: true }
 			);
 
-			console.log('Subscription data updated in Firestore.');
+			console.log('Subscription updated in Firestore.');
 		} catch (e) {
-			console.error('Error updating subscription data in Firestore:', e);
+			console.error('Error updating subscription:', e);
 		}
 	}
 
 	private async updateCustomerData(eventData: CustomerCreatedEvent | CustomerUpdatedEvent) {
 		try {
+			if (!eventData.data) {
+				throw new Error('Missing eventData.data in webhook payload');
+			}
+
+			console.log('Updating customer:', eventData.data.id);
+
 			const customerRef = this.firestore.collection('customers').doc(eventData.data.id.toString());
 
-			// Upsert customer data
 			await customerRef.set(
 				{
-					email: eventData.data.email,
+					email: eventData.data.email ?? '',
 					updated_at: new Date(),
 				},
 				{ merge: true }
@@ -84,7 +100,7 @@ class ProcessWebhook {
 
 			console.log('Customer data updated in Firestore.');
 		} catch (e) {
-			console.error('Error updating customer data in Firestore:', e);
+			console.error('Error updating customer data:', e);
 		}
 	}
 }
@@ -96,24 +112,31 @@ export async function POST(request: NextRequest) {
 	const rawRequestBody = await request.text();
 	const privateKey = process.env['PADDLE_NOTIFICATION_WEBHOOK_SECRET'] || '';
 
+	console.log('Received Webhook: ', rawRequestBody);
+	console.log('Signature:', signature);
+
 	let status, eventName;
 	try {
 		if (signature && rawRequestBody) {
 			const paddle = getPaddleInstance();
 			const eventData = await paddle.webhooks.unmarshal(rawRequestBody, privateKey, signature);
+
+			console.log('Unmarshalled Event:', JSON.stringify(eventData, null, 2));
+
 			status = 200;
 			eventName = eventData?.eventType ?? 'Unknown event';
+
 			if (eventData) {
+				console.log('Received Webhook Payload:', JSON.stringify(eventData, null, 2));
 				await webhookProcessor.processEvent(eventData);
 			}
 		} else {
 			status = 400;
-			console.log('Missing signature from header');
+			console.log('Missing signature or raw request body');
 		}
 	} catch (e) {
-		// Handle error
 		status = 500;
-		console.log(e);
+		console.error('Error processing webhook:', e);
 	}
 	return Response.json({ status, eventName });
 }
