@@ -15,15 +15,16 @@ import { useProfileStore } from '@/store/use-profile';
 export default function Dashboard() {
 	const { user, authLoading } = useAuth();
 	const { getUser, getProfile } = useFirestore();
-	const { userData, setUser } = useUserStore();
+	const { userData, setUser, clearUser } = useUserStore();
 	const { profile, setProfile } = useProfileStore();
 
 	useEffect(() => {
-		if (user?.uid && (userData === null || profile === null)) {
+		if (user?.uid && (!userData || !profile)) {
 			const fetchUser = async () => {
 				const data1 = await getUser();
 				const data2 = await getProfile();
 				if (data1) {
+					clearUser();
 					setUser(data1);
 				}
 				if (data2) {
