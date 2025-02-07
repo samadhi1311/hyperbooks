@@ -1,21 +1,7 @@
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, QueryDocumentSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase.config';
-import { create } from 'zustand';
-
-interface PaginationStore {
-	documents: DocumentData[];
-	setDocuments: (docs: DocumentData[]) => void;
-	currentPage: number;
-	setCurrentPage: (page: number) => void;
-}
-
-const usePaginationStore = create<PaginationStore>((set) => ({
-	documents: [],
-	setDocuments: (docs) => set({ documents: docs }),
-	currentPage: 1,
-	setCurrentPage: (page) => set({ currentPage: page }),
-}));
+import { usePaginationStore } from '@/store/use-pagination';
 
 interface UseFirestorePaginationProps {
 	userId: string;

@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ProfileData, UserData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
 import { useUserStore } from '@/store/use-user';
+import useFirestorePagination from './use-pagination';
 
 export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
@@ -13,8 +14,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 
-	const { setProfile } = useProfileStore();
-	const { setUser } = useUserStore();
+	const { setProfile, clearProfile } = useProfileStore();
+	const { setUser, clearUser } = useUserStore();
+
+	const { resetPagination } = useFirestorePagination({ userId: user?.uid || '', pageSize: 10 });
 
 	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
@@ -78,6 +81,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			// Commit batch updates
 			await batch.commit();
+
+			clearUser();
 
 			toast({
 				variant: 'success',
@@ -160,6 +165,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				title: 'Profile Updated',
 				description: 'Profile successfully updated in Firestore.',
 			});
+
+			clearProfile();
 
 			return userDocRef;
 		} catch (err) {
@@ -274,6 +281,9 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Commit batch
 			await batch.commit();
 
+			resetPagination();
+			clearUser();
+
 			toast({
 				variant: 'default',
 				title: 'Status Updated!',
@@ -349,6 +359,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			// Commit batch
 			await batch.commit();
+
+			resetPagination();
+			clearUser();
+			console.log('User Cleared');
 
 			toast({
 				variant: 'success',
