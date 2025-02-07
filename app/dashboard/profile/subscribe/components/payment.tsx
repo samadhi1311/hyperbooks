@@ -34,6 +34,10 @@ export default function Payment() {
 				variant: 'multi-page',
 				successUrl: 'http://localhost:3000/dashboard/profile/subscribe/thank-you',
 			},
+			customData: {
+				user_id: user.uid,
+				email: user.email,
+			},
 		});
 	};
 
