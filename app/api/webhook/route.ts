@@ -9,7 +9,7 @@ if (!admin.apps.length) {
 		credential: admin.credential.cert({
 			// Firebase Admin SDK credentials (from Firebase Console)
 			projectId: process.env.FIREBASE_PROJECT_ID,
-			privateKey: process.env.FIREBASE_PRIVATE_KEY,
+			privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
 			clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 		}),
 	});
@@ -30,7 +30,7 @@ function getPaddleInstance() {
 	return new Paddle(process.env.PADDLE_API_KEY!, paddleOptions);
 }
 
-export class ProcessWebhook {
+class ProcessWebhook {
 	private firestore = getFirestore();
 
 	async processEvent(eventData: EventEntity) {
