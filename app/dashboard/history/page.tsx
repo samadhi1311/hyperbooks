@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useProfileStore } from '@/store/use-profile';
 import { useTemplateStore } from '@/store/use-templates';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore } from '@/hooks/use-firestore';
 
 export default function History() {
 	const [expandedRow, setExpandedRow] = useState<string | null>(null);
@@ -25,6 +26,7 @@ export default function History() {
 	});
 	const { profile } = useProfileStore();
 	const { selectedTemplate } = useTemplateStore();
+	const { deleteInvoice, updateStatus, loading: invoiceLoading } = useFirestore();
 	const { toast } = useToast();
 	if (authLoading || !user || !profile) return <Loader />;
 	if (error) return <div>Error: {error}</div>;
@@ -35,7 +37,14 @@ export default function History() {
 		<PageWrapper>
 			<Section>
 				<H2 className='mb-4'>History</H2>
-				<DataTable columns={columns({ expandedRow, toggleRow, profile, selectedTemplate, toast })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} />
+				<DataTable
+					columns={columns({ expandedRow, toggleRow, profile, selectedTemplate, toast, updateStatus, deleteInvoice })}
+					data={data}
+					fetchNextPage={fetchNextPage}
+					hasMore={hasMore}
+					loading={loading}
+					invoiceLoading={invoiceLoading}
+				/>
 			</Section>
 		</PageWrapper>
 	);

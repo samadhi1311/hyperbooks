@@ -1,18 +1,23 @@
 import { useState } from 'react';
-import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { ProfileData } from '@/lib/types';
+import { ProfileData, UserData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
+import { useUserStore } from '@/store/use-user';
+import useFirestorePagination from './use-pagination';
 
-export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
+export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
 	const { toast } = useToast();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 
-	const { setProfile } = useProfileStore();
+	const { setProfile, clearProfile } = useProfileStore();
+	const { setUser, clearUser } = useUserStore();
+
+	const { resetPagination } = useFirestorePagination({ userId: user?.uid || '', pageSize: 10 });
 
 	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
@@ -28,43 +33,56 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const batch = writeBatch(db);
-			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
 			const userDocRef = doc(db, 'users', user.uid);
+			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
 
-			// Get today's date as YYYY-MM-DD
-			const today = new Date();
-			const dateKey = today.toISOString().split('T')[0]; // Example: "2025-02-01"
+			// Get today's date in local timezone using createdAt timestamp
+			const createdAt = Timestamp.now(); // Firestore timestamp
+			const createdAtDate = createdAt.toDate(); // Convert to JS Date
+			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // Format to 'YYYY-MM-DD'
+			const monthKey = createdAtDate.toISOString().slice(0, 7); // Keep the same format for the month
 
-			// Add the invoice
-			const dataWithTimestamp = { ...data, createdAt: Timestamp.now() };
+			// Fetch existing analytics data before batch or create the document
+			const userDocSnap = await getDoc(userDocRef);
+			if (!userDocSnap.exists()) {
+				await setDoc(userDocRef, { totalInvoiceCount: 0, totalIncome: 0, last30DaysInvoices: {}, monthlyIncome: {}, totalOutstandingCount: 0, totalOutstandingAmount: 0 });
+			}
+			const userData = (await getDoc(userDocRef)).data() || {};
+
+			// Prepare invoice data
+			const dataWithTimestamp = { ...data, complete: false, createdAt }; // Store Firestore timestamp directly
 			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
-			batch.set(invoiceRef, dataWithTimestamp);
 
-			// Update user stats
+			// Round the total amount to avoid floating-point precision issues
+			const roundedTotal = Math.round(data.total * 100) / 100; // Round to 2 decimal places
+
+			// Prepare updated analytics data
+			const last30DaysData = { ...(userData.last30DaysInvoices || {}) };
+			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + roundedTotal;
+
+			// Keep only the last 30 days
+			const sortedKeys = Object.keys(last30DaysData).sort();
+			if (sortedKeys.length > 30) delete last30DaysData[sortedKeys[0]];
+
+			const monthlyIncomeData = { ...(userData.monthlyIncome || {}) };
+			monthlyIncomeData[monthKey] = (monthlyIncomeData[monthKey] || 0) + roundedTotal;
+
+			// Start batch
+			const batch = writeBatch(db);
+			batch.set(invoiceRef, dataWithTimestamp);
 			batch.update(userDocRef, {
 				totalInvoiceCount: increment(1),
 				totalIncome: increment(data.total),
+				last30DaysInvoices: last30DaysData,
+				monthlyIncome: monthlyIncomeData,
+				totalOutstandingCount: increment(1),
+				totalOutstandingAmount: increment(roundedTotal),
 			});
-
-			// Fetch the last 30 days data
-			const userDocSnap = await getDoc(userDocRef);
-			const last30DaysData = userDocSnap.exists() ? userDocSnap.data()?.last30DaysInvoices || {} : {};
-
-			// Update today's total
-			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + data.total;
-
-			// Ensure only the latest 30 days are stored
-			const sortedKeys = Object.keys(last30DaysData).sort();
-			if (sortedKeys.length > 30) {
-				delete last30DaysData[sortedKeys[0]]; // Remove the oldest day
-			}
-
-			// Save the updated last30DaysInvoices object
-			await updateDoc(userDocRef, { last30DaysInvoices: last30DaysData });
 
 			// Commit batch updates
 			await batch.commit();
+
+			clearUser();
 
 			toast({
 				variant: 'success',
@@ -87,7 +105,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	const getUserProfile = async () => {
+	const getProfile = async () => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
@@ -101,7 +119,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
+			const userDocRef = doc(db, 'users', user.uid, 'profile', user.uid);
 			const userDoc = await getDoc(userDocRef);
 
 			if (userDoc.exists()) {
@@ -124,7 +142,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	const updateUserProfile = async (profileData: T) => {
+	const updateProfile = async (profileData: T) => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
@@ -138,7 +156,7 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
+			const userDocRef = doc(db, 'users', user.uid, 'profile', user.uid);
 
 			await setDoc(userDocRef, profileData, { merge: true });
 
@@ -147,6 +165,8 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 				title: 'Profile Updated',
 				description: 'Profile successfully updated in Firestore.',
 			});
+
+			clearProfile();
 
 			return userDocRef;
 		} catch (err) {
@@ -163,5 +183,204 @@ export const useFirestoreAdd = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getUserProfile, updateUserProfile, loading, error };
+	const getUser = async () => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to get User data.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+			const userDoc = await getDoc(userDocRef);
+
+			if (userDoc.exists()) {
+				const userData = userDoc.data() as UserData;
+				setUser(userData);
+				return userData;
+			}
+			return null;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Getting Profile',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const updateStatus = async (invoiceId: string, status: boolean) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to update the invoice status.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+			const invoiceRef = doc(db, 'users', user.uid, 'invoices', invoiceId);
+
+			// Fetch the invoice data
+			const invoiceSnap = await getDoc(invoiceRef);
+			if (!invoiceSnap.exists()) throw new Error('Invoice not found.');
+
+			const invoiceData = invoiceSnap.data();
+			const invoiceTotal = invoiceData.total;
+			const currentStatus = invoiceData.complete; // Previous status
+
+			if (currentStatus === status) {
+				// No change needed
+				toast({
+					variant: 'default',
+					title: 'No Update Needed',
+					description: 'Invoice status is already set to the selected value.',
+				});
+				return null;
+			}
+
+			// Start batch
+			const batch = writeBatch(db);
+
+			// Update invoice status
+			batch.update(invoiceRef, { complete: status });
+
+			// Update user financials
+			if (status) {
+				// Marking invoice as complete
+				batch.update(userDocRef, {
+					totalRevenue: increment(invoiceTotal),
+					totalOutstandingCount: increment(-1),
+					totalOutstandingAmount: increment(-invoiceTotal),
+				});
+			} else {
+				// Marking invoice as incomplete
+				batch.update(userDocRef, {
+					totalRevenue: increment(-invoiceTotal),
+					totalOutstandingCount: increment(1),
+					totalOutstandingAmount: increment(invoiceTotal),
+				});
+			}
+
+			// Commit batch
+			await batch.commit();
+
+			resetPagination();
+			clearUser();
+
+			toast({
+				variant: 'default',
+				title: 'Status Updated!',
+				description: `Invoice status has been updated to ${status ? 'completed' : 'incomplete'}.`,
+			});
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Updating Status',
+				description: error.message,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const deleteInvoice = async (invoiceId: string) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to delete an invoice.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+			const invoiceDocRef = doc(db, 'users', user.uid, 'invoices', invoiceId);
+
+			// Fetch the invoice data before deletion
+			const invoiceSnap = await getDoc(invoiceDocRef);
+			if (!invoiceSnap.exists()) throw new Error('Invoice not found.');
+
+			const invoiceData = invoiceSnap.data();
+			const invoiceTotal = invoiceData.total;
+			const createdAt = invoiceData.createdAt.toDate();
+			const dateKey = createdAt.toISOString().split('T')[0];
+			const monthKey = createdAt.toISOString().slice(0, 7);
+
+			// Fetch user analytics data
+			const userDocSnap = await getDoc(userDocRef);
+			const userData = userDocSnap.exists() ? userDocSnap.data() : {};
+
+			// Update last 30 days income
+			const last30DaysData = { ...(userData.last30DaysInvoices || {}) };
+			if (last30DaysData[dateKey]) {
+				last30DaysData[dateKey] -= invoiceTotal;
+				if (last30DaysData[dateKey] <= 0) delete last30DaysData[dateKey];
+			}
+
+			// Update monthly income
+			const monthlyIncomeData = { ...(userData.monthlyIncome || {}) };
+			if (monthlyIncomeData[monthKey]) {
+				monthlyIncomeData[monthKey] -= invoiceTotal;
+				if (monthlyIncomeData[monthKey] <= 0) delete monthlyIncomeData[monthKey];
+			}
+
+			// Start batch
+			const batch = writeBatch(db);
+			batch.delete(invoiceDocRef);
+			batch.update(userDocRef, {
+				totalInvoiceCount: increment(-1),
+				totalIncome: increment(-invoiceTotal),
+				last30DaysInvoices: last30DaysData,
+				monthlyIncome: monthlyIncomeData,
+			});
+
+			// Commit batch
+			await batch.commit();
+
+			resetPagination();
+			clearUser();
+			console.log('User Cleared');
+
+			toast({
+				variant: 'success',
+				title: 'Invoice Deleted',
+				description: 'Invoice successfully deleted from Firestore.',
+			});
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Deleting Invoice',
+				description: error.message,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, updateStatus, loading, error };
 };

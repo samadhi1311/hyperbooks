@@ -1,24 +1,30 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign } from 'lucide-react';
+import { ScrollTextIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
-import { useProfileStore } from '@/store/use-profile';
 import { useEffect, useState } from 'react';
+import { useUserStore } from '@/store/use-user';
 
 export default function Invoices() {
-	const { profile } = useProfileStore();
+	const { userData } = useUserStore();
 	const [count, setCount] = useState(0);
+	const [outstanding, setOutstanding] = useState(0);
 
 	useEffect(() => {
-		setCount(profile?.totalInvoiceCount ?? 0);
-	}, [profile?.totalInvoiceCount]);
+		setCount(userData?.totalInvoiceCount ?? 0);
+		setOutstanding(userData?.totalOutstandingCount ?? 0);
+	}, [userData?.totalInvoiceCount, userData?.totalOutstandingCount]);
 	return (
 		<Card>
 			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-				<CardTitle className='text-sm font-medium'>Total Issued</CardTitle>
-				<DollarSign className='h-4 w-4 text-muted-foreground' />
+				<CardTitle className='text-sm font-medium'>Completed Invoices</CardTitle>
+				<ScrollTextIcon className='h-4 w-4 text-muted-foreground' />
 			</CardHeader>
 			<CardContent>
-				<NumberFlow className='text-2xl font-bold' value={count} />
+				<NumberFlow className='text-2xl font-bold' value={count - outstanding} />
+				<span className='flex items-center gap-2 text-sm text-muted-foreground'>
+					Total Invoices: <NumberFlow className='text-sm text-muted-foreground' value={count} />
+					{outstanding > 1 ? <TrendingDownIcon className='h-4 w-4 text-muted-foreground' /> : <TrendingUpIcon className='h-4 w-4 text-muted-foreground' />}
+				</span>
 			</CardContent>
 		</Card>
 	);

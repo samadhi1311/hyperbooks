@@ -9,30 +9,43 @@ import { db } from '@/firebase.config';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 import NumberFlow from '@number-flow/react';
+import { Loader2Icon } from 'lucide-react';
 
 export default function Chart() {
 	const { user } = useAuth();
 	const [chartData, setChartData] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		if (!user) return;
 		const getLast30DaysInvoices = async () => {
-			const userDocRef = doc(db, 'users', user.uid);
-			const userSnap = await getDoc(userDocRef);
+			try {
+				setLoading(true);
+				const userDocRef = doc(db, 'users', user.uid);
+				const userSnap = await getDoc(userDocRef);
 
-			if (userSnap.exists()) {
-				const last30DaysInvoices = userSnap.data().last30DaysInvoices || {};
+				if (userSnap.exists()) {
+					const last30DaysInvoices = userSnap.data().last30DaysInvoices || {};
 
-				// Convert Firestore data into chart format
-				const formattedData = Array.from({ length: 30 }, (_, i) => {
-					const dateKey = format(subDays(new Date(), 29 - i), 'yyyy-MM-dd');
-					return {
-						date: format(subDays(new Date(), 29 - i), 'MMM dd'), // Format as 'Jan 01', 'Jan 02', etc.
-						revenue: last30DaysInvoices[dateKey] || 0, // Default to 0 if no data
-					};
-				});
+					// Convert Firestore data into chart format
+					const formattedData = Array.from({ length: 30 }, (_, i) => {
+						const currentDay = new Date();
+						const targetDay = subDays(currentDay, 29 - i); // Get the exact date for this index
+						const dateKey = format(targetDay, 'yyyy-MM-dd'); // Use targetDay here
 
-				setChartData(formattedData);
+						// Ensure data is placed on the right date
+						return {
+							date: format(targetDay, 'MMM dd'), // Format the date as 'MMM dd' (e.g., Feb 07)
+							revenue: last30DaysInvoices[dateKey] || 0,
+						};
+					});
+
+					setChartData(formattedData);
+				}
+			} catch (error) {
+				console.error('Error fetching last 30 days invoices:', error);
+			} finally {
+				setLoading(false);
 			}
 		};
 
@@ -46,14 +59,13 @@ export default function Chart() {
 		},
 	} satisfies ChartConfig;
 
-	if (!chartData.length) return null;
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle>Statistics</CardTitle>
 				<CardDescription>Your revenue in the last 30 days</CardDescription>
 			</CardHeader>
-			<CardContent>
+			<CardContent className='relative'>
 				<ChartContainer config={chartConfig}>
 					<BarChart accessibilityLayer data={chartData}>
 						<CartesianGrid vertical={false} />
@@ -64,9 +76,20 @@ export default function Chart() {
 							labelClassName='text-base font-medium'
 							content={<ChartTooltipContent className='px-4 py-2' nameKey='revenue' />}
 						/>
-						<Bar dataKey='revenue' fill='var(--color-revenue)' radius={8} />
+						<Bar dataKey='revenue' fill='var(--color-revenue)' radius={0} />
 					</BarChart>
 				</ChartContainer>
+				{loading && (
+					<div className='absolute inset-0 flex items-center justify-center bg-background'>
+						<Loader2Icon className='animate-spin text-muted-foreground' />
+					</div>
+				)}
+
+				{chartData.length === 0 && !loading && (
+					<div className='absolute inset-0 flex items-center justify-center bg-background'>
+						<p className='text-sm text-muted-foreground'>No data available.</p>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);
