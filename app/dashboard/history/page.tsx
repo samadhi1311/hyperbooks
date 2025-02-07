@@ -26,7 +26,7 @@ export default function History() {
 	});
 	const { profile } = useProfileStore();
 	const { selectedTemplate } = useTemplateStore();
-	const { deleteInvoice, updateStatus } = useFirestore();
+	const { deleteInvoice, updateStatus, loading: invoiceLoading } = useFirestore();
 	const { toast } = useToast();
 	if (authLoading || !user || !profile) return <Loader />;
 	if (error) return <div>Error: {error}</div>;
@@ -43,6 +43,7 @@ export default function History() {
 					fetchNextPage={fetchNextPage}
 					hasMore={hasMore}
 					loading={loading}
+					invoiceLoading={invoiceLoading}
 				/>
 			</Section>
 		</PageWrapper>
