@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/use-auth';
 import useFirestorePagination from '@/hooks/use-pagination';
 import { InvoiceData } from '@/lib/types';
 import NumberFlow from '@number-flow/react';
+import { ListRestartIcon } from 'lucide-react';
 
 export default function Recent() {
 	const { user, authLoading } = useAuth();
@@ -14,13 +15,16 @@ export default function Recent() {
 	});
 
 	const data = documents as InvoiceData[];
-	if (authLoading || loading) return null;
+	if (authLoading) return null;
 	return (
-		<Card>
+		<Card className='overflow-hidden'>
 			<CardHeader>
-				<CardTitle>Recent Sales</CardTitle>
+				<CardTitle className='flex items-center gap-3'>
+					<ListRestartIcon className='size-8' />
+					Recent Sales
+				</CardTitle>
 			</CardHeader>
-			<CardContent className='grid gap-8'>
+			<CardContent className='grid h-full gap-8'>
 				{documents.length > 0 &&
 					data.map((doc, index) => (
 						<div className='flex items-center gap-4' key={index}>
@@ -51,12 +55,12 @@ export default function Recent() {
 							</div>
 						</div>
 					))}
-				{documents.length === 0 && (
-					<div className='mb-4 grid h-full gap-1'>
-						<p className='text-sm font-medium leading-none'>Your recent sales will appear here.</p>
+				{!loading && documents.length === 0 && (
+					<div className='mb-4 flex h-full w-full flex-col items-center justify-center'>
+						<p className='text-sm font-medium leading-none text-muted-foreground'>Your recent sales will appear here.</p>
 					</div>
 				)}
-				{documents.length === 0 &&
+				{loading &&
 					Array.from({ length: 5 }).map((_, index) => (
 						<div className='flex items-center space-x-4' key={index}>
 							<Skeleton className='h-12 w-12 rounded-full' />
