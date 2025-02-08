@@ -9,7 +9,7 @@ import { db } from '@/firebase.config';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 import NumberFlow from '@number-flow/react';
-import { Loader2Icon } from 'lucide-react';
+import { ChartColumnIncreasingIcon, Loader2Icon } from 'lucide-react';
 
 export default function Chart() {
 	const { user } = useAuth();
@@ -60,9 +60,12 @@ export default function Chart() {
 	} satisfies ChartConfig;
 
 	return (
-		<Card>
+		<Card className='overflow-hidden'>
 			<CardHeader>
-				<CardTitle>Statistics</CardTitle>
+				<CardTitle className='flex items-center gap-3'>
+					<ChartColumnIncreasingIcon className='size-8' />
+					Statistics
+				</CardTitle>
 				<CardDescription>Your revenue in the last 30 days</CardDescription>
 			</CardHeader>
 			<CardContent className='relative'>
