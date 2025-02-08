@@ -1,12 +1,36 @@
+'use client';
+
 import { Section } from '@/components/ui/layout';
 import Dashboard from './components/dashboard';
+import { useEffect } from 'react';
+import { useProfileStore } from '@/store/use-profile';
+import { useFirestore } from '@/hooks/use-firestore';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function Page() {
-	/*
-    1. Personal Greeting, total revenue, issued invoices, Outstanding invoices
-    2. Revenue trend as a graph
-    3. Most Recent invoices and shortcut to invoice history
-    */
+	const { user } = useAuth();
+	const { profile, setProfile } = useProfileStore();
+	const { getProfile } = useFirestore();
+	const router = useRouter();
+
+	const fetchProfile = async () => {
+		if (user) {
+			const profileData = await getProfile();
+			if (profileData?.name) {
+				setProfile(profileData);
+			} else {
+				router.push('/dashboard/profile');
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (!profile) {
+			fetchProfile();
+		}
+	}, [profile?.name]);
+
 	return (
 		<Section variant='main'>
 			<Dashboard />
