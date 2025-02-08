@@ -70,4 +70,13 @@ const placeholders = {
 	discount: 'Discount',
 };
 
-export { type InvoiceData, type ProfileData, type UserData, type Tier, type SubscriptionStatus, placeholders };
+const avatars = [
+	{ id: 1, url: '/avatars/microbe-1.svg' },
+	{ id: 2, url: '/avatars/microbe-2.svg' },
+	{ id: 3, url: '/avatars/microbe-3.svg' },
+	{ id: 4, url: '/avatars/microbe-4.svg' },
+	{ id: 5, url: '/avatars/microbe-5.svg' },
+	{ id: 6, url: '/avatars/microbe-6.svg' },
+];
+
+export { type InvoiceData, type ProfileData, type UserData, type Tier, type SubscriptionStatus, placeholders, avatars };
