@@ -100,7 +100,7 @@ export default function Navigation() {
 							<div className='flex flex-col gap-8'></div>
 
 							<SheetFooter>
-								<div className='flex w-full flex-col gap-8'>
+								<div className='flex w-full flex-col items-center justify-center gap-8'>
 									<AuthButton />
 									<ModeToggle />
 								</div>
