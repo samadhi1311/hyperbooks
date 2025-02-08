@@ -9,8 +9,10 @@ type UserData = {
 	name: string;
 	planId: string;
 	email: string;
-	tier: Tier;
-	subscriptionId?: string;
+	customerId?: string;
+	tier?: Tier;
+	priceId?: string;
+	productId?: string;
 	subscriptionStatus?: SubscriptionStatus;
 	validUntil?: Date;
 	totalIncome?: number;
