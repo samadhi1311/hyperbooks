@@ -15,7 +15,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const [error, setError] = useState<Error | null>(null);
 
 	const { setProfile, clearProfile } = useProfileStore();
-	const { setUser, clearUser } = useUserStore();
+	const { userData, setUser, clearUser } = useUserStore();
 
 	const { resetPagination } = useFirestorePagination({ userId: user?.uid || '', pageSize: 10 });
 
@@ -203,7 +203,26 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			if (userDoc.exists()) {
 				const userData = userDoc.data() as UserData;
 				setUser(userData);
-				return userData;
+			}
+
+			const subscriptionDocRef = doc(db, 'subscriptions', user.uid);
+			const subscriptionDocSnap = await getDoc(subscriptionDocRef);
+
+			if (subscriptionDocSnap.exists()) {
+				const subscriptionData = subscriptionDocSnap.data();
+				console.log('Subscription Data:', subscriptionData);
+				const newUserData = {
+					...userData,
+					customerId: subscriptionData.customer_id,
+					tier: subscriptionData.subscription_status === 'active' ? 'pro' : 'starter',
+					subscriptionStatus: subscriptionData.subscription_status,
+					productId: subscriptionData.product_id,
+					priceId: subscriptionData.price_id,
+					validUntil: subscriptionData.scheduled_change,
+				} as UserData;
+				setUser(newUserData);
+
+				return newUserData;
 			}
 			return null;
 		} catch (err) {
@@ -382,5 +401,51 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, updateStatus, loading, error };
+	const getSubscriptionStatus = async () => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to access your subscription.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const subscriptionDocRef = doc(db, 'subscriptions', user.uid);
+			const subscriptionDocSnap = await getDoc(subscriptionDocRef);
+
+			if (subscriptionDocSnap.exists()) {
+				const subscriptionData = subscriptionDocSnap.data();
+				console.log('Subscription Data:', subscriptionData);
+				const newUserData = {
+					...userData,
+					customerId: subscriptionData.customer_id,
+					tier: subscriptionData.subscription_status === 'active' ? 'pro' : 'starter',
+					subscriptionStatus: subscriptionData.subscription_status,
+					productId: subscriptionData.product_id,
+					priceId: subscriptionData.price_id,
+					validUntil: subscriptionData.scheduled_change,
+				} as UserData;
+				setUser(newUserData);
+
+				return newUserData;
+			}
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Deleting Invoice',
+				description: error.message,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, updateStatus, getSubscriptionStatus, loading, error };
 };
