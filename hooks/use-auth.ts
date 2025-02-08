@@ -3,6 +3,10 @@ import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUs
 import { FirebaseError } from 'firebase/app';
 import { auth } from '@/firebase.config';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/use-user';
+import { useProfileStore } from '@/store/use-profile';
+import { useInvoiceStore } from '@/store/use-invoice';
 
 const generateAuthErrorMessages = (error: FirebaseError) => {
 	switch (error?.code) {
@@ -21,8 +25,11 @@ const generateAuthErrorMessages = (error: FirebaseError) => {
 
 const useAuth = () => {
 	const { toast } = useToast();
-
+	const router = useRouter();
 	const [user, setUser] = useState<User | null>(null);
+	const { clearUser } = useUserStore();
+	const { clearProfile } = useProfileStore();
+	const { resetInvoiceData } = useInvoiceStore();
 	const [authLoading, setAuthLoading] = useState(true);
 
 	useEffect(() => {
@@ -40,10 +47,14 @@ const useAuth = () => {
 			const userCredentials = await signInWithEmailAndPassword(auth, email, password);
 			if (userCredentials.user.uid) {
 				toast({
-					variant: 'success',
-					title: 'You are logged in successfully.',
-					description: `Welcome back to hyperbooks. Let's pick up from where you left off.`,
+					variant: 'default',
+					title: 'Welcome back to hyperbooks. ',
+					description: `Let's pick up from where you left off.`,
 				});
+				clearUser();
+				clearProfile();
+				resetInvoiceData();
+				router.push('/dashboard');
 				return userCredentials.user;
 			}
 		} catch (error) {
@@ -63,10 +74,15 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			await signOut(auth);
+			router.push('/login');
+			clearUser();
+			clearProfile();
+			resetInvoiceData();
+			user?.reload();
 			toast({
 				variant: 'default',
-				title: 'See you next time.',
-				description: 'You are logged out successfully. Hoping to see you again.',
+				title: 'Greetings from hyperbooks.',
+				description: 'See you next time.',
 			});
 		} catch (error) {
 			if (error instanceof FirebaseError) {
@@ -76,6 +92,7 @@ const useAuth = () => {
 					description: generateAuthErrorMessages(error),
 				});
 			}
+			console.error(error);
 		} finally {
 			setAuthLoading(false);
 		}
@@ -92,6 +109,9 @@ const useAuth = () => {
 					description: `Welcome to hyperbooks. Let's start invoicing.`,
 				});
 			}
+			clearUser();
+			clearProfile();
+			resetInvoiceData();
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
