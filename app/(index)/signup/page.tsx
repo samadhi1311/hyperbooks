@@ -14,9 +14,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PasswordInput } from '@/components/ui/password-input';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
 	const { signup, authLoading } = useAuth();
+	const router = useRouter();
 
 	const formSchema = z.object({
 		email: z.string().email().min(1, { message: 'Email is required' }).max(64, { message: 'Email must be at most 64 characters' }),
@@ -34,6 +36,7 @@ export default function SignUp() {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log(values);
 		signup(values.email, values.password);
+		router.push('/dashboard/getting-started');
 	}
 	return (
 		<PageWrapper>
