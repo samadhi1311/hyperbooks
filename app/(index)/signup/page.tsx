@@ -90,7 +90,7 @@ export default function SignUp() {
 					</form>
 				</Form>
 
-				<img className='absolute top-0 -z-50 -translate-y-1/2 saturate-150 dark:saturate-100' src='/bg-gradient.png' width={1000} height={1000} alt='back bg' />
+				<img className='absolute top-0 -z-50 -translate-y-1/2 blur-lg saturate-150 dark:saturate-100' src='/bg-gradient.png' width={1000} height={1000} alt='back bg' />
 
 				<GridPattern
 					squares={[

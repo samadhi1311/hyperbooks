@@ -81,7 +81,7 @@ export default function Hero() {
 				</div>
 			</div>
 
-			<img className='hyperreal-hero-bg absolute top-0 -z-50 -translate-y-1/2 opacity-0 saturate-150 dark:saturate-100' src='/bg-gradient.png' width={1000} height={1000} alt='back bg' />
+			<img className='hyperreal-hero-bg absolute top-0 -z-50 -translate-y-1/2 opacity-0 blur-lg saturate-150 dark:saturate-100' src='/bg-gradient.png' width={1000} height={1000} alt='back bg' />
 
 			<GridPattern
 				squares={[
