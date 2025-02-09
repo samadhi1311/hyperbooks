@@ -12,6 +12,7 @@
 3. HonoJS for Serverless APIs.
 4. Google Firebase (Authentication, Database and Cloud Storage)
 5. Cloudflare Workers and Pages (REST APIs andApp Hosting)
+6. Paddle for Sunscriptions
 
 ### Road Map
 
@@ -22,7 +23,7 @@
 5. Implement authentication. (100%)
 6. Implement database. (80%)
 7. Implement Cloud Storage. (80%)
-8. Implement payment processing. (0%)
+8. Implement payment processing. (80%)
 
 ### Important Notes
 
