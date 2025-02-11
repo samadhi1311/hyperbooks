@@ -18,6 +18,8 @@ const generateAuthErrorMessages = (error: FirebaseError) => {
 			return 'The email entered is already in use. You should try to Login instead.';
 		case 'auth/null-user':
 			return 'It seems like you are not logged in. Please log in first.';
+		case 'auth/network-request-failed':
+			return 'Looks like there is an issue with your Internet connection.';
 		default:
 			return 'It seems like an unexpected error occurred in our end. Please try again or contact us.';
 	}
@@ -112,6 +114,7 @@ const useAuth = () => {
 			clearUser();
 			clearProfile();
 			resetInvoiceData();
+			router.push('/dashboard/getting-started');
 			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
