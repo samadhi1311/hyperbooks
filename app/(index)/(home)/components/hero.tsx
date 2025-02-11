@@ -54,9 +54,9 @@ export default function Hero() {
 						</AnimatedShinyText>
 					</div>
 
-					<h1 className='overflow-clip text-5xl font-semibold leading-none tracking-tighter text-foreground md:text-7xl'>
+					<h1 className='overflow-clip text-5xl font-semibold leading-none tracking-tight text-foreground md:text-7xl'>
 						{description.map((char, index) => (
-							<span key={index} className='hyperbooks-hero-title inline-block overflow-clip whitespace-pre py-1.5 opacity-0'>
+							<span key={index} className='hyperbooks-hero-title inline-block overflow-clip whitespace-pre py-2 opacity-0'>
 								{char}
 							</span>
 						))}
