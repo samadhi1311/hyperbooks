@@ -31,8 +31,8 @@ type InvoiceData = {
 		phone?: string;
 	};
 	items: { description: string; quantity: number | undefined; amount: number | undefined }[];
-	discount: number;
-	tax: number;
+	discount?: number;
+	tax?: number;
 	createdAt?: Timestamp;
 	total: number;
 	complete?: boolean;
