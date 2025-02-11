@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import Splash from '@/components/splash';
+import CookieConsent from '@/components/cookie-consent';
 
 const sans = Inter({
 	variable: '--font-sans',
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				<ThemeProvider attribute='class' defaultTheme='dark'>
 					<Splash />
 					{children}
+					<CookieConsent />
 					<Toaster />
 				</ThemeProvider>
 			</body>
