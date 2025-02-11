@@ -358,7 +358,7 @@ export const MinimalTemplate = ({
 								<span className='suffix'>%</span>
 							</div>
 
-							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * (tax / 100), 0).toFixed(2)}</p>
+							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</p>
 						</div>
 						<div style={styles.totalField}>
 							<p>{'Discount: '}</p>
@@ -376,7 +376,7 @@ export const MinimalTemplate = ({
 								/>
 								<span className='suffix'>%</span>
 							</div>
-							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * (discount / 100), 0).toFixed(2)}</p>
+							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0).toFixed(2)}</p>
 						</div>
 						<div>
 							<hr />
@@ -487,12 +487,12 @@ export const renderMinimalTemplate = ({ data, profile }: { data: InvoiceData; pr
 
 						<View style={styles.totalField}>
 							<Text>{`Tax: ${tax}%`}</Text>
-							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * (tax / 100), 0).toFixed(2)}</Text>
+							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</Text>
 						</View>
 
 						<View style={styles.totalField}>
 							<Text>{`Discount: ${discount}%`}</Text>
-							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * (discount / 100), 0).toFixed(2)}</Text>
+							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0).toFixed(2)}</Text>
 						</View>
 
 						<Svg viewBox='0 0 200% 1%' height='1%' width='100%'>

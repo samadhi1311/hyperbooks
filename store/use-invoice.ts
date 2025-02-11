@@ -27,8 +27,8 @@ const defaultInvoiceData: InvoiceData = {
 
 const calculateTotal = (invoiceData: InvoiceData) => {
 	const subtotal = invoiceData.items.reduce((sum, item) => sum + (item.quantity || 0) * (item.amount || 0), 0);
-	const discountAmount = (subtotal * invoiceData.discount) / 100;
-	const taxAmount = ((subtotal - discountAmount) * invoiceData.tax) / 100;
+	const discountAmount = invoiceData.discount !== undefined ? (subtotal * invoiceData.discount) / 100 : 0;
+	const taxAmount = invoiceData.tax !== undefined ? ((subtotal - discountAmount) * invoiceData.tax) / 100 : 0;
 	const total = subtotal - discountAmount + taxAmount;
 	return parseFloat(total.toFixed(2));
 };
