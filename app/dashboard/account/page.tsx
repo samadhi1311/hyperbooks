@@ -96,8 +96,8 @@ export default function Settings() {
 													<div
 														key={avatar.id}
 														onClick={() => field.onChange(avatar.id)}
-														className={`flex size-20 items-center justify-center rounded-full transition-all border border-input duration-300 ${
-															field.value === avatar.id ? 'border-accent-foreground bg-muted' : ''
+														className={`flex size-20 items-center justify-center rounded-full transition-all border-2 duration-200 ${
+															field.value === avatar.id ? 'border-sidebar-ring bg-foreground' : 'border-input bg-transparent'
 														}`}>
 														<img src={avatar.url} alt={`Avatar ${avatar.id}`} className='size-16 object-contain' />
 													</div>
