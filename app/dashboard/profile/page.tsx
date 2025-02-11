@@ -18,8 +18,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { CircleCheckIcon, ImagePlusIcon, Loader2Icon, SendHorizonalIcon, XCircleIcon } from 'lucide-react';
 import { H2 } from '@/components/ui/typography';
-import { Separator } from '@/components/ui/separator';
-import { updateProfile as updateUser } from 'firebase/auth';
 import { useProfileStore } from '@/store/use-profile';
 
 export default function Profile() {
@@ -31,7 +29,6 @@ export default function Profile() {
 	const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
 
 	const formSchema = z.object({
-		username: z.string().min(2, { message: 'Username must be at least 2 characters' }).max(50),
 		name: z.string().min(2, { message: 'Name must be at least 2 characters' }).max(50),
 		email: z.string().email({ message: 'Invalid email address' }),
 		phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, { message: 'Invalid phone number' }),
@@ -43,7 +40,6 @@ export default function Profile() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			username: user?.displayName || '',
 			name: profile?.name || '',
 			email: profile?.email || '',
 			phone: profile?.phone || '',
@@ -116,7 +112,6 @@ export default function Profile() {
 					.filter((part) => part.length > 0); // Remove empty parts
 
 				const data = {
-					username: values.username,
 					name: values.name,
 					email: values.email,
 					phone: values.phone,
@@ -127,7 +122,6 @@ export default function Profile() {
 
 				await updateProfile(data);
 				setProfile(data);
-				updateUser(currentUser, { displayName: values.username });
 			}
 
 			setUploadStatus('success');
@@ -141,26 +135,9 @@ export default function Profile() {
 	return (
 		<PageWrapper>
 			<Section className='mx-auto max-w-screen-sm space-y-8'>
-				<H2>Profile</H2>
+				<H2>Business Profile</H2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-						<FormField
-							control={form.control}
-							name='username'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Username</FormLabel>
-									<FormControl>
-										<Input placeholder='Your Username Name' {...field} />
-									</FormControl>
-									<FormDescription>We will only use this username to personally identify you.</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<Separator />
-
 						<FormField
 							control={form.control}
 							name='name'
