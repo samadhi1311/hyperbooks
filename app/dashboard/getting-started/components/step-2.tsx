@@ -47,8 +47,8 @@ export default function Step2({ handlePrevious, formAnimations }: { handlePrevio
 			name: profile?.name || '',
 			email: profile?.email || '',
 			phone: profile?.phone || '',
-			address: profile?.address?.join(', ') || '',
-			website: profile?.website || '',
+			address: profile?.address?.join(', ') || undefined,
+			website: profile?.website || undefined,
 			logo: '',
 		},
 	});
@@ -105,23 +105,23 @@ export default function Step2({ handlePrevious, formAnimations }: { handlePrevio
 				const logoUrl = await handleImageUpload();
 				if (logoUrl) values.logo = logoUrl;
 			} else {
-				delete values.logo; // Prevents overwriting logo when not updating
+				delete values.logo;
 			}
 
 			if (user && currentUser) {
-				// Split the address by commas, trim extra spaces, and save as an array
-				const address = values.address
-					?.split(',') // Split by commas
-					.map((part) => part.trim()) // Trim any extra spaces around parts
-					.filter((part) => part.length > 0); // Remove empty parts
+				const address =
+					values.address
+						?.split(',')
+						.map((part) => part.trim())
+						.filter((part) => part.length > 0) || [];
 
-				const data = {
+				const data: ProfileData = {
 					name: values.name,
 					email: values.email,
 					phone: values.phone,
-					address,
-					website: values.website,
-					logo: values.logo,
+					address, // Always an array
+					website: values.website || '',
+					logo: values.logo || '',
 				};
 
 				await updateProfile(data);
