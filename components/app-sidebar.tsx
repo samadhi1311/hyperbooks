@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutListIcon, PlusCircleIcon, RocketIcon, SwatchBookIcon } from 'lucide-react';
+import { BriefcaseBusinessIcon, LayoutListIcon, PlusCircleIcon, RocketIcon, SwatchBookIcon } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>Invoices</SidebarGroupLabel>
+					<SidebarGroupLabel></SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton className={pathname === '/dashboard' ? 'bg-sidebar-accent/50' : ''} asChild>
@@ -37,14 +37,56 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarGroup>
+
+				<SidebarGroup>
+					<SidebarGroupLabel>Income</SidebarGroupLabel>
+					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/create' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/create' className='flex h-full items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3'>
 									<PlusCircleIcon />
-									Create
+									Create Invoice
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuButton className={pathname === '/dashboard/invoices/history' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/invoices/history' className='flex h-full items-center gap-3'>
+									<LayoutListIcon />
+									Invoice History
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarGroup>
+
+				<SidebarGroup>
+					<SidebarGroupLabel>Expense</SidebarGroupLabel>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<SidebarMenuButton className={pathname === '/dashboard/expenses/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/expenses/create' className='flex h-full items-center gap-3'>
+									<PlusCircleIcon />
+									Create Bill
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuButton className={pathname === '/dashboard/expenses/history' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/expenses/history' className='flex h-full items-center gap-3'>
+									<LayoutListIcon />
+									Bill History
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarGroup>
+
+				<SidebarGroup>
+					<SidebarGroupLabel>Settings</SidebarGroupLabel>
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton className={pathname === '/dashboard/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
 								<Link href='/dashboard/templates' className='flex h-full items-center gap-3'>
@@ -54,10 +96,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/history' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/history' className='flex h-full items-center gap-3'>
-									<LayoutListIcon />
-									History
+							<SidebarMenuButton className={pathname === '/dashboard/profile' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/profile' className='flex h-full items-center gap-3'>
+									<BriefcaseBusinessIcon />
+									Business Profile
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
