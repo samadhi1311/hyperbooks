@@ -14,22 +14,20 @@ export default function Page() {
 	const { getProfile } = useFirestore();
 	const router = useRouter();
 
-	const fetchProfile = async () => {
-		if (user) {
-			const profileData = await getProfile();
-			if (profileData?.name) {
-				setProfile(profileData);
-			} else {
-				router.push('/dashboard/profile');
-			}
-		}
-	};
-
 	useEffect(() => {
-		if (!profile) {
-			fetchProfile();
-		}
-	}, [profile?.name]);
+		const fetchProfile = async () => {
+			if (user && !profile) {
+				const profileData = await getProfile();
+				if (profileData?.name) {
+					setProfile(profileData);
+				} else {
+					router.replace('/dashboard/getting-started'); // Use replace to avoid navigation history clutter
+				}
+			}
+		};
+
+		fetchProfile();
+	}, [user, profile]); // Depend on `user` and `profile`
 
 	return (
 		<Section variant='main'>
