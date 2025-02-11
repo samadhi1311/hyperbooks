@@ -5,10 +5,15 @@ import { useState, useEffect } from 'react';
 
 export default function Splash() {
 	const [isLoading, setIsLoading] = useState(true);
+	const heroAnimated = sessionStorage.getItem('heroAnimated');
 
 	useEffect(() => {
+		if (heroAnimated) {
+			setIsLoading(false);
+			return;
+		}
+
 		const splashTimeout = async () => {
-			// Simulate a minimum loading time
 			await new Promise((resolve) => setTimeout(resolve, 3000));
 			setIsLoading(false);
 		};
