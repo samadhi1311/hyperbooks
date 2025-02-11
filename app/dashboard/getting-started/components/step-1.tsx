@@ -9,15 +9,21 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { auth } from '@/firebase.config';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, User } from 'firebase/auth';
 import { avatars } from '@/lib/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 
 export default function Step1({ handleNext, formAnimations }: { handleNext: () => void; formAnimations: object }) {
-	const currentUser = auth.currentUser;
-
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [updating, setUpdating] = useState(false);
+
+	useEffect(() => {
+		if (auth.currentUser) {
+			auth.currentUser.reload();
+			setCurrentUser(auth.currentUser);
+		}
+	}, []);
 
 	const formSchema = z.object({
 		username: z.string().min(2, {
@@ -33,6 +39,15 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 			avatar: currentUser?.photoURL ? avatars.findIndex((avatar) => avatar.url === currentUser.photoURL) + 1 : 1,
 		},
 	});
+
+	useEffect(() => {
+		if (currentUser) {
+			form.reset({
+				username: currentUser.displayName || '',
+				avatar: currentUser.photoURL ? avatars.findIndex((avatar) => avatar.url === currentUser.photoURL) + 1 : 1,
+			});
+		}
+	}, [currentUser, form]);
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		setUpdating(true);
@@ -98,8 +113,8 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 											<div
 												key={avatar.id}
 												onClick={() => field.onChange(avatar.id)}
-												className={`flex size-20 items-center justify-center rounded-full transition-all border border-input duration-300 ${
-													field.value === avatar.id ? 'border-accent-foreground bg-muted' : ''
+												className={`flex size-20 items-center justify-center rounded-full transition-all border duration-200 ${
+													field.value === avatar.id ? 'border-accent-foreground bg-muted' : 'border-input bg-transparent'
 												}`}>
 												<img src={avatar.url} alt={`Avatar ${avatar.id}`} className='size-16 object-contain' />
 											</div>
