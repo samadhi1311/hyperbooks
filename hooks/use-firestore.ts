@@ -198,39 +198,39 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 		try {
 			const userDocRef = doc(db, 'users', user.uid);
-			const userDoc = await getDoc(userDocRef);
-
-			if (userDoc.exists()) {
-				const userData = userDoc.data() as UserData;
-				setUser(userData);
-			}
-
 			const subscriptionDocRef = doc(db, 'subscriptions', user.uid);
-			const subscriptionDocSnap = await getDoc(subscriptionDocRef);
 
-			if (subscriptionDocSnap.exists()) {
-				const subscriptionData = subscriptionDocSnap.data();
-				console.log('Subscription Data:', subscriptionData);
-				const newUserData = {
-					...userData,
-					customerId: subscriptionData.customer_id,
-					tier: subscriptionData.subscription_status === 'active' ? 'pro' : 'starter',
-					subscriptionStatus: subscriptionData.subscription_status,
-					productId: subscriptionData.product_id,
-					priceId: subscriptionData.price_id,
-					validUntil: subscriptionData.scheduled_change,
-				} as UserData;
-				setUser(newUserData);
+			// Fetch both user and subscription data in parallel
+			const [userDocSnap, subscriptionDocSnap] = await Promise.all([getDoc(userDocRef), getDoc(subscriptionDocRef)]);
 
-				return newUserData;
-			}
-			return null;
+			// Extract user data
+			const userData = userDocSnap.exists() ? (userDocSnap.data() as UserData) : null;
+
+			// Extract subscription data
+			const subscriptionData = subscriptionDocSnap.exists() ? subscriptionDocSnap.data() : {};
+
+			// Merge both datasets
+			const mergedUserData = {
+				...userData,
+				customerId: subscriptionData.customer_id || null,
+				tier: subscriptionData.subscription_status === 'active' ? 'pro' : 'starter',
+				subscriptionStatus: subscriptionData.subscription_status || 'inactive',
+				productId: subscriptionData.product_id || null,
+				priceId: subscriptionData.price_id || null,
+				validUntil: subscriptionData.scheduled_change || null,
+			} as UserData;
+
+			// Update store
+			setUser(mergedUserData);
+			console.log('Merged User Data:', mergedUserData);
+
+			return mergedUserData;
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Getting Profile',
+				title: 'Error Getting User Data',
 				description: error.message,
 			});
 			return null;
