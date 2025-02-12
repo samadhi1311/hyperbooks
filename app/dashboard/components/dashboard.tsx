@@ -15,25 +15,26 @@ import { useProfileStore } from '@/store/use-profile';
 export default function Dashboard() {
 	const { user, authLoading } = useAuth();
 	const { getUser, getProfile } = useFirestore();
-	const { userData, setUser, clearUser } = useUserStore();
-	const { profile, setProfile } = useProfileStore();
+	const { setUser } = useUserStore();
+	const { setProfile } = useProfileStore();
 
 	useEffect(() => {
-		if (user?.uid && (!userData || !profile)) {
-			const fetchUser = async () => {
-				const data1 = await getUser();
-				const data2 = await getProfile();
-				if (data1) {
-					clearUser();
-					setUser(data1);
+		async function fetchData() {
+			if (user?.uid) {
+				const userdata = await getUser();
+				if (userdata) {
+					setUser(userdata);
 				}
-				if (data2) {
-					setProfile(data2);
+
+				const profile = await getProfile();
+				if (profile) {
+					setProfile(profile);
 				}
-			};
-			fetchUser();
+			}
 		}
-	}, [authLoading]);
+
+		fetchData();
+	}, [user, authLoading]);
 
 	return (
 		<div className='flex min-h-svh w-full flex-col'>
