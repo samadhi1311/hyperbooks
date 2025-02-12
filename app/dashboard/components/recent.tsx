@@ -24,7 +24,7 @@ export default function Recent() {
 					Recent Sales
 				</CardTitle>
 			</CardHeader>
-			<CardContent className='grid h-full gap-8'>
+			<CardContent className='grid h-full place-items-start gap-4'>
 				{documents.length > 0 &&
 					data.map((doc, index) => (
 						<div className='flex items-center gap-4' key={index}>
@@ -61,7 +61,7 @@ export default function Recent() {
 					</div>
 				)}
 				{loading &&
-					Array.from({ length: 5 }).map((_, index) => (
+					Array.from({ length: 8 }).map((_, index) => (
 						<div className='flex items-center space-x-4' key={index}>
 							<Skeleton className='h-12 w-12 rounded-full' />
 							<div className='space-y-2'>
