@@ -45,12 +45,14 @@ export default function Dashboard() {
 					<Outstanding />
 					<Invoices />
 				</div>
-				<div className='grid h-full gap-4 md:gap-8 xl:grid-cols-2 2xl:grid-cols-3'>
-					<div className='h-full xl:col-span-2'>
+				<div className='grid h-full gap-4 md:gap-8 xl:grid-cols-5 2xl:grid-cols-3'>
+					<div className='h-full xl:col-span-3 2xl:col-span-2'>
 						<Chart />
 					</div>
 
-					<Recent />
+					<div className='h-full xl:col-span-2 2xl:col-span-1'>
+						<Recent />
+					</div>
 				</div>
 			</main>
 		</div>
