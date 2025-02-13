@@ -20,6 +20,7 @@ type UserData = {
 	totalInvoiceCount?: number;
 	totalOutstandingCount?: number;
 	totalOutstandingAmount?: number;
+	currency?: string;
 };
 
 type InvoiceData = {
