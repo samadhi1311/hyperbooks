@@ -17,14 +17,14 @@ export default function Recent() {
 	const data = documents as InvoiceData[];
 	if (authLoading) return null;
 	return (
-		<Card className='overflow-hidden'>
+		<Card className='h-full'>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-3'>
 					<ListRestartIcon className='size-8' />
 					Recent Sales
 				</CardTitle>
 			</CardHeader>
-			<CardContent className='grid h-full place-items-start gap-4'>
+			<CardContent className='flex w-full flex-col gap-4'>
 				{documents.length > 0 &&
 					data.map((doc, index) => (
 						<div className='flex items-center gap-4' key={index}>
