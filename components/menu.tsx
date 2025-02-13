@@ -1,4 +1,4 @@
-import { CloudUploadIcon, DownloadIcon, FilePlus2Icon, Loader2Icon, MenuIcon } from 'lucide-react';
+import { CloudUploadIcon, DownloadIcon, FilePlus2Icon, FullscreenIcon, Loader2Icon, MenuIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { useInvoiceStore } from '@/store/use-invoice';
@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/hooks/use-firestore';
 import { InvoiceData, ProfileData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
+import { useViewStore } from '@/store/use-view';
 
 export default function Menu() {
 	const { invoiceData, resetInvoiceData } = useInvoiceStore();
@@ -16,6 +17,11 @@ export default function Menu() {
 	const { profile } = useProfileStore();
 	const { addInvoice, loading, error } = useFirestore<Partial<InvoiceData>>();
 	const { toast } = useToast();
+	const { view, setView } = useViewStore();
+
+	const handleView = () => {
+		setView(view === 'form' ? 'invoice' : 'form');
+	};
 
 	const invoicePayload = {
 		data: invoiceData,
@@ -72,16 +78,21 @@ export default function Menu() {
 	};
 
 	return (
-		<div className='mb-4'>
+		<div className='sticky top-8 z-50'>
 			<DropdownMenu modal>
 				<DropdownMenuTrigger asChild>
-					<Button variant='outline' className='flex items-center gap-3'>
+					<Button variant='default' className='flex items-center gap-3'>
 						<MenuIcon />
 						Options
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align='start' side='bottom'>
 					<div className='grid gap-1'>
+						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={handleView}>
+							<FullscreenIcon />
+							Switch View
+						</DropdownMenuItem>
+
 						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={resetInvoiceData}>
 							<FilePlus2Icon />
 							New Invoice
