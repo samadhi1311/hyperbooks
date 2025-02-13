@@ -10,8 +10,10 @@ export default function Invoices() {
 	const [outstanding, setOutstanding] = useState(0);
 
 	useEffect(() => {
-		setCount(userData?.totalInvoiceCount ?? 0);
-		setOutstanding(userData?.totalOutstandingCount ?? 0);
+		setTimeout(() => {
+			setCount(userData?.totalInvoiceCount ?? 0);
+			setOutstanding(userData?.totalOutstandingCount ?? 0);
+		}, 500);
 	}, [userData?.totalInvoiceCount, userData?.totalOutstandingCount]);
 	return (
 		<Card>

@@ -12,8 +12,10 @@ export default function Revenue() {
 	const [revenue, setRevenue] = useState(0);
 
 	useEffect(() => {
-		setAmount(userData?.totalIncome ?? 0);
-		setRevenue(userData?.totalRevenue ?? 0);
+		setTimeout(() => {
+			setAmount(userData?.totalIncome ?? 0);
+			setRevenue(userData?.totalRevenue ?? 0);
+		}, 500);
 	}, [userData?.totalIncome, userData?.totalRevenue]);
 
 	return (

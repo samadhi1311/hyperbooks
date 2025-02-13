@@ -10,8 +10,10 @@ export default function Outstanding() {
 	const [amount, setAmount] = useState(0);
 
 	useEffect(() => {
-		setCount(userData?.totalOutstandingCount ?? 0);
-		setAmount(userData?.totalOutstandingAmount ?? 0);
+		setTimeout(() => {
+			setCount(userData?.totalOutstandingCount ?? 0);
+			setAmount(userData?.totalOutstandingAmount ?? 0);
+		}, 500);
 	}, [userData?.totalOutstandingCount, userData?.totalOutstandingAmount]);
 	return (
 		<Card className={count > 1 ? 'border-orange-300 dark:border-orange-300/30' : ''}>
