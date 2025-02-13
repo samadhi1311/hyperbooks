@@ -239,6 +239,45 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
+	const updateUser = async (newUserData: Partial<UserData>) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to update User data.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userDocRef = doc(db, 'users', user.uid);
+			const updatedUserData = await setDoc(userDocRef, newUserData, { merge: true });
+
+			const cleanData = Object.fromEntries(Object.entries(newUserData).filter(([value]) => value !== undefined)) as Partial<UserData>;
+
+			setUser({
+				...userData,
+				...cleanData,
+			} as UserData);
+
+			return updatedUserData;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Updaing User Data',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const updateStatus = async (invoiceId: string, status: boolean) => {
 		if (!user) {
 			toast({
@@ -447,5 +486,5 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getProfile, updateProfile, getUser, deleteInvoice, updateStatus, getSubscriptionStatus, loading, error };
+	return { addInvoice, getProfile, updateProfile, getUser, updateUser, deleteInvoice, updateStatus, getSubscriptionStatus, loading, error };
 };
