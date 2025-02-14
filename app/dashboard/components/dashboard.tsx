@@ -5,18 +5,21 @@ import Greeting from './greeting';
 import Revenue from './revenue';
 import Invoices from './invoices';
 import Outstanding from './outstanding';
-import Recent from './recent';
+import RecentInvoices from './recent-invoices';
+import RecentBills from './recent-bills';
 import { useAuth } from '@/hooks/use-auth';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useEffect } from 'react';
 import { useUserStore } from '@/store/use-user';
 import { useProfileStore } from '@/store/use-profile';
+import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function Dashboard() {
 	const { user, authLoading } = useAuth();
-	const { getUser, getProfile } = useFirestore();
+	const { getUser, getProfile, getAnalytics } = useFirestore();
 	const { setUser } = useUserStore();
 	const { setProfile } = useProfileStore();
+	const { setAnalytics } = useAnalyticsStore();
 
 	useEffect(() => {
 		async function fetchData() {
@@ -30,6 +33,11 @@ export default function Dashboard() {
 				if (profile) {
 					setProfile(profile);
 				}
+
+				const analytics = await getAnalytics();
+				if (analytics) {
+					setAnalytics(analytics);
+				}
 			}
 		}
 
@@ -37,24 +45,27 @@ export default function Dashboard() {
 	}, [user, authLoading]);
 
 	return (
-		<div className='flex min-h-svh w-full flex-col'>
-			<main className='flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8'>
+		<div className='flex w-full flex-col'>
+			<section className='flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8'>
 				<div className='grid gap-4 md:grid-cols-2 md:gap-8 xl:grid-cols-4'>
 					<Greeting />
 					<Revenue />
 					<Outstanding />
 					<Invoices />
 				</div>
-				<div className='grid h-full gap-4 md:gap-8 xl:grid-cols-5 2xl:grid-cols-3'>
-					<div className='h-full xl:col-span-3 2xl:col-span-2'>
+				<div className='grid h-full grid-rows-1 gap-4 md:gap-8 xl:grid-cols-5 xl:grid-rows-2 xl:gap-y-8 2xl:grid-cols-3'>
+					<div className='h-full xl:col-span-3 xl:row-span-2 2xl:col-span-2'>
 						<Chart />
 					</div>
 
-					<div className='h-full xl:col-span-2 2xl:col-span-1'>
-						<Recent />
+					<div className='xl:col-span-2 2xl:col-span-1'>
+						<RecentInvoices />
+					</div>
+					<div className='xl:col-span-2 2xl:col-span-1'>
+						<RecentBills />
 					</div>
 				</div>
-			</main>
+			</section>
 		</div>
 	);
 }
