@@ -13,7 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const path = pathname.split('/');
 	return (
 		<ProtectedRoute>
-			<SidebarProvider>
+			<SidebarProvider className='min-h-svh'>
 				<AppSidebar />
 				<SidebarInset>
 					<header className='flex h-16 shrink-0 items-center gap-2'>
