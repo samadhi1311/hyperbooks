@@ -4,19 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
 import { useEffect, useState } from 'react';
-import { useUserStore } from '@/store/use-user';
+import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function Revenue() {
-	const { userData } = useUserStore();
+	const { analytics } = useAnalyticsStore();
 	const [amount, setAmount] = useState(0);
 	const [revenue, setRevenue] = useState(0);
 
 	useEffect(() => {
 		setTimeout(() => {
-			setAmount(userData?.totalIncome ?? 0);
-			setRevenue(userData?.totalRevenue ?? 0);
+			setAmount(analytics?.totalIncome ?? 0);
+			setRevenue((analytics?.totalIncome ?? 0) - (analytics?.totalOutstandingAmount ?? 0));
 		}, 500);
-	}, [userData?.totalIncome, userData?.totalRevenue]);
+	}, [analytics?.totalIncome, analytics?.totalOutstandingAmount]);
 
 	return (
 		<Card>
