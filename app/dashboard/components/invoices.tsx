@@ -2,19 +2,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollTextIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
 import { useEffect, useState } from 'react';
-import { useUserStore } from '@/store/use-user';
+import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function Invoices() {
-	const { userData } = useUserStore();
+	const { analytics } = useAnalyticsStore();
 	const [count, setCount] = useState(0);
 	const [outstanding, setOutstanding] = useState(0);
 
 	useEffect(() => {
 		setTimeout(() => {
-			setCount(userData?.totalInvoiceCount ?? 0);
-			setOutstanding(userData?.totalOutstandingCount ?? 0);
+			setCount(analytics?.totalInvoiceCount ?? 0);
+			setOutstanding(analytics?.totalOutstandingCount ?? 0);
 		}, 500);
-	}, [userData?.totalInvoiceCount, userData?.totalOutstandingCount]);
+	}, [analytics?.totalInvoiceCount, analytics?.totalOutstandingCount]);
 	return (
 		<Card>
 			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
