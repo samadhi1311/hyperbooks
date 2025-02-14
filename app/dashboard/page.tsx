@@ -21,17 +21,13 @@ export default function Page() {
 				if (profileData?.name) {
 					setProfile(profileData);
 				} else {
-					router.replace('/dashboard/getting-started'); // Use replace to avoid navigation history clutter
+					router.replace('/dashboard/getting-started');
 				}
 			}
 		};
 
 		fetchProfile();
-	}, [user, profile]); // Depend on `user` and `profile`
+	}, [user, profile]);
 
-	return (
-		<Section variant='main'>
-			<Dashboard />
-		</Section>
-	);
+	return <Dashboard />;
 }
