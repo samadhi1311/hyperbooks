@@ -75,7 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarMenuItem>
 						<SidebarMenuItem>
 							<SidebarMenuButton className={pathname === '/dashboard/bills/history' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/expenses/history' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/bills/history' className='flex h-full items-center gap-3'>
 									<LayoutListIcon />
 									Bill History
 								</Link>
