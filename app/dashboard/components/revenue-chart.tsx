@@ -1,86 +1,112 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useAuth } from '@/hooks/use-auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase.config';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 import NumberFlow from '@number-flow/react';
 import { ChartColumnIncreasingIcon, Loader2Icon } from 'lucide-react';
+import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function Chart() {
 	const { user } = useAuth();
 	const [chartData, setChartData] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
+	const { analytics } = useAnalyticsStore();
 
 	useEffect(() => {
 		if (!user) return;
-		const getLast30DaysInvoices = async () => {
-			try {
-				setLoading(true);
-				const userDocRef = doc(db, 'users', user.uid);
-				const userSnap = await getDoc(userDocRef);
+		const getLast30DaysData = async () => {
+			setLoading(true);
 
-				if (userSnap.exists()) {
-					const last30DaysInvoices = userSnap.data().last30DaysInvoices || {};
+			const last30DaysInvoices = analytics.last30DaysInvoices;
+			const last30DaysExpenses = analytics.last30DaysExpenses;
 
-					// Convert Firestore data into chart format
-					const formattedData = Array.from({ length: 30 }, (_, i) => {
-						const currentDay = new Date();
-						const targetDay = subDays(currentDay, 29 - i); // Get the exact date for this index
-						const dateKey = format(targetDay, 'yyyy-MM-dd'); // Use targetDay here
+			const formattedData = Array.from({ length: 30 }, (_, i) => {
+				const currentDay = new Date();
+				const targetDay = subDays(currentDay, 29 - i);
+				const dateKey = format(targetDay, 'yyyy-MM-dd');
 
-						// Ensure data is placed on the right date
-						return {
-							date: format(targetDay, 'MMM dd'), // Format the date as 'MMM dd' (e.g., Feb 07)
-							revenue: last30DaysInvoices[dateKey] || 0,
-						};
-					});
+				return {
+					date: format(targetDay, 'MMM dd'),
+					income: last30DaysInvoices[dateKey] || 0,
+					expense: last30DaysExpenses[dateKey] || 0,
+				};
+			});
 
-					setChartData(formattedData);
-				}
-			} catch (error) {
-				console.error('Error fetching last 30 days invoices:', error);
-			} finally {
-				setLoading(false);
-			}
+			setChartData(formattedData);
+			setLoading(false);
 		};
 
-		getLast30DaysInvoices();
+		getLast30DaysData();
 	}, [user]);
 
 	const chartConfig = {
-		revenue: {
-			label: 'Revenue',
+		income: {
+			label: 'Income',
 			color: 'hsl(var(--chart-2))',
+		},
+		expense: {
+			label: 'Expense',
+			color: 'hsl(var(--chart-3))',
 		},
 	} satisfies ChartConfig;
 
 	return (
-		<Card className='overflow-hidden'>
+		<Card className='h-full'>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-3'>
 					<ChartColumnIncreasingIcon className='size-8' />
 					Statistics
 				</CardTitle>
-				<CardDescription>Your revenue in the last 30 days</CardDescription>
+				<CardDescription>Your income and expenses in the last 30 days</CardDescription>
 			</CardHeader>
 			<CardContent className='relative'>
-				<ChartContainer config={chartConfig}>
-					<BarChart accessibilityLayer data={chartData}>
+				<ChartContainer config={chartConfig} className='h-full'>
+					<AreaChart accessibilityLayer data={chartData} className='h-full'>
 						<CartesianGrid vertical={false} />
 						<XAxis dataKey='date' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
 						<ChartTooltip
+							content={
+								<ChartTooltipContent
+									className='max-w-fit'
+									formatter={(value, name) => (
+										<>
+											<div
+												className='h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]'
+												style={
+													{
+														'--color-bg': `var(--color-${name})`,
+													} as React.CSSProperties
+												}
+											/>
+											{chartConfig[name as keyof typeof chartConfig]?.label || name}
+											<div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground'>
+												<span className='font-normal text-muted-foreground'>LKR </span>
+												{value}
+											</div>
+										</>
+									)}
+								/>
+							}
 							cursor={false}
-							formatter={(value) => <NumberFlow value={value as number} className='text-base' prefix='LKR ' />}
-							labelClassName='text-base font-medium'
-							content={<ChartTooltipContent className='px-4 py-2' nameKey='revenue' />}
+							defaultIndex={1}
 						/>
-						<Bar dataKey='revenue' fill='var(--color-revenue)' radius={0} />
-					</BarChart>
+						<defs>
+							<linearGradient id='fillIncome' x1='0' y1='0' x2='0' y2='1'>
+								<stop offset='5%' stopColor='var(--color-income)' stopOpacity={0.8} />
+								<stop offset='95%' stopColor='var(--color-income)' stopOpacity={0.1} />
+							</linearGradient>
+							<linearGradient id='fillExpense' x1='0' y1='0' x2='0' y2='1'>
+								<stop offset='5%' stopColor='var(--color-expense)' stopOpacity={0.8} />
+								<stop offset='95%' stopColor='var(--color-expense)' stopOpacity={0.1} />
+							</linearGradient>
+						</defs>
+						<Area dataKey='expense' type='basis' fill='url(#fillExpense)' fillOpacity={0.4} stroke='var(--color-expense)' stackId='a' />
+						<Area dataKey='income' type='basis' fill='url(#fillIncome)' fillOpacity={0.4} stroke='var(--color-income)' stackId='a' />
+					</AreaChart>
 				</ChartContainer>
 				{loading && (
 					<div className='absolute inset-0 flex items-center justify-center bg-background'>
