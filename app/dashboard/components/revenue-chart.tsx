@@ -1,12 +1,11 @@
 'use client';
 
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useAuth } from '@/hooks/use-auth';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
-import NumberFlow from '@number-flow/react';
 import { ChartColumnIncreasingIcon, Loader2Icon } from 'lucide-react';
 import { useAnalyticsStore } from '@/store/use-analytics';
 
