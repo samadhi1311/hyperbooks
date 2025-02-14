@@ -47,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<SidebarMenuButton className={pathname === '/dashboard/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
 								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3'>
 									<PlusCircleIcon />
-									Create Invoice
+									Create a new Invoice
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -66,15 +66,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupLabel>Expense</SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/expenses/create' ? 'bg-sidebar-accent/50' : ''} asChild>
-								<Link href='/dashboard/expenses/create' className='flex h-full items-center gap-3'>
+							<SidebarMenuButton className={pathname === '/dashboard/bills/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+								<Link href='/dashboard/bills/create' className='flex h-full items-center gap-3'>
 									<PlusCircleIcon />
-									Create Bill
+									Create a new Bill
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/expenses/history' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton className={pathname === '/dashboard/bills/history' ? 'bg-sidebar-accent/50' : ''} asChild>
 								<Link href='/dashboard/expenses/history' className='flex h-full items-center gap-3'>
 									<LayoutListIcon />
 									Bill History
