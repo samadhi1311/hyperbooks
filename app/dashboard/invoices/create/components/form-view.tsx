@@ -113,11 +113,12 @@ export default function FormView() {
 			const subtotal = values.items.reduce((sum, item) => sum + (item.quantity || 0) * (item.amount || 0), 0);
 			const afterTax = subtotal + (subtotal * ((values.tax as number) ?? 0)) / 100;
 			const total = parseFloat((afterTax - (afterTax * ((values.discount as number) ?? 0)) / 100).toFixed(2));
+			const formattedAddress = values.address ? values.address.split(', ') : [''];
 
 			const formData = {
 				billedTo: {
 					name: values.name,
-					address: values.address ?? [''],
+					address: formattedAddress ?? [''],
 					email: values.email ?? '',
 					phone: values.phone ?? '',
 				},
