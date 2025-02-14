@@ -48,6 +48,27 @@ type ProfileData = {
 	logo?: string;
 };
 
+type BillData = {
+	description: string;
+	category: string;
+	amount: number;
+	createdAt?: Timestamp;
+};
+
+const expenseCategories = [
+	{ label: 'Rent & Utilities', value: 'rent_utilities', description: 'Office rent, electricity, internet, water, phone bills' },
+	{ label: 'Office Supplies & Equipment', value: 'office_supplies_equipment', description: 'Stationery, furniture, laptops, printers' },
+	{ label: 'Software & Subscriptions', value: 'software_subscriptions', description: 'SaaS tools, cloud storage, email services' },
+	{ label: 'Marketing & Advertising', value: 'marketing_advertising', description: 'Social media ads, SEO, branding' },
+	{ label: 'Travel & Transportation', value: 'travel_transportation', description: 'Business trips, fuel, ride-sharing, hotels' },
+	{ label: 'Employee & Contractor Costs', value: 'employee_contractor_costs', description: 'Salaries, freelancer payments, benefits' },
+	{ label: 'Financial & Bank Fees', value: 'financial_bank_fees', description: 'Transaction fees, loan interest, currency exchange' },
+	{ label: 'Taxes & Compliance', value: 'taxes_compliance', description: 'Income tax, sales tax, business registration' },
+	{ label: 'Client & Business Development', value: 'client_business_development', description: 'Client dinners, networking events, gifts' },
+	{ label: 'Insurance', value: 'insurance', description: 'Business insurance, health insurance, equipment coverage' },
+	{ label: 'Other', value: 'other', description: 'Any other expenses' },
+];
+
 const placeholders = {
 	company: {
 		name: 'Company Name',
@@ -80,4 +101,4 @@ const avatars = [
 	{ id: 6, url: '/avatars/microbe-6.svg' },
 ];
 
-export { type InvoiceData, type ProfileData, type UserData, type Tier, type SubscriptionStatus, placeholders, avatars };
+export { type InvoiceData, type ProfileData, type UserData, type Tier, type SubscriptionStatus, type BillData, expenseCategories, placeholders, avatars };
