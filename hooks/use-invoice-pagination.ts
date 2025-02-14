@@ -3,12 +3,12 @@ import { collection, query, orderBy, limit, startAfter, getDocs, QueryDocumentSn
 import { db } from '@/firebase.config';
 import { usePaginationStore } from '@/store/use-pagination';
 
-interface UseFirestorePaginationProps {
+interface useInvoicePaginationProps {
 	userId: string;
 	pageSize?: number;
 }
 
-const useFirestorePagination = ({ userId, pageSize = 10 }: UseFirestorePaginationProps) => {
+const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationProps) => {
 	const { documents, setDocuments, currentPage, setCurrentPage } = usePaginationStore();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -95,4 +95,4 @@ const useFirestorePagination = ({ userId, pageSize = 10 }: UseFirestorePaginatio
 	};
 };
 
-export default useFirestorePagination;
+export default useInvoicePagination;
