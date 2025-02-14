@@ -6,8 +6,9 @@ import { useToast } from '@/hooks/use-toast';
 import { ProfileData, UserData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
 import { useUserStore } from '@/store/use-user';
-import useFirestorePagination from './use-pagination';
+import useInvoicePagination from './use-invoice-pagination';
 import useBillsPagination from './use-bill-pagination';
+import { useAnalyticsStore } from '@/store/use-analytics';
 
 export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
@@ -17,8 +18,9 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 	const { setProfile, clearProfile } = useProfileStore();
 	const { userData, setUser, clearUser } = useUserStore();
+	const { analytics, setAnalytics, clearAnalytics } = useAnalyticsStore();
 
-	const { resetPagination } = useFirestorePagination({ userId: user?.uid || '', pageSize: 10 });
+	const { resetPagination } = useInvoicePagination({ userId: user?.uid || '', pageSize: 10 });
 	const { resetPagination: resetBillsPagination } = useBillsPagination({ userId: user?.uid || '', pageSize: 10 });
 
 	const addInvoice = async (data: T, customDocId?: string) => {
@@ -651,5 +653,56 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, loading, error };
+	const getAnalytics = async () => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to get User data.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const incomeDocRef = doc(db, 'users', user.uid, 'analytics', 'income');
+			const expensesDocRef = doc(db, 'users', user.uid, 'analytics', 'expenses');
+
+			// Fetch both income and expenses data in parallel
+			const [incomeDocSnap, expensesDocSnap] = await Promise.all([getDoc(incomeDocRef), getDoc(expensesDocRef)]);
+
+			// Extract income data
+			const incomeData = incomeDocSnap.exists() ? incomeDocSnap.data() : {};
+
+			// Extract subscription data
+			const expensesData = expensesDocSnap.exists() ? expensesDocSnap.data() : {};
+
+			// Merge both datasets
+			const analyticsData = {
+				...incomeData,
+				...expensesData,
+			};
+
+			// Update store
+			setAnalytics(analyticsData);
+			console.log('Analytic Data:', analyticsData);
+
+			return analyticsData;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Getting Analytics',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, getAnalytics, loading, error };
 };
