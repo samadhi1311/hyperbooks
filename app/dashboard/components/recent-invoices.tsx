@@ -2,16 +2,16 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
-import useFirestorePagination from '@/hooks/use-pagination';
+import useInvoicePagination from '@/hooks/use-invoice-pagination';
 import { InvoiceData } from '@/lib/types';
 import NumberFlow from '@number-flow/react';
 import { ListRestartIcon } from 'lucide-react';
 
-export default function Recent() {
+export default function RecentInvoices() {
 	const { user, authLoading } = useAuth();
-	const { documents, loading } = useFirestorePagination({
+	const { documents, loading } = useInvoicePagination({
 		userId: user?.uid || '',
-		pageSize: 10,
+		pageSize: 5,
 	});
 
 	const data = documents as InvoiceData[];
@@ -19,8 +19,8 @@ export default function Recent() {
 	return (
 		<Card className='h-full'>
 			<CardHeader>
-				<CardTitle className='flex items-center gap-3'>
-					<ListRestartIcon className='size-8' />
+				<CardTitle className='flex items-center gap-3 text-base text-muted-foreground'>
+					<ListRestartIcon className='size-5' />
 					Recent Sales
 				</CardTitle>
 			</CardHeader>
@@ -56,14 +56,15 @@ export default function Recent() {
 						</div>
 					))}
 				{!loading && documents.length === 0 && (
-					<div className='mb-4 flex h-full w-full flex-col items-center justify-center'>
+					<div className='mb-4 flex w-full flex-col items-center justify-center'>
 						<p className='text-sm font-medium leading-none text-muted-foreground'>Your recent sales will appear here.</p>
 					</div>
 				)}
 				{loading &&
-					Array.from({ length: 8 }).map((_, index) => (
+					documents.length === 0 &&
+					Array.from({ length: 5 }).map((_, index) => (
 						<div className='flex items-center space-x-4' key={index}>
-							<Skeleton className='h-12 w-12 rounded-full' />
+							<Skeleton className='h-10 w-10 rounded-full' />
 							<div className='space-y-2'>
 								<Skeleton className='h-4 w-[250px]' />
 								<Skeleton className='h-4 w-[200px]' />
