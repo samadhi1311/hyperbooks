@@ -1,6 +1,5 @@
 'use client';
 
-import { Section } from '@/components/ui/layout';
 import Dashboard from './components/dashboard';
 import { useEffect } from 'react';
 import { useProfileStore } from '@/store/use-profile';
