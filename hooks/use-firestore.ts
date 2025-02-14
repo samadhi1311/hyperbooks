@@ -7,6 +7,7 @@ import { ProfileData, UserData } from '@/lib/types';
 import { useProfileStore } from '@/store/use-profile';
 import { useUserStore } from '@/store/use-user';
 import useFirestorePagination from './use-pagination';
+import useBillsPagination from './use-bill-pagination';
 
 export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
@@ -18,6 +19,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const { userData, setUser, clearUser } = useUserStore();
 
 	const { resetPagination } = useFirestorePagination({ userId: user?.uid || '', pageSize: 10 });
+	const { resetPagination: resetBillsPagination } = useBillsPagination({ userId: user?.uid || '', pageSize: 10 });
 
 	const addInvoice = async (data: T, customDocId?: string) => {
 		if (!user) {
@@ -628,7 +630,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Commit batch
 			await batch.commit();
 
-			resetPagination();
+			resetBillsPagination();
 			clearUser();
 
 			toast({
