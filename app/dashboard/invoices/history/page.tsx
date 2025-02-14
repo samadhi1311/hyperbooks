@@ -4,7 +4,7 @@ import { PageWrapper, Section } from '@/components/ui/layout';
 import { H2 } from '@/components/ui/typography';
 import { DataTable } from './components/data-table';
 import { columns } from './components/columns';
-import useFirestorePagination from '@/hooks/use-pagination';
+import useInvoicePagination from '@/hooks/use-invoice-pagination';
 import { useAuth } from '@/hooks/use-auth';
 import Loader from '@/components/ui/loader';
 import { InvoiceData } from '@/lib/types';
@@ -20,7 +20,7 @@ export default function History() {
 		setExpandedRow(expandedRow === rowId ? null : rowId);
 	};
 	const { user, authLoading } = useAuth();
-	const { documents, loading, error, fetchNextPage, hasMore } = useFirestorePagination({
+	const { documents, loading, error, fetchNextPage, hasMore } = useInvoicePagination({
 		userId: user?.uid || '',
 		pageSize: 10,
 	});
