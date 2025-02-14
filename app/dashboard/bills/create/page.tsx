@@ -19,6 +19,7 @@ import { H3, P } from '@/components/ui/typography';
 import { Textarea } from '@/components/ui/textarea';
 import { PrefixedInput } from '@/components/prefixed-input';
 import { useBillStore } from '@/store/use-bill';
+import { useFirestore } from '@/hooks/use-firestore';
 
 const FormSchema = z.object({
 	description: z
@@ -29,13 +30,14 @@ const FormSchema = z.object({
 	category: z.string({
 		required_error: 'Please select a Category.',
 	}),
-	amount: z.number({ required_error: 'Amount is required', invalid_type_error: 'Expense is required' }).min(0, 'Amount must be at least 0'),
+	amount: z.union([z.number().positive('Amount must be greater than zero'), z.string().min(1, 'Amount is required')]).transform((val) => (typeof val === 'string' ? parseFloat(val) : val)),
 });
 
 export default function CreateBill() {
 	const isMobile = useIsMobile();
 	const [open, setOpen] = useState(false);
 	const { bill, clearBill, setBill } = useBillStore();
+	const { addBill } = useFirestore();
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -54,15 +56,13 @@ export default function CreateBill() {
 		return () => subscription.unsubscribe();
 	}, []);
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
-		toast({
-			title: 'You submitted the following values:',
-			description: (
-				<pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-					<code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-				</pre>
-			),
-		});
+	async function onSubmit(data: z.infer<typeof FormSchema>) {
+		try {
+			const bill = await addBill(data);
+			console.log(bill);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	return (
