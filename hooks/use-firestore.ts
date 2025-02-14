@@ -33,50 +33,54 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
 			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
+			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'income');
 
-			// Get today's date in local timezone using createdAt timestamp
-			const createdAt = Timestamp.now(); // Firestore timestamp
-			const createdAtDate = createdAt.toDate(); // Convert to JS Date
-			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // Format to 'YYYY-MM-DD'
-			const monthKey = createdAtDate.toISOString().slice(0, 7); // Keep the same format for the month
+			// Get current timestamp and formatted date keys
+			const createdAt = Timestamp.now();
+			const createdAtDate = createdAt.toDate();
+			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
+			const monthKey = createdAtDate.toISOString().slice(0, 7); // 'YYYY-MM'
 
-			// Fetch existing analytics data before batch or create the document
-			const userDocSnap = await getDoc(userDocRef);
-			if (!userDocSnap.exists()) {
-				await setDoc(userDocRef, { totalInvoiceCount: 0, totalIncome: 0, last30DaysInvoices: {}, monthlyIncome: {}, totalOutstandingCount: 0, totalOutstandingAmount: 0 });
+			// Fetch existing analytics data
+			const analyticsSnap = await getDoc(analyticsRef);
+			if (!analyticsSnap.exists()) {
+				await setDoc(analyticsRef, {
+					totalIncome: 0,
+					last30DaysInvoices: {},
+					monthlyIncome: {},
+					totalInvoiceCount: 0,
+					totalOutstandingCount: 0,
+					totalOutstandingAmount: 0,
+				});
 			}
-			const userData = (await getDoc(userDocRef)).data() || {};
+			const analyticsData = (await getDoc(analyticsRef)).data() || {};
 
 			// Prepare invoice data
-			const dataWithTimestamp = { ...data, complete: false, createdAt }; // Store Firestore timestamp directly
+			const dataWithTimestamp = { ...data, complete: false, createdAt };
 			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
+			const roundedTotal = Math.round(data.total * 100) / 100;
 
-			// Round the total amount to avoid floating-point precision issues
-			const roundedTotal = Math.round(data.total * 100) / 100; // Round to 2 decimal places
-
-			// Prepare updated analytics data
-			const last30DaysData = { ...(userData.last30DaysInvoices || {}) };
+			// Update analytics
+			const last30DaysData = { ...(analyticsData.last30DaysInvoices || {}) };
 			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + roundedTotal;
 
-			// Keep only the last 30 days
 			const sortedKeys = Object.keys(last30DaysData).sort();
 			if (sortedKeys.length > 30) delete last30DaysData[sortedKeys[0]];
 
-			const monthlyIncomeData = { ...(userData.monthlyIncome || {}) };
+			const monthlyIncomeData = { ...(analyticsData.monthlyIncome || {}) };
 			monthlyIncomeData[monthKey] = (monthlyIncomeData[monthKey] || 0) + roundedTotal;
 
 			// Start batch
 			const batch = writeBatch(db);
 			batch.set(invoiceRef, dataWithTimestamp);
-			batch.update(userDocRef, {
+			batch.update(analyticsRef, {
+				totalIncome: increment(roundedTotal),
 				totalInvoiceCount: increment(1),
-				totalIncome: increment(data.total),
-				last30DaysInvoices: last30DaysData,
-				monthlyIncome: monthlyIncomeData,
 				totalOutstandingCount: increment(1),
 				totalOutstandingAmount: increment(roundedTotal),
+				last30DaysInvoices: last30DaysData,
+				monthlyIncome: monthlyIncomeData,
 			});
 
 			// Commit batch updates
@@ -292,8 +296,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
 			const invoiceRef = doc(db, 'users', user.uid, 'invoices', invoiceId);
+			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'income');
 
 			// Fetch the invoice data
 			const invoiceSnap = await getDoc(invoiceRef);
@@ -304,7 +308,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			const currentStatus = invoiceData.complete; // Previous status
 
 			if (currentStatus === status) {
-				// No change needed
 				toast({
 					variant: 'default',
 					title: 'No Update Needed',
@@ -319,22 +322,21 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Update invoice status
 			batch.update(invoiceRef, { complete: status });
 
-			// Update user financials
+			// Update outstanding amounts
+			const updates: Record<string, any> = {
+				totalOutstandingCount: increment(status ? -1 : 1),
+				totalOutstandingAmount: increment(status ? -invoiceTotal : invoiceTotal),
+			};
+
+			// Adjust total revenue when marking as complete/incomplete
 			if (status) {
-				// Marking invoice as complete
-				batch.update(userDocRef, {
-					totalRevenue: increment(invoiceTotal),
-					totalOutstandingCount: increment(-1),
-					totalOutstandingAmount: increment(-invoiceTotal),
-				});
+				updates.totalRevenue = increment(invoiceTotal);
 			} else {
-				// Marking invoice as incomplete
-				batch.update(userDocRef, {
-					totalRevenue: increment(-invoiceTotal),
-					totalOutstandingCount: increment(1),
-					totalOutstandingAmount: increment(invoiceTotal),
-				});
+				updates.totalRevenue = increment(-invoiceTotal);
 			}
+
+			// Update analytics document
+			batch.update(analyticsRef, updates);
 
 			// Commit batch
 			await batch.commit();
@@ -374,8 +376,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const userDocRef = doc(db, 'users', user.uid);
 			const invoiceDocRef = doc(db, 'users', user.uid, 'invoices', invoiceId);
+			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'income');
 
 			// Fetch the invoice data before deletion
 			const invoiceSnap = await getDoc(invoiceDocRef);
@@ -384,22 +386,22 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			const invoiceData = invoiceSnap.data();
 			const invoiceTotal = invoiceData.total;
 			const createdAt = invoiceData.createdAt.toDate();
-			const dateKey = createdAt.toISOString().split('T')[0];
-			const monthKey = createdAt.toISOString().slice(0, 7);
+			const dateKey = createdAt.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+			const monthKey = createdAt.toISOString().slice(0, 7); // 'YYYY-MM'
 
-			// Fetch user analytics data
-			const userDocSnap = await getDoc(userDocRef);
-			const userData = userDocSnap.exists() ? userDocSnap.data() : {};
+			// Fetch analytics data
+			const analyticsSnap = await getDoc(analyticsRef);
+			const analyticsData = analyticsSnap.exists() ? analyticsSnap.data() : {};
 
 			// Update last 30 days income
-			const last30DaysData = { ...(userData.last30DaysInvoices || {}) };
+			const last30DaysData = { ...(analyticsData.last30DaysInvoices || {}) };
 			if (last30DaysData[dateKey]) {
 				last30DaysData[dateKey] -= invoiceTotal;
 				if (last30DaysData[dateKey] <= 0) delete last30DaysData[dateKey];
 			}
 
 			// Update monthly income
-			const monthlyIncomeData = { ...(userData.monthlyIncome || {}) };
+			const monthlyIncomeData = { ...(analyticsData.monthlyIncome || {}) };
 			if (monthlyIncomeData[monthKey]) {
 				monthlyIncomeData[monthKey] -= invoiceTotal;
 				if (monthlyIncomeData[monthKey] <= 0) delete monthlyIncomeData[monthKey];
@@ -408,7 +410,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Start batch
 			const batch = writeBatch(db);
 			batch.delete(invoiceDocRef);
-			batch.update(userDocRef, {
+			batch.update(analyticsRef, {
 				totalInvoiceCount: increment(-1),
 				totalIncome: increment(-invoiceTotal),
 				last30DaysInvoices: last30DaysData,
@@ -420,7 +422,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			resetPagination();
 			clearUser();
-			console.log('User Cleared');
 
 			toast({
 				variant: 'success',
@@ -486,5 +487,5 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, getProfile, updateProfile, getUser, updateUser, deleteInvoice, updateStatus, getSubscriptionStatus, loading, error };
+	return { addInvoice, deleteInvoice, updateStatus, addBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, loading, error };
 };
