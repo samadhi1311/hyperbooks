@@ -571,5 +571,83 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, deleteInvoice, updateStatus, addBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, loading, error };
+	const deleteBill = async (billId: string) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to delete a bill.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const billRef = doc(db, 'users', user.uid, 'bills', billId);
+			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'expenses');
+
+			// Fetch bill data before deletion
+			const billSnap = await getDoc(billRef);
+			if (!billSnap.exists()) throw new Error('Bill not found.');
+
+			const billData = billSnap.data();
+			const billAmount = billData.amount;
+			const createdAt = billData.createdAt.toDate();
+			const dateKey = createdAt.toISOString().split('T')[0];
+			const monthKey = createdAt.toISOString().slice(0, 7);
+
+			// Fetch analytics data
+			const analyticsSnap = await getDoc(analyticsRef);
+			const analyticsData = analyticsSnap.exists() ? analyticsSnap.data() : {};
+
+			// Update last 30 days expenses
+			const last30DaysData = { ...(analyticsData.last30DaysExpenses || {}) };
+			if (last30DaysData[dateKey]) {
+				last30DaysData[dateKey] -= billAmount;
+				if (last30DaysData[dateKey] <= 0) delete last30DaysData[dateKey];
+			}
+
+			// Update monthly expenses
+			const monthlyExpensesData = { ...(analyticsData.monthlyExpenses || {}) };
+			if (monthlyExpensesData[monthKey]) {
+				monthlyExpensesData[monthKey] -= billAmount;
+				if (monthlyExpensesData[monthKey] <= 0) delete monthlyExpensesData[monthKey];
+			}
+
+			// Start batch
+			const batch = writeBatch(db);
+			batch.delete(billRef);
+			batch.update(analyticsRef, {
+				totalExpenses: increment(-billAmount),
+				last30DaysExpenses: last30DaysData,
+				monthlyExpenses: monthlyExpensesData,
+			});
+
+			// Commit batch
+			await batch.commit();
+
+			resetPagination();
+			clearUser();
+
+			toast({
+				variant: 'success',
+				title: 'Bill Deleted',
+				description: 'Bill successfully deleted from Firestore.',
+			});
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Deleting Bill',
+				description: error.message,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, loading, error };
 };
