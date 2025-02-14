@@ -487,5 +487,89 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
+	const addBill = async (data: T, customDocId?: string) => {
+		if (!user) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to add a bill.',
+			});
+			return null;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const userBillsRef = collection(db, 'users', user.uid, 'bills');
+			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'expenses');
+
+			// Get current timestamp and formatted date keys
+			const createdAt = Timestamp.now();
+			const createdAtDate = createdAt.toDate();
+			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
+			const monthKey = createdAtDate.toISOString().slice(0, 7); // 'YYYY-MM'
+
+			// Fetch existing analytics data
+			const analyticsSnap = await getDoc(analyticsRef);
+			if (!analyticsSnap.exists()) {
+				await setDoc(analyticsRef, {
+					totalExpenses: 0,
+					last30DaysExpenses: {},
+					monthlyExpenses: {},
+				});
+			}
+			const analyticsData = (await getDoc(analyticsRef)).data() || {};
+
+			// Prepare bill data
+			const dataWithTimestamp = { ...data, createdAt };
+			const billRef = customDocId ? doc(userBillsRef, customDocId) : doc(userBillsRef);
+			const roundedAmount = Math.round(data.amount * 100) / 100;
+
+			// Update analytics
+			const last30DaysData = { ...(analyticsData.last30DaysExpenses || {}) };
+			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + roundedAmount;
+
+			const sortedKeys = Object.keys(last30DaysData).sort();
+			if (sortedKeys.length > 30) delete last30DaysData[sortedKeys[0]];
+
+			const monthlyExpensesData = { ...(analyticsData.monthlyExpenses || {}) };
+			monthlyExpensesData[monthKey] = (monthlyExpensesData[monthKey] || 0) + roundedAmount;
+
+			// Start batch
+			const batch = writeBatch(db);
+			batch.set(billRef, dataWithTimestamp);
+			batch.update(analyticsRef, {
+				totalExpenses: increment(roundedAmount),
+				last30DaysExpenses: last30DaysData,
+				monthlyExpenses: monthlyExpensesData,
+			});
+
+			// Commit batch updates
+			await batch.commit();
+
+			clearUser();
+
+			toast({
+				variant: 'success',
+				title: 'Bill Added',
+				description: 'Bill successfully added to Firestore.',
+			});
+
+			return billRef;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Adding Bill',
+				description: error.message,
+			});
+			return null;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return { addInvoice, deleteInvoice, updateStatus, addBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, loading, error };
 };
