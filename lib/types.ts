@@ -49,6 +49,7 @@ type ProfileData = {
 };
 
 type BillData = {
+	id?: string;
 	description: string;
 	category: string;
 	amount: number;
