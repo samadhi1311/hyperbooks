@@ -54,7 +54,7 @@ export default function Chart() {
 	} satisfies ChartConfig;
 
 	return (
-		<Card className='h-full'>
+		<Card className='h-full min-h-[300px]'>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-3'>
 					<ChartColumnIncreasingIcon className='size-8' />
@@ -62,8 +62,8 @@ export default function Chart() {
 				</CardTitle>
 				<CardDescription>Your income and expenses in the last 30 days</CardDescription>
 			</CardHeader>
-			<CardContent className='relative'>
-				<ChartContainer config={chartConfig} className='h-full'>
+			<CardContent className=''>
+				<ChartContainer config={chartConfig} className='h-full min-h-[300px] w-full'>
 					<AreaChart accessibilityLayer data={chartData} className='h-full'>
 						<CartesianGrid vertical={false} />
 						<XAxis dataKey='date' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
@@ -103,8 +103,8 @@ export default function Chart() {
 								<stop offset='95%' stopColor='var(--color-expense)' stopOpacity={0.1} />
 							</linearGradient>
 						</defs>
-						<Area dataKey='expense' type='basis' fill='url(#fillExpense)' fillOpacity={0.4} stroke='var(--color-expense)' stackId='a' />
-						<Area dataKey='income' type='basis' fill='url(#fillIncome)' fillOpacity={0.4} stroke='var(--color-income)' stackId='a' />
+						<Area dataKey='expense' type='monotone' fill='url(#fillExpense)' fillOpacity={0.4} stroke='var(--color-expense)' stackId='a' />
+						<Area dataKey='income' type='monotone' fill='url(#fillIncome)' fillOpacity={0.4} stroke='var(--color-income)' stackId='a' />
 					</AreaChart>
 				</ChartContainer>
 				{loading && (
