@@ -8,18 +8,20 @@ import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function Revenue() {
 	const { analytics } = useAnalyticsStore();
-	const [amount, setAmount] = useState(0);
 	const [revenue, setRevenue] = useState(0);
+	const [outstanding, setOutstanding] = useState(0);
+	const [outstandingCount, setOutstandingCount] = useState(0);
 
 	useEffect(() => {
 		setTimeout(() => {
-			setAmount(analytics?.totalIncome ?? 0);
 			setRevenue((analytics?.totalIncome ?? 0) - (analytics?.totalOutstandingAmount ?? 0));
+			setOutstanding(analytics?.totalOutstandingAmount ?? 0);
+			setOutstandingCount(analytics.totalOutstandingCount ?? 0);
 		}, 500);
-	}, [analytics?.totalIncome, analytics?.totalOutstandingAmount]);
+	}, [analytics?.totalIncome, analytics?.totalOutstandingAmount, analytics?.totalOutstandingCount]);
 
 	return (
-		<Card>
+		<Card className={outstandingCount > 1 ? 'border-orange-300 dark:border-orange-300/30' : ''}>
 			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 				<CardTitle className='text-sm font-medium'>Revenue</CardTitle>
 				<DollarSign className='h-4 w-4 text-muted-foreground' />
@@ -27,8 +29,8 @@ export default function Revenue() {
 			<CardContent>
 				<NumberFlow className='text-2xl font-bold' format={{ notation: 'standard', style: 'currency', currency: 'LKR' }} value={revenue} />
 				<span className='flex items-center gap-2 text-sm text-muted-foreground'>
-					Total Invoiced: <NumberFlow className='text-sm text-muted-foreground' format={{ notation: 'standard', style: 'currency', currency: 'LKR' }} value={amount} />
-					{amount === revenue ? <TrendingUpIcon className='h-4 w-4 text-muted-foreground' /> : <TrendingDownIcon className='h-4 w-4 text-muted-foreground' />}
+					Outstanding: <NumberFlow className='text-sm text-muted-foreground' format={{ notation: 'standard', style: 'currency', currency: 'LKR' }} value={outstanding} />
+					{outstandingCount > 1 ? <TrendingUpIcon className='h-4 w-4 text-muted-foreground' /> : <TrendingDownIcon className='h-4 w-4 text-muted-foreground' />}
 				</span>
 			</CardContent>
 		</Card>
