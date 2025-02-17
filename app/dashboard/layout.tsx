@@ -13,8 +13,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const path = pathname.split('/');
 	return (
 		<ProtectedRoute>
-			<SidebarProvider className='min-h-svh'>
-				<AppSidebar />
+			<SidebarProvider className='relative min-h-svh overflow-hidden'>
+				<AppSidebar variant='floating' collapsible='offcanvas' />
 				<SidebarInset>
 					<header className='flex h-16 shrink-0 items-center gap-2'>
 						<div className='flex items-center gap-2 px-4'>
@@ -40,6 +40,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 					</header>
 					<div className='max-w-[100svw]'>{children}</div>
 				</SidebarInset>
+				<div className='hyperbooks-gradient-blob-1 pointer-events-none absolute right-0 top-0 aspect-square w-1/2 opacity-50 md:left-0 md:w-1/3 md:opacity-10' aria-hidden />
+				<div
+					className='hyperbooks-gradient-blob-2 pointer-events-none absolute -bottom-1/3 -left-1/2 aspect-square w-1/3 rounded-full opacity-50 md:-right-1/4 md:left-auto md:w-1/2 md:opacity-20'
+					aria-hidden
+				/>
 			</SidebarProvider>
 		</ProtectedRoute>
 	);
