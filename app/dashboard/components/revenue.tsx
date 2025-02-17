@@ -5,6 +5,7 @@ import { DollarSign, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
 import { useEffect, useState } from 'react';
 import { useAnalyticsStore } from '@/store/use-analytics';
+import { cn } from '@/lib/utils';
 
 export default function Revenue() {
 	const { analytics } = useAnalyticsStore();
@@ -21,7 +22,7 @@ export default function Revenue() {
 	}, [analytics?.totalIncome, analytics?.totalOutstandingAmount, analytics?.totalOutstandingCount]);
 
 	return (
-		<Card className={outstandingCount > 1 ? 'border-orange-300 dark:border-orange-300/30' : ''}>
+		<Card className={cn('relative z-10 bg-background/60 shadow-xl backdrop-blur-sm', outstandingCount > 1 ? 'border-orange-300 dark:border-orange-300/30' : '')}>
 			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 				<CardTitle className='text-sm font-medium'>Revenue</CardTitle>
 				<DollarSign className='h-4 w-4 text-muted-foreground' />
