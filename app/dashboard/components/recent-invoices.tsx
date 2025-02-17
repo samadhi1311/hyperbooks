@@ -17,7 +17,7 @@ export default function RecentInvoices() {
 	const data = documents as InvoiceData[];
 	if (authLoading) return null;
 	return (
-		<Card className='h-full'>
+		<Card className='relative z-10 bg-background/60 shadow-xl backdrop-blur-sm'>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-3 text-base text-muted-foreground'>
 					<ListRestartIcon className='size-5' />
@@ -26,7 +26,7 @@ export default function RecentInvoices() {
 			</CardHeader>
 			<CardContent className='flex w-full flex-col gap-4'>
 				{documents.length > 0 &&
-					data.map((doc, index) => (
+					data.slice(0, 5).map((doc, index) => (
 						<div className='flex items-center gap-4' key={index}>
 							<Avatar className='hidden h-9 w-9 sm:flex'>
 								<AvatarFallback className='bg-muted text-muted-foreground'>
