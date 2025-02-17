@@ -12,14 +12,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
 
 	return (
-		<Sidebar variant='inset' {...props}>
+		<Sidebar {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<Card className=''>
-							<CardContent className='flex h-full items-center justify-center p-6'>
+						<Card>
+							<CardContent className='flex h-full w-full flex-col items-center justify-center gap-4 p-6'>
 								<img src='/logo.svg' alt='hyperreal logo' className='mr-2 size-5' />
-								<P className='font-medium tracking-tight'>hyperbooks.</P>
+								<P className='font-medium tracking-tight text-muted-foreground'>hyperbooks.</P>
 							</CardContent>
 						</Card>
 					</SidebarMenuItem>
