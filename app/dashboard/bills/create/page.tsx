@@ -29,7 +29,7 @@ const FormSchema = z.object({
 	category: z.string({
 		required_error: 'Please select a Category.',
 	}),
-	amount: z.union([z.number().positive('Amount must be greater than zero'), z.string().min(1, 'Amount is required')]).transform((val) => (typeof val === 'string' ? parseFloat(val) : val)),
+	amount: z.coerce.number().min(0, 'Amount must be at least 0').optional(),
 });
 
 export default function CreateBill() {
@@ -43,17 +43,19 @@ export default function CreateBill() {
 		defaultValues: {
 			description: bill?.description ?? '',
 			category: bill?.category ?? '',
-			amount: bill?.amount ?? 0,
+			//@ts-expect-error Type 'string | undefined' is not assignable to type 'string'.
+			amount: bill?.amount ?? '',
 		},
 	});
 
 	useEffect(() => {
 		const subscription = form.watch((values) => {
-			setBill({ ...values } as BillData);
+			if (!form.formState.isSubmitting && !form.formState.isValidating) {
+				setBill({ ...values } as BillData);
+			}
 		});
-
 		return () => subscription.unsubscribe();
-	}, []);
+	}, [form]);
 
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		try {
@@ -92,7 +94,7 @@ export default function CreateBill() {
 								<FormItem>
 									<FormLabel>Amount</FormLabel>
 									<FormControl>
-										<PrefixedInput prefix='LKR' type='number' placeholder='Expense amount' {...field} />
+										<PrefixedInput prefix='LKR' type='number' placeholder='Expense amount' {...field} value={field.value ?? ''} />
 									</FormControl>
 									<FormDescription>Enter the amount of the expense</FormDescription>
 									<FormMessage />
@@ -148,7 +150,11 @@ export default function CreateBill() {
 								size='lg'
 								variant='ghost'
 								onClick={() => {
-									form.reset();
+									form.reset({
+										description: '',
+										category: '',
+										amount: undefined, // or 0 if you want a numeric fallback
+									});
 									clearBill();
 								}}>
 								<UndoDotIcon />
