@@ -30,7 +30,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupLabel></SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={pathname === '/dashboard' ? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5' : ''}
+								asChild>
 								<Link href='/dashboard' className='flex h-full items-center gap-3'>
 									<RocketIcon />
 									Dashboard
@@ -44,7 +46,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupLabel>Income</SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/invoices/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={
+									pathname === '/dashboard/invoices/create'
+										? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5'
+										: ''
+								}
+								asChild>
 								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3'>
 									<PlusCircleIcon />
 									Create a new Invoice
@@ -52,7 +60,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/invoices/history' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={
+									pathname === '/dashboard/invoices/history'
+										? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5'
+										: ''
+								}
+								asChild>
 								<Link href='/dashboard/invoices/history' className='flex h-full items-center gap-3'>
 									<LayoutListIcon />
 									Invoice History
@@ -66,7 +80,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupLabel>Expense</SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/bills/create' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={
+									pathname === '/dashboard/bills/create'
+										? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5'
+										: ''
+								}
+								asChild>
 								<Link href='/dashboard/bills/create' className='flex h-full items-center gap-3'>
 									<PlusCircleIcon />
 									Create a new Bill
@@ -74,7 +94,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/bills/history' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={
+									pathname === '/dashboard/bills/history'
+										? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5'
+										: ''
+								}
+								asChild>
 								<Link href='/dashboard/bills/history' className='flex h-full items-center gap-3'>
 									<LayoutListIcon />
 									Bill History
@@ -88,7 +114,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupLabel>Settings</SidebarGroupLabel>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/templates' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={
+									pathname === '/dashboard/templates'
+										? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5'
+										: ''
+								}
+								asChild>
 								<Link href='/dashboard/templates' className='flex h-full items-center gap-3'>
 									<SwatchBookIcon />
 									Templates
@@ -96,7 +128,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton className={pathname === '/dashboard/profile' ? 'bg-sidebar-accent/50' : ''} asChild>
+							<SidebarMenuButton
+								className={
+									pathname === '/dashboard/profile' ? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5' : ''
+								}
+								asChild>
 								<Link href='/dashboard/profile' className='flex h-full items-center gap-3'>
 									<BriefcaseBusinessIcon />
 									Business Profile
