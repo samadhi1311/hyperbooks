@@ -6,6 +6,9 @@ interface PaginationStore {
 	setDocuments: (docs: DocumentData[]) => void;
 	currentPage: number;
 	setCurrentPage: (page: number) => void;
+	clearAllInvoices: () => void;
+	loading: boolean;
+	setLoading: (loading: boolean) => void; // New setter for loading state
 }
 
 export const usePaginationStore = create<PaginationStore>((set) => ({
@@ -13,4 +16,7 @@ export const usePaginationStore = create<PaginationStore>((set) => ({
 	setDocuments: (docs) => set({ documents: docs }),
 	currentPage: 1,
 	setCurrentPage: (page) => set({ currentPage: page }),
+	clearAllInvoices: () => set({ documents: [], currentPage: 1 }),
+	loading: false, // Default loading state
+	setLoading: (loading) => set({ loading }), // Set loading state
 }));
