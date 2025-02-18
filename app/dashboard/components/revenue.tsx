@@ -17,12 +17,12 @@ export default function Revenue() {
 		setTimeout(() => {
 			setRevenue((analytics?.totalIncome ?? 0) - (analytics?.totalOutstandingAmount ?? 0));
 			setOutstanding(analytics?.totalOutstandingAmount ?? 0);
-			setOutstandingCount(analytics.totalOutstandingCount ?? 0);
+			setOutstandingCount(analytics?.totalOutstandingCount ?? 0);
 		}, 500);
 	}, [analytics?.totalIncome, analytics?.totalOutstandingAmount, analytics?.totalOutstandingCount]);
 
 	return (
-		<Card className={cn('relative z-10 bg-background/60 shadow-xl backdrop-blur-sm', outstandingCount > 1 ? 'border-orange-300 dark:border-orange-300/30' : '')}>
+		<Card className={cn('relative z-10 bg-background/60 shadow-md backdrop-blur-sm', outstandingCount > 1 ? 'border-orange-300 dark:border-orange-300/30' : '')}>
 			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 				<CardTitle className='text-sm font-medium'>Revenue</CardTitle>
 				<DollarSign className='h-4 w-4 text-muted-foreground' />
