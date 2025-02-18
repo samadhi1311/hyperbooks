@@ -9,8 +9,10 @@ interface UseBillsPaginationProps {
 }
 
 const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) => {
-	const { documents, setDocuments, currentPage, setCurrentPage, loading, setLoading, hasMore, setHasMore, setError } = useBillPaginationStore(); // Using store's state
+	const { documents, setDocuments, currentPage, setCurrentPage, loading, setLoading } = useBillPaginationStore(); // Using store's state
+	const [error, setError] = useState<string | null>(null);
 	const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(null);
+	const [hasMore, setHasMore] = useState(true);
 
 	useEffect(() => {
 		fetchInitialData();
@@ -86,11 +88,12 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 
 	return {
 		documents,
-		loading, // Use loading from store
+		loading,
 		hasMore,
 		currentPage,
 		fetchNextPage,
 		resetPagination,
+		error,
 	};
 };
 
