@@ -11,10 +11,10 @@ interface DataTableProps<TData, TValue> {
 	hasMore: boolean;
 	fetchNextPage: () => void;
 	loading: boolean;
-	invoiceLoading: boolean;
+	billLoading: boolean;
 }
 
-export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage, loading, invoiceLoading }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage, loading, billLoading }: DataTableProps<TData, TValue>) {
 	const table = useReactTable({
 		data,
 		columns,
@@ -36,7 +36,7 @@ export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage
 						))}
 					</TableHeader>
 					<TableBody>
-						{invoiceLoading || loading ? (
+						{billLoading || loading ? (
 							<TableRow className='w-full'>
 								<TableCell colSpan={columns.length} className='flex h-24 w-full items-center justify-center'>
 									<Loader2Icon className='h-4 w-4 animate-spin' />
@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage
 							))
 						) : (
 							!loading &&
-							!invoiceLoading &&
+							!billLoading &&
 							table.getRowCount() === 0 && (
 								<TableRow>
 									<TableCell colSpan={columns.length} className='h-24 text-center'>

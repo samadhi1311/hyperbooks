@@ -14,7 +14,7 @@ export default function History() {
 	const { user, authLoading } = useAuth();
 
 	const { documents, loading, error, fetchNextPage, hasMore } = useBillsPagination({ userId: user?.uid || '', pageSize: 10 });
-	const { deleteBill, loading: invoiceLoading } = useFirestore();
+	const { deleteBill, loading: billLoading } = useFirestore();
 
 	if (authLoading || !user) return <Loader />;
 	if (error) return <div>Error: {error}</div>;
@@ -27,7 +27,7 @@ export default function History() {
 		<PageWrapper>
 			<Section>
 				<H2 className='mb-4'>History</H2>
-				<DataTable columns={columns({ deleteBill })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} invoiceLoading={invoiceLoading} />
+				<DataTable columns={columns({ deleteBill })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} billLoading={billLoading} />
 			</Section>
 		</PageWrapper>
 	);
