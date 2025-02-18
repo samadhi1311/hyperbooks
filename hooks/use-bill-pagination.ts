@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, startAfter, getDocs, QueryDocumentSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase.config';
-import { usePaginationStore } from '@/store/use-pagination';
 import { useBillPaginationStore } from '@/store/use-bill-pagination';
 
 interface UseBillsPaginationProps {
@@ -10,11 +9,8 @@ interface UseBillsPaginationProps {
 }
 
 const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) => {
-	const { documents, setDocuments, currentPage, setCurrentPage } = useBillPaginationStore();
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const { documents, setDocuments, currentPage, setCurrentPage, loading, setLoading, hasMore, setHasMore, setError } = useBillPaginationStore(); // Using store's state
 	const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(null);
-	const [hasMore, setHasMore] = useState(true);
 
 	useEffect(() => {
 		fetchInitialData();
@@ -25,7 +21,6 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 
 		try {
 			setLoading(true);
-			setError(null);
 
 			console.log('Calling bill pagination...');
 
@@ -43,6 +38,7 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 			setHasMore(querySnapshot.docs.length === pageSize);
 			setCurrentPage(1);
 		} catch (err) {
+			console.error('Error fetching bills:', err);
 			setError(err instanceof Error ? err.message : 'An error occurred');
 		} finally {
 			setLoading(false);
@@ -54,7 +50,7 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 
 		try {
 			setLoading(true);
-			setError(null);
+			console.log('Calling bill next pagination...');
 
 			const collectionRef = collection(db, 'users', userId, 'bills');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), startAfter(lastVisible), limit(pageSize));
@@ -73,6 +69,7 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 			setHasMore(querySnapshot.docs.length === pageSize);
 			setCurrentPage(currentPage + 1);
 		} catch (err) {
+			console.error('Error fetching next page of bills:', err);
 			setError(err instanceof Error ? err.message : 'An error occurred');
 		} finally {
 			setLoading(false);
@@ -89,8 +86,7 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 
 	return {
 		documents,
-		loading,
-		error,
+		loading, // Use loading from store
 		hasMore,
 		currentPage,
 		fetchNextPage,
