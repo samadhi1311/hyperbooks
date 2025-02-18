@@ -168,7 +168,7 @@ input.editor[type='number'] {
 	background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse at 70% 60%, #c3e060 0%, rgba(195, 224, 96, 0) 90%),
 		radial-gradient(ellipse at 30% 30%, #c3e060 0%, rgba(195, 224, 96, 0) 60%), radial-gradient(ellipse at bottom left, #00a3cb 0%, rgba(0, 163, 203, 0) 70%),
 		linear-gradient(135deg, rgba(18, 46, 119, 0) 0%, rgba(18, 46, 119, 0) 75%, #122e77 100%), linear-gradient(to right, #625793 0%, #d55d64 35%, #e49129 65%, #c0671c 100%);
-	background-blend-mode: lighten, saturation, screen, color, color-dodge, multiply;
+	background-blend-mode: color-burn;
 	filter: blur(64px);
 }
 
@@ -178,6 +178,6 @@ input.editor[type='number'] {
 		radial-gradient(141.73% 105.23% at 50% -7.16%, #e1f8ff 0%, rgba(160, 198, 255, 0) 50.73%, rgba(162, 147, 255, 0) 100%),
 		radial-gradient(112.27% 48.54% at 1.59% 50%, rgba(255, 130, 227, 0.5) 0%, rgba(255, 123, 234, 0.095) 53.91%, rgba(254, 216, 255, 0) 100%),
 		linear-gradient(153.07deg, #8177f3 6.37%, rgba(255, 230, 166, 0) 83.82%);
-	background-blend-mode: normal, normal, normal, normal, normal, normal;
+	background-blend-mode: color-burn;
 	filter: blur(64px);
 }
