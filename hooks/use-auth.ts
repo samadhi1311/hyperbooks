@@ -7,6 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/use-user';
 import { useProfileStore } from '@/store/use-profile';
 import { useInvoiceStore } from '@/store/use-invoice';
+import { useAnalyticsStore } from '@/store/use-analytics';
+import { useBillPaginationStore } from '@/store/use-bill-pagination';
+import { useBillStore } from '@/store/use-bill';
+import { usePaginationStore } from '@/store/use-pagination';
 
 const generateAuthErrorMessages = (error: FirebaseError) => {
 	switch (error?.code) {
@@ -32,7 +36,21 @@ const useAuth = () => {
 	const { clearUser } = useUserStore();
 	const { clearProfile } = useProfileStore();
 	const { resetInvoiceData } = useInvoiceStore();
+	const { clearAnalytics } = useAnalyticsStore();
 	const [authLoading, setAuthLoading] = useState(true);
+	const { clearAllBills } = useBillPaginationStore();
+	const { clearBill } = useBillStore();
+	const { clearAllInvoices } = usePaginationStore();
+
+	const clearMemory = () => {
+		clearAllBills();
+		clearBill();
+		clearAllInvoices();
+		clearAnalytics();
+		resetInvoiceData();
+		clearProfile();
+		clearUser();
+	};
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -46,6 +64,8 @@ const useAuth = () => {
 	const login = async (email: string, password: string) => {
 		setAuthLoading(true);
 		try {
+			clearMemory();
+			console.log('Logging in...');
 			const userCredentials = await signInWithEmailAndPassword(auth, email, password);
 			if (userCredentials.user.uid) {
 				toast({
@@ -53,9 +73,6 @@ const useAuth = () => {
 					title: 'Welcome back to hyperbooks. ',
 					description: `Let's pick up from where you left off.`,
 				});
-				clearUser();
-				clearProfile();
-				resetInvoiceData();
 				router.push('/dashboard');
 				return userCredentials.user;
 			}
@@ -75,11 +92,10 @@ const useAuth = () => {
 	const logout = async () => {
 		setAuthLoading(true);
 		try {
+			console.log('Logging out...');
 			await signOut(auth);
 			router.push('/login');
-			clearUser();
-			clearProfile();
-			resetInvoiceData();
+			clearMemory();
 			user?.reload();
 			toast({
 				variant: 'default',
@@ -103,6 +119,8 @@ const useAuth = () => {
 	const signup = async (email: string, password: string) => {
 		setAuthLoading(true);
 		try {
+			clearMemory();
+			console.log('Signing up...');
 			const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
 			if (userCredentials.user.uid) {
 				toast({
@@ -111,9 +129,6 @@ const useAuth = () => {
 					description: `Welcome to hyperbooks. Let's start invoicing.`,
 				});
 			}
-			clearUser();
-			clearProfile();
-			resetInvoiceData();
 			router.push('/dashboard/getting-started');
 			return userCredentials.user;
 		} catch (error) {
@@ -132,6 +147,8 @@ const useAuth = () => {
 	const signInWithGoogle = async () => {
 		setAuthLoading(true);
 		try {
+			clearMemory();
+			console.log('Signing in with Google...');
 			const provider = new GoogleAuthProvider();
 			const userCredentials = await signInWithPopup(auth, provider);
 			if (userCredentials.user.uid) {
