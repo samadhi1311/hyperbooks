@@ -2,29 +2,26 @@
 
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
-import { useAuth } from '@/hooks/use-auth';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 import { ChartColumnIncreasingIcon, Loader2Icon } from 'lucide-react';
 import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function Chart() {
-	const { user } = useAuth();
 	const [chartData, setChartData] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const { analytics } = useAnalyticsStore();
 
 	useEffect(() => {
-		if (!user) return;
 		const getLast30DaysData = async () => {
+			if (!analytics) return;
 			setLoading(true);
 
-			const last30DaysInvoices = analytics.last30DaysInvoices;
-			const last30DaysExpenses = analytics.last30DaysExpenses;
+			const last30DaysInvoices = analytics?.last30DaysInvoices || {};
+			const last30DaysExpenses = analytics?.last30DaysExpenses || {};
 
 			const formattedData = Array.from({ length: 30 }, (_, i) => {
-				const currentDay = new Date();
-				const targetDay = subDays(currentDay, 29 - i);
+				const targetDay = subDays(new Date(), 29 - i);
 				const dateKey = format(targetDay, 'yyyy-MM-dd');
 
 				return {
@@ -39,7 +36,7 @@ export default function Chart() {
 		};
 
 		getLast30DaysData();
-	}, [user]);
+	}, [analytics]);
 
 	const chartConfig = {
 		income: {
@@ -54,7 +51,7 @@ export default function Chart() {
 
 	return (
 		<div className='h-full rounded-lg bg-gradient-to-br from-muted-foreground/80 via-muted/80 to-muted/80 p-px'>
-			<div className='z-10 h-full min-h-[300px] w-full overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
+			<div className='z-10 flex h-full min-h-[300px] w-full flex-col justify-between overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
 				<div className='mb-6 space-y-2'>
 					<div className='flex items-center gap-3 text-xl font-medium'>
 						<ChartColumnIncreasingIcon className='size-6' />
@@ -62,7 +59,7 @@ export default function Chart() {
 					</div>
 					<div className='text-sm text-muted-foreground'>Your income and expenses in the last 30 days</div>
 				</div>
-				<div>
+				<div className='relative'>
 					<ChartContainer config={chartConfig} className='h-full min-h-[400px] w-full'>
 						<AreaChart accessibilityLayer data={chartData} className='h-full'>
 							<CartesianGrid vertical={false} />
@@ -108,14 +105,14 @@ export default function Chart() {
 							<ChartLegend content={<ChartLegendContent />} />
 						</AreaChart>
 					</ChartContainer>
-					{loading && (
-						<div className='absolute inset-0 flex items-center justify-center bg-background'>
+					{loading && chartData.length === 0 && (
+						<div className='absolute inset-0 flex items-center justify-center bg-transparent'>
 							<Loader2Icon className='animate-spin text-muted-foreground' />
 						</div>
 					)}
 
 					{chartData.length === 0 && !loading && (
-						<div className='absolute inset-0 flex items-center justify-center bg-background'>
+						<div className='absolute inset-0 flex items-center justify-center bg-transparent'>
 							<p className='text-sm text-muted-foreground'>No data available.</p>
 						</div>
 					)}
