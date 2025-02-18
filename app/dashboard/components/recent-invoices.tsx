@@ -1,23 +1,19 @@
+'use client';
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@/hooks/use-auth';
-import useInvoicePagination from '@/hooks/use-invoice-pagination';
 import { InvoiceData } from '@/lib/types';
+import { usePaginationStore } from '@/store/use-pagination';
 import NumberFlow from '@number-flow/react';
 import { ListRestartIcon } from 'lucide-react';
 
 export default function RecentInvoices() {
-	const { user, authLoading } = useAuth();
-	const { documents, loading } = useInvoicePagination({
-		userId: user?.uid || '',
-		pageSize: 5,
-	});
-
+	const { documents, loading } = usePaginationStore();
 	const data = documents as InvoiceData[];
-	if (authLoading) return null;
+
 	return (
-		<Card className='relative z-10 bg-background/60 shadow-xl backdrop-blur-sm'>
+		<Card className='relative z-10 h-full bg-background/60 shadow-md backdrop-blur-sm'>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-3 text-base text-muted-foreground'>
 					<ListRestartIcon className='size-5' />
@@ -25,7 +21,17 @@ export default function RecentInvoices() {
 				</CardTitle>
 			</CardHeader>
 			<CardContent className='flex w-full flex-col gap-4'>
-				{documents.length > 0 &&
+				{loading && !documents.length ? (
+					Array.from({ length: 5 }).map((_, index) => (
+						<div className='flex items-center space-x-4' key={index}>
+							<Skeleton className='h-9 w-9 rounded-full' />
+							<div className='space-y-2'>
+								<Skeleton className='h-4 w-[250px]' />
+								<Skeleton className='h-4 w-[200px]' />
+							</div>
+						</div>
+					))
+				) : data.length > 0 ? (
 					data.slice(0, 5).map((doc, index) => (
 						<div className='flex items-center gap-4' key={index}>
 							<Avatar className='hidden h-9 w-9 sm:flex'>
@@ -54,23 +60,12 @@ export default function RecentInvoices() {
 								<NumberFlow value={doc.total} format={{ style: 'currency', currency: 'LKR' }} />
 							</div>
 						</div>
-					))}
-				{!loading && documents.length === 0 && (
+					))
+				) : (
 					<div className='mb-4 flex w-full flex-col items-center justify-center'>
 						<p className='text-sm font-medium leading-none text-muted-foreground'>Your recent sales will appear here.</p>
 					</div>
 				)}
-				{loading &&
-					documents.length === 0 &&
-					Array.from({ length: 5 }).map((_, index) => (
-						<div className='flex items-center space-x-4' key={index}>
-							<Skeleton className='h-10 w-10 rounded-full' />
-							<div className='space-y-2'>
-								<Skeleton className='h-4 w-[250px]' />
-								<Skeleton className='h-4 w-[200px]' />
-							</div>
-						</div>
-					))}
 			</CardContent>
 		</Card>
 	);
