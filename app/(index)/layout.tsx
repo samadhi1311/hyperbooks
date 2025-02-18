@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Navigation from '@/components/navigation';
 import Footer from '@/components/footer';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
 	title: 'hyperbooks. | Your Invoicing, Simplified.',
 	description: 'Create, manage, and export professional invoices in seconds—anytime, anywhere.',
