@@ -9,8 +9,7 @@ interface useInvoicePaginationProps {
 }
 
 const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationProps) => {
-	const { documents, setDocuments, currentPage, setCurrentPage } = usePaginationStore();
-	const [loading, setLoading] = useState(false);
+	const { documents, setDocuments, currentPage, setCurrentPage, setLoading, loading } = usePaginationStore();
 	const [error, setError] = useState<string | null>(null);
 	const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(null);
 	const [hasMore, setHasMore] = useState(true);
@@ -23,8 +22,10 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 		if (!userId) return;
 
 		try {
-			setLoading(true);
+			setLoading(true); // Set loading to true
 			setError(null);
+
+			console.log('Calling invoice pagination...');
 
 			const collectionRef = collection(db, 'users', userId, 'invoices');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), limit(pageSize));
@@ -42,7 +43,7 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'An error occurred');
 		} finally {
-			setLoading(false);
+			setLoading(false); // Set loading to false
 		}
 	};
 
@@ -50,8 +51,9 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 		if (!lastVisible || !hasMore || !userId) return;
 
 		try {
-			setLoading(true);
+			setLoading(true); // Set loading to true for next page
 			setError(null);
+			console.log('Calling invoice next pagination...');
 
 			const collectionRef = collection(db, 'users', userId, 'invoices');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), startAfter(lastVisible), limit(pageSize));
@@ -62,7 +64,6 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 				...doc.data(),
 			}));
 
-			// Avoid duplicates by using a Set
 			const uniqueDocs = [...new Map([...documents, ...newDocs].map((doc) => [doc.id, doc])).values()];
 
 			setDocuments(uniqueDocs);
@@ -72,7 +73,7 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'An error occurred');
 		} finally {
-			setLoading(false);
+			setLoading(false); // Set loading to false after fetch
 		}
 	};
 
