@@ -42,7 +42,7 @@ export default function Dashboard() {
 		}
 
 		fetchData();
-	}, [user, authLoading]);
+	}, [authLoading]);
 
 	return (
 		<div className='relative flex w-full flex-col overflow-clip'>
