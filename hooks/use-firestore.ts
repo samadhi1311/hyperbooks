@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment } from 'firebase/firestore';
+import { doc, setDoc, collection, WithFieldValue, DocumentData, getDoc, Timestamp, writeBatch, increment, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +9,7 @@ import { useUserStore } from '@/store/use-user';
 import useInvoicePagination from './use-invoice-pagination';
 import useBillsPagination from './use-bill-pagination';
 import { useAnalyticsStore } from '@/store/use-analytics';
+import { PLAN_LIMITS } from '@/lib/constants';
 
 export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	const { user } = useAuth();
@@ -18,7 +19,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 	const { setProfile, clearProfile } = useProfileStore();
 	const { userData, setUser, clearUser } = useUserStore();
-	const { analytics, setAnalytics, clearAnalytics } = useAnalyticsStore();
+	const { setAnalytics } = useAnalyticsStore();
 
 	const { resetPagination } = useInvoicePagination({ userId: user?.uid || '', pageSize: 10 });
 	const { resetPagination: resetBillsPagination } = useBillsPagination({ userId: user?.uid || '', pageSize: 10 });
@@ -37,14 +38,59 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
+			// Usage reference
+			const usageRef = doc(db, 'users', user.uid);
+			const usageSnap = await getDoc(usageRef);
+
+			let invoiceCount = 0;
+			let lastReset = null;
+
+			if (usageSnap.exists()) {
+				const data = usageSnap.data();
+				invoiceCount = data.invoiceCount || 0;
+				lastReset = data.lastReset?.toDate() || new Date(0);
+			}
+
+			const now = new Date();
+			const currentMonth = now.getMonth();
+			const lastResetMonth = lastReset.getMonth();
+
+			// Check if it's a new month — reset usage if needed
+			if (currentMonth !== lastResetMonth) {
+				await setDoc(
+					usageRef,
+					{
+						invoiceCount: 0,
+						lastReset: serverTimestamp(),
+					},
+					{ merge: true }
+				);
+				invoiceCount = 0;
+			}
+
+			if (!userData) return null;
+
+			// Plan limits check
+			const userPlan = userData?.plan || 'starter';
+			const planLimit = PLAN_LIMITS[userPlan as keyof typeof PLAN_LIMITS].invoicesPerMonth || 0;
+
+			if (invoiceCount >= planLimit) {
+				toast({
+					title: 'Limit Reached',
+					description: `You’ve reached your ${planLimit} invoices per month limit. Upgrade to create more invoices.`,
+					variant: 'destructive',
+				});
+				return null;
+			}
+
+			// Continue with invoice creation
 			const userInvoicesRef = collection(db, 'users', user.uid, 'invoices');
 			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'income');
 
-			// Get current timestamp and formatted date keys
 			const createdAt = Timestamp.now();
 			const createdAtDate = createdAt.toDate();
-			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
-			const monthKey = createdAtDate.toISOString().slice(0, 7); // 'YYYY-MM'
+			const dateKey = createdAtDate.toLocaleDateString('en-CA');
+			const monthKey = createdAtDate.toISOString().slice(0, 7);
 
 			// Fetch existing analytics data
 			const analyticsSnap = await getDoc(analyticsRef);
@@ -60,12 +106,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			}
 			const analyticsData = (await getDoc(analyticsRef)).data() || {};
 
-			// Prepare invoice data
 			const dataWithTimestamp = { ...data, complete: false, createdAt };
 			const invoiceRef = customDocId ? doc(userInvoicesRef, customDocId) : doc(userInvoicesRef);
 			const roundedTotal = Math.round(data.total * 100) / 100;
 
-			// Update analytics
 			const last30DaysData = { ...(analyticsData.last30DaysInvoices || {}) };
 			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + roundedTotal;
 
@@ -86,6 +130,29 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				last30DaysInvoices: last30DaysData,
 				monthlyIncome: monthlyIncomeData,
 			});
+
+			// Increment usage counter
+			// Only reset if it's a new month
+			if (currentMonth !== lastResetMonth) {
+				await setDoc(
+					usageRef,
+					{
+						invoiceCount: 0,
+						lastReset: serverTimestamp(),
+					},
+					{ merge: true }
+				);
+				invoiceCount = 0;
+			}
+
+			// Increment usage counter without updating lastReset every time
+			batch.set(
+				usageRef,
+				{
+					invoiceCount: increment(1),
+				},
+				{ merge: true }
+			);
 
 			// Commit batch updates
 			await batch.commit();
@@ -206,33 +273,18 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 		try {
 			const userDocRef = doc(db, 'users', user.uid);
-			const subscriptionDocRef = doc(db, 'subscriptions', user.uid);
 
 			// Fetch both user and subscription data in parallel
-			const [userDocSnap, subscriptionDocSnap] = await Promise.all([getDoc(userDocRef), getDoc(subscriptionDocRef)]);
+			const userDocSnap = await getDoc(userDocRef);
 
 			// Extract user data
-			const userData = userDocSnap.exists() ? (userDocSnap.data() as UserData) : null;
+			if (userDocSnap.exists()) {
+				const userData = userDocSnap.data() as UserData;
+				setUser(userData);
+			}
+			console.log('User Data:', userData);
 
-			// Extract subscription data
-			const subscriptionData = subscriptionDocSnap.exists() ? subscriptionDocSnap.data() : {};
-
-			// Merge both datasets
-			const mergedUserData = {
-				...userData,
-				customerId: subscriptionData.customer_id || null,
-				tier: subscriptionData.subscription_status === 'active' ? 'pro' : 'starter',
-				subscriptionStatus: subscriptionData.subscription_status || 'inactive',
-				productId: subscriptionData.product_id || null,
-				priceId: subscriptionData.price_id || null,
-				validUntil: subscriptionData.scheduled_change || null,
-			} as UserData;
-
-			// Update store
-			setUser(mergedUserData);
-			console.log('Merged User Data:', mergedUserData);
-
-			return mergedUserData;
+			return userData;
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
@@ -459,7 +511,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
-			const subscriptionDocRef = doc(db, 'subscriptions', user.uid);
+			const subscriptionDocRef = doc(db, 'users', user.uid);
 			const subscriptionDocSnap = await getDoc(subscriptionDocRef);
 
 			if (subscriptionDocSnap.exists()) {
@@ -505,14 +557,56 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		setError(null);
 
 		try {
+			// Usage reference
+			const usageRef = doc(db, 'users', user.uid);
+			const usageSnap = await getDoc(usageRef);
+
+			let billCount = 0;
+			let lastReset = null;
+
+			if (usageSnap.exists()) {
+				const data = usageSnap.data();
+				billCount = data.billCount || 0;
+				lastReset = data.lastReset?.toDate() || new Date(0);
+			}
+
+			const now = new Date();
+			const currentMonth = now.getMonth();
+			const lastResetMonth = lastReset.getMonth();
+
+			// Check if it's a new month — reset usage if needed
+			if (currentMonth !== lastResetMonth) {
+				await setDoc(
+					usageRef,
+					{
+						billCount: 0,
+						lastReset: serverTimestamp(),
+					},
+					{ merge: true }
+				);
+				billCount = 0;
+			}
+
+			// Plan limits check
+			const userPlan = userData?.plan || 'starter';
+			const planLimit = PLAN_LIMITS[userPlan as keyof typeof PLAN_LIMITS].billsPerMonth || 0;
+
+			if (billCount >= planLimit) {
+				toast({
+					title: 'Limit Reached',
+					description: `You’ve reached your ${planLimit} bills per month limit. Upgrade to add more bills.`,
+					variant: 'destructive',
+				});
+				return null;
+			}
+
 			const userBillsRef = collection(db, 'users', user.uid, 'bills');
 			const analyticsRef = doc(db, 'users', user.uid, 'analytics', 'expenses');
 
-			// Get current timestamp and formatted date keys
 			const createdAt = Timestamp.now();
 			const createdAtDate = createdAt.toDate();
-			const dateKey = createdAtDate.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
-			const monthKey = createdAtDate.toISOString().slice(0, 7); // 'YYYY-MM'
+			const dateKey = createdAtDate.toLocaleDateString('en-CA');
+			const monthKey = createdAtDate.toISOString().slice(0, 7);
 
 			// Fetch existing analytics data
 			const analyticsSnap = await getDoc(analyticsRef);
@@ -525,12 +619,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			}
 			const analyticsData = (await getDoc(analyticsRef)).data() || {};
 
-			// Prepare bill data
 			const dataWithTimestamp = { ...data, createdAt };
 			const billRef = customDocId ? doc(userBillsRef, customDocId) : doc(userBillsRef);
 			const roundedAmount = Math.round(data.amount * 100) / 100;
 
-			// Update analytics
 			const last30DaysData = { ...(analyticsData.last30DaysExpenses || {}) };
 			last30DaysData[dateKey] = (last30DaysData[dateKey] || 0) + roundedAmount;
 
@@ -548,6 +640,15 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				last30DaysExpenses: last30DaysData,
 				monthlyExpenses: monthlyExpensesData,
 			});
+
+			// Increment usage counter without updating lastReset every time
+			batch.set(
+				usageRef,
+				{
+					billCount: increment(1),
+				},
+				{ merge: true }
+			);
 
 			// Commit batch updates
 			await batch.commit();
