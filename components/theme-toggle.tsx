@@ -17,7 +17,7 @@ export function ModeToggle({ variant = 'default' }: { variant?: 'default' | 'sec
 
 	if (variant === 'secondary') {
 		return (
-			<span className='flex items-center gap-2' onClick={handleToggle}>
+			<span className='flex h-full w-full items-center gap-2' onClick={handleToggle}>
 				<span className='relative flex h-4 w-4 items-center justify-center'>
 					<Sun className='size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
 					<Moon className='absolute size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
