@@ -1,26 +1,28 @@
 import { Timestamp } from 'firebase/firestore';
 
-type Tier = 'starter' | 'pro' | 'ultimate';
+type Plan = 'starter' | 'pro' | 'ultimate';
 
 type SubscriptionStatus = 'active' | 'paused' | 'cancelled';
 
 type UserData = {
 	id: string;
 	name: string;
-	planId: string;
 	email: string;
-	customerId?: string;
-	tier?: Tier;
-	priceId?: string;
-	productId?: string;
-	subscriptionStatus?: SubscriptionStatus;
-	validUntil?: Date;
+	currency?: string;
+
 	totalIncome?: number;
 	totalRevenue?: number;
 	totalInvoiceCount?: number;
 	totalOutstandingCount?: number;
 	totalOutstandingAmount?: number;
-	currency?: string;
+
+	plan?: Plan;
+	customer_id?: string;
+	price_id?: string;
+	product_id?: string;
+	subscription_status?: SubscriptionStatus;
+	scheduled_change?: Date;
+	updated_at?: Date;
 };
 
 type InvoiceData = {
@@ -102,4 +104,4 @@ const avatars = [
 	{ id: 6, url: '/avatars/microbe-6.svg' },
 ];
 
-export { type InvoiceData, type ProfileData, type UserData, type Tier, type SubscriptionStatus, type BillData, expenseCategories, placeholders, avatars };
+export { type InvoiceData, type ProfileData, type UserData, type Plan, type SubscriptionStatus, type BillData, expenseCategories, placeholders, avatars };
