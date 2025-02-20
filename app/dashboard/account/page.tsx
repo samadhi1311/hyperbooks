@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useUserStore } from '@/store/use-user';
+import Link from 'next/link';
 
 export default function Settings() {
 	const currentUser = auth.currentUser;
@@ -94,6 +95,18 @@ export default function Settings() {
 		} finally {
 			setUpdating(false);
 		}
+	}
+
+	async function getPortalLink() {
+		if (!userData) return;
+
+		const portalLink = await fetch('https://hyperbooks-api.hyperreal.cloud/customer-portal', {
+			method: 'POST',
+			body: JSON.stringify({ customer_id: userData.customer_id }),
+		});
+
+		const response = await portalLink.json();
+		window.open(response.url, '_blank');
 	}
 
 	if (!currentUser) return null;
@@ -173,12 +186,26 @@ export default function Settings() {
 				</div>
 
 				<div className='flex flex-col gap-4'>
-					<H3 className='mb-1'>Manage Subscription</H3>
-					<Button className='flex max-w-fit items-center gap-2'>
-						<ShoppingCartIcon />
-						Open Customer Portal
-					</Button>
-					<Label className='text-muted-foreground'>To manage your current subscription, click the button above and follow the instructions.</Label>
+					{userData?.subscription_status !== 'active' ? (
+						<>
+							<H3 className='mb-1'>Manage Subscription</H3>
+							<Button className='flex max-w-fit items-center gap-2' onClick={getPortalLink}>
+								<ShoppingCartIcon />
+								Open Customer Portal
+							</Button>
+							<Label className='text-muted-foreground'>To manage your current subscription, click the button above and follow the instructions.</Label>
+						</>
+					) : (
+						<>
+							<H3 className='mb-1'>Upgrade to Pro or Ultimate</H3>
+							<Link href='/dashboard/upgrade'>
+								<Button className='flex max-w-fit items-center gap-2'>
+									<ShoppingCartIcon />
+									View Plans
+								</Button>
+							</Link>
+						</>
+					)}
 				</div>
 
 				<div className='flex flex-col gap-4'>
