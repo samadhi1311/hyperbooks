@@ -9,10 +9,10 @@ export default function Subscription() {
 	const { userData } = useUserStore();
 
 	const fetchPortalLink = async () => {
-		if (userData?.customerId) {
+		if (userData?.customer_id) {
 			const response = await fetch(`https://hyperbooks-api.hyperreal.cloud/customer-portal`, {
 				method: 'POST',
-				body: JSON.stringify({ customer_id: userData.customerId }),
+				body: JSON.stringify({ customer_id: userData.customer_id }),
 			});
 
 			const result = await response.json();
