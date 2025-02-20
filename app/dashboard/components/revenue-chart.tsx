@@ -6,37 +6,74 @@ import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 import { ChartColumnIncreasingIcon, Loader2Icon } from 'lucide-react';
 import { useAnalyticsStore } from '@/store/use-analytics';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function Chart() {
+	const [selectedPeriod, setSelectedPeriod] = useState('lastMonth');
 	const [chartData, setChartData] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const { analytics } = useAnalyticsStore();
 
 	useEffect(() => {
-		const getLast30DaysData = async () => {
-			if (!analytics) return;
-			setLoading(true);
+		if (!analytics) return;
+		setLoading(true);
 
-			const last30DaysInvoices = analytics?.last30DaysInvoices || {};
-			const last30DaysExpenses = analytics?.last30DaysExpenses || {};
+		let data: any[] = [];
+		const now = new Date();
 
-			const formattedData = Array.from({ length: 30 }, (_, i) => {
-				const targetDay = subDays(new Date(), 29 - i);
+		if (selectedPeriod === 'lastWeek') {
+			data = Array.from({ length: 7 }, (_, i) => {
+				const targetDay = subDays(now, 6 - i);
 				const dateKey = format(targetDay, 'yyyy-MM-dd');
-
 				return {
 					date: format(targetDay, 'MMM dd'),
-					income: last30DaysInvoices[dateKey] || 0,
-					expense: last30DaysExpenses[dateKey] || 0,
+					income: analytics.last30DaysInvoices?.[dateKey] || 0,
+					expense: analytics.last30DaysExpenses?.[dateKey] || 0,
 				};
 			});
+		} else if (selectedPeriod === 'lastTwoWeeks') {
+			data = Array.from({ length: 14 }, (_, i) => {
+				const targetDay = subDays(now, 13 - i);
+				const dateKey = format(targetDay, 'yyyy-MM-dd');
+				return {
+					date: format(targetDay, 'MMM dd'),
+					income: analytics.last30DaysInvoices?.[dateKey] || 0,
+					expense: analytics.last30DaysExpenses?.[dateKey] || 0,
+				};
+			});
+		} else if (selectedPeriod === 'lastMonth') {
+			data = Array.from({ length: 30 }, (_, i) => {
+				const targetDay = subDays(now, 29 - i);
+				const dateKey = format(targetDay, 'yyyy-MM-dd');
+				return {
+					date: format(targetDay, 'MMM dd'),
+					income: analytics.last30DaysInvoices?.[dateKey] || 0,
+					expense: analytics.last30DaysExpenses?.[dateKey] || 0,
+				};
+			});
+		} else if (selectedPeriod === 'allTime') {
+			const monthlyData = Object.keys(analytics.monthlyIncome || {}).map((month) => ({
+				date: month,
+				income: analytics.monthlyIncome[month] || 0,
+				expense: analytics.monthlyExpenses?.[month] || 0,
+			}));
 
-			setChartData(formattedData);
-			setLoading(false);
-		};
+			if (monthlyData.length === 1) {
+				const firstMonth = monthlyData[0].date;
+				const previousMonth = format(subDays(new Date(`${firstMonth}-01`), 1), 'yyyy-MM');
+				monthlyData.unshift({
+					date: previousMonth,
+					income: 0,
+					expense: 0,
+				});
+			}
 
-		getLast30DaysData();
-	}, [analytics]);
+			data = monthlyData;
+		}
+
+		setChartData(data);
+		setLoading(false);
+	}, [analytics, selectedPeriod]);
 
 	const chartConfig = {
 		income: {
@@ -50,14 +87,35 @@ export default function Chart() {
 	} satisfies ChartConfig;
 
 	return (
-		<div className='h-full rounded-lg bg-gradient-to-br from-muted-foreground/80 via-muted/80 to-muted/80 p-px'>
+		<div className='h-full rounded-lg bg-gradient-to-br from-orange-200/20 via-muted/80 to-violet-300/20 p-px'>
 			<div className='z-10 flex h-full min-h-[300px] w-full flex-col justify-between overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
-				<div className='mb-6 space-y-2'>
-					<div className='flex items-center gap-3 text-xl font-medium'>
-						<ChartColumnIncreasingIcon className='size-6' />
-						Statistics
+				<div className='mb-6 flex items-start justify-between'>
+					<div className='space-y-2'>
+						<div className='flex items-center gap-3 text-xl font-medium'>
+							<ChartColumnIncreasingIcon className='size-6' />
+							Statistics
+						</div>
+						<div className='text-sm text-muted-foreground'>
+							Your income and expenses in the
+							{selectedPeriod === 'lastWeek' ? ' last week' : ''}
+							{selectedPeriod === 'lastTwoWeeks' ? ' last two weeks' : ''}
+							{selectedPeriod === 'lastMonth' ? ' last month' : ''}
+							{selectedPeriod === 'allTime' ? ' all time' : ''}
+						</div>
 					</div>
-					<div className='text-sm text-muted-foreground'>Your income and expenses in the last 30 days</div>
+					<div>
+						<Select onValueChange={(value) => setSelectedPeriod(value)}>
+							<SelectTrigger className='w-[180px]'>
+								<SelectValue placeholder='Time period' />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value='lastWeek'>Last week</SelectItem>
+								<SelectItem value='lastTwoWeeks'>Last two weeks</SelectItem>
+								<SelectItem value='lastMonth'>Last month</SelectItem>
+								<SelectItem value='allTime'>All time</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 				<div className='relative'>
 					<ChartContainer config={chartConfig} className='h-full min-h-[400px] w-full'>
