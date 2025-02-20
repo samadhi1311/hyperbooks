@@ -25,8 +25,6 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 			setLoading(true); // Set loading to true
 			setError(null);
 
-			console.log('Calling invoice pagination...');
-
 			const collectionRef = collection(db, 'users', userId, 'invoices');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), limit(pageSize));
 
@@ -53,7 +51,6 @@ const useInvoicePagination = ({ userId, pageSize = 10 }: useInvoicePaginationPro
 		try {
 			setLoading(true); // Set loading to true for next page
 			setError(null);
-			console.log('Calling invoice next pagination...');
 
 			const collectionRef = collection(db, 'users', userId, 'invoices');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), startAfter(lastVisible), limit(pageSize));
