@@ -3,13 +3,17 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { A } from './ui/typography';
+import { motion, AnimatePresence } from 'motion/react';
 
 const CookieConsent = () => {
 	const [showBanner, setShowBanner] = useState(false);
 
 	useEffect(() => {
 		const consent = localStorage.getItem('cookie-consent');
-		if (!consent) setShowBanner(true);
+		if (!consent) {
+			const timer = setTimeout(() => setShowBanner(true), 5000);
+			return () => clearTimeout(timer);
+		}
 	}, []);
 
 	const acceptCookies = () => {
@@ -17,17 +21,24 @@ const CookieConsent = () => {
 		setShowBanner(false);
 	};
 
-	if (!showBanner) return null;
-
 	return (
-		<div className='fixed bottom-0 z-50 flex w-full items-center justify-between border-t border-border px-8 py-4 backdrop-blur-md'>
-			<p className='text-sm'>
-				We use cookies and local storage for core functionality. Hence cannot be disabled. <A href='/privacy-policy'>Learn more</A>.
-			</p>
-			<Button onClick={acceptCookies} variant='secondary'>
-				OK
-			</Button>
-		</div>
+		<AnimatePresence>
+			{showBanner ? (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.5 }}
+					className='fixed bottom-0 z-50 flex w-full items-center justify-between border-t border-border px-8 py-4 backdrop-blur-md'>
+					<p className='text-sm'>
+						We use cookies and local storage for core functionality. <A href='/privacy-policy'>Learn more</A>.
+					</p>
+					<Button onClick={acceptCookies} variant='secondary'>
+						OK
+					</Button>
+				</motion.div>
+			) : null}
+		</AnimatePresence>
 	);
 };
 
