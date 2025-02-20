@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import Splash from '@/components/splash';
 import CookieConsent from '@/components/cookie-consent';
+import Script from 'next/script';
 
 const sans = Inter({
 	variable: '--font-sans',
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					<Toaster />
 				</ThemeProvider>
 			</body>
+			<Script src='https://challenges.cloudflare.com/turnstile/v0/api.js' strategy='lazyOnload' />
 		</html>
 	);
 }
