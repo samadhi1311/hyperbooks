@@ -24,8 +24,6 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 		try {
 			setLoading(true);
 
-			console.log('Calling bill pagination...');
-
 			const collectionRef = collection(db, 'users', userId, 'bills');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), limit(pageSize));
 
@@ -52,7 +50,6 @@ const useBillsPagination = ({ userId, pageSize = 10 }: UseBillsPaginationProps) 
 
 		try {
 			setLoading(true);
-			console.log('Calling bill next pagination...');
 
 			const collectionRef = collection(db, 'users', userId, 'bills');
 			const q = query(collectionRef, orderBy('createdAt', 'desc'), startAfter(lastVisible), limit(pageSize));
