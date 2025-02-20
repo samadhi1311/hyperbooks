@@ -41,8 +41,8 @@ export default function RecentBills() {
 										.join('')}
 								</AvatarFallback>
 							</Avatar>
-							<div className='grid gap-1'>
-								<p className='text-sm font-medium leading-none'>{doc.description}</p>
+							<div className='grid gap-0.5'>
+								<p className='w-[200px] truncate pb-px text-sm font-medium leading-none'>{doc.description}</p>
 								<p className='text-sm text-muted-foreground'>
 									{doc.createdAt?.toDate().toLocaleString('en-US', {
 										year: 'numeric',
@@ -60,8 +60,8 @@ export default function RecentBills() {
 						</div>
 					))
 				) : (
-					<div className='mb-4 flex w-full flex-col items-center justify-center'>
-						<p className='text-sm font-medium leading-none text-muted-foreground'>Your recent bills will appear here.</p>
+					<div className='mb-4'>
+						<p className='text-sm font-medium leading-none text-muted-foreground/50'>Your recent bills will appear here.</p>
 					</div>
 				)}
 			</CardContent>
