@@ -282,7 +282,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				const userData = userDocSnap.data() as UserData;
 				setUser(userData);
 			}
-			console.log('User Data:', userData);
 
 			return userData;
 		} catch (err) {
@@ -516,7 +515,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			if (subscriptionDocSnap.exists()) {
 				const subscriptionData = subscriptionDocSnap.data();
-				console.log('Subscription Data:', subscriptionData);
 				const newUserData = {
 					...userData,
 					customerId: subscriptionData.customer_id,
@@ -788,7 +786,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			// Update store
 			setAnalytics(analyticsData);
-			console.log('Analytic Data:', analyticsData);
 
 			return analyticsData;
 		} catch (err) {
