@@ -15,9 +15,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PasswordInput } from '@/components/ui/password-input';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 export default function SignUp() {
 	const { signup, authLoading } = useAuth();
+	const siteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!;
+	const { theme } = useTheme();
 	const router = useRouter();
 
 	const formSchema = z.object({
@@ -74,6 +77,8 @@ export default function SignUp() {
 									</FormItem>
 								)}
 							/>
+
+							<div className='cf-turnstile *:border-none' data-sitekey={siteKey} data-theme={theme === 'dark' ? 'dark' : 'light'} data-size='flexible' />
 
 							<div className='mt-4 flex w-full items-center justify-center'>
 								<IconButton type='submit' variant='secondary' icon={authLoading ? <Loader2Icon className='animate-spin' /> : <LogInIcon />}>
