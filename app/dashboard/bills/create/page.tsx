@@ -59,8 +59,7 @@ export default function CreateBill() {
 
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		try {
-			const bill = await addBill(data);
-			console.log(bill);
+			await addBill(data);
 		} catch (error) {
 			console.error(error);
 		}
