@@ -127,8 +127,7 @@ export default function FormView() {
 				tax: (values.tax as number) ?? 0,
 				total: total,
 			};
-			const data = await addInvoice(formData);
-			console.log(data);
+			await addInvoice(formData);
 		} catch (error) {
 			console.error(error);
 		}
