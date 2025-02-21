@@ -52,7 +52,6 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		setUpdating(true);
 		try {
-			console.log(values);
 			if (currentUser) {
 				updateProfile(currentUser, { displayName: values.username, photoURL: avatars[values.avatar - 1].url });
 				currentUser.reload();
