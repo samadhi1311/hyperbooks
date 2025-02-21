@@ -21,8 +21,6 @@ export default function History() {
 
 	const data = documents as BillData[];
 
-	console.log(data);
-
 	return (
 		<PageWrapper>
 			<Section>
