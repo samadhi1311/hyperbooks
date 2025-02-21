@@ -16,7 +16,6 @@ export default function Subscription() {
 			});
 
 			const result = await response.json();
-			console.log(result);
 			window.open(result.url, '_blank');
 		}
 	};
