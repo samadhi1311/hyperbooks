@@ -37,7 +37,6 @@ export default function SignUp() {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
 		signup(values.email, values.password);
 		router.push('/dashboard/getting-started');
 	}
