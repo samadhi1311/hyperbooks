@@ -65,7 +65,6 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			clearMemory();
-			console.log('Logging in...');
 			const userCredentials = await signInWithEmailAndPassword(auth, email, password);
 			if (userCredentials.user.uid) {
 				toast({
@@ -92,7 +91,6 @@ const useAuth = () => {
 	const logout = async () => {
 		setAuthLoading(true);
 		try {
-			console.log('Logging out...');
 			await signOut(auth);
 			router.push('/login');
 			clearMemory();
@@ -120,7 +118,6 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			clearMemory();
-			console.log('Signing up...');
 			const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
 			if (userCredentials.user.uid) {
 				toast({
@@ -148,7 +145,6 @@ const useAuth = () => {
 		setAuthLoading(true);
 		try {
 			clearMemory();
-			console.log('Signing in with Google...');
 			const provider = new GoogleAuthProvider();
 			const userCredentials = await signInWithPopup(auth, provider);
 			if (userCredentials.user.uid) {
