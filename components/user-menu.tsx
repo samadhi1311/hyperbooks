@@ -1,6 +1,6 @@
 'use client';
 
-import { BadgeCheck, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
+import { User2Icon, ChevronsUpDown, LogOut, Sparkles } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
@@ -30,11 +30,15 @@ export function UserMenu() {
 							<ChevronsUpDown className='ml-auto size-4' />
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg' side={isMobile ? 'bottom' : 'right'} align='end' sideOffset={4}>
+					<DropdownMenuContent
+						className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-muted/10 backdrop-blur-md'
+						side={isMobile ? 'bottom' : 'right'}
+						align='end'
+						sideOffset={4}>
 						<DropdownMenuLabel className='p-0 font-normal'>
 							<div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
-								<Avatar className='h-8 w-8 rounded-full'>
-									<AvatarImage src={user.photoURL!} alt={user.displayName!} />
+								<Avatar className='flex size-8 items-center justify-center rounded-full border border-muted-foreground bg-muted'>
+									<AvatarImage className='size-6 object-contain' src={user.photoURL!} alt={user.displayName!} />
 									<AvatarFallback className='rounded-lg'>{user.displayName?.charAt(0)}</AvatarFallback>
 								</Avatar>
 								<div className='grid flex-1 text-left text-sm leading-tight'>
@@ -45,7 +49,7 @@ export function UserMenu() {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem onClick={() => router.push('/account/upgrade')}>
+							<DropdownMenuItem onClick={() => router.push('/dashboard/upgrade')}>
 								<Sparkles />
 								Upgrade to Pro
 							</DropdownMenuItem>
@@ -53,12 +57,8 @@ export function UserMenu() {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
-								<BadgeCheck />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
-								<CreditCard />
-								Manage Subscription
+								<User2Icon />
+								Account settings
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
