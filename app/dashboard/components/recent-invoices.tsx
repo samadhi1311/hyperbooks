@@ -17,7 +17,7 @@ export default function RecentInvoices() {
 			<CardHeader>
 				<CardTitle className='flex items-center gap-3 text-base text-muted-foreground'>
 					<ListRestartIcon className='size-5' />
-					Recent Sales
+					Recent Invoices
 				</CardTitle>
 			</CardHeader>
 			<CardContent className='flex w-full flex-col gap-4'>
@@ -63,7 +63,7 @@ export default function RecentInvoices() {
 					))
 				) : (
 					<div className='mb-4'>
-						<p className='text-sm font-medium leading-none text-muted-foreground/50'>Your recent sales will appear here.</p>
+						<p className='text-sm font-medium leading-none text-muted-foreground/50'>Your recent invoices will appear here.</p>
 					</div>
 				)}
 			</CardContent>
