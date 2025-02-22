@@ -14,14 +14,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PasswordInput } from '@/components/ui/password-input';
-import { useRouter } from 'next/navigation';
-import { useTheme } from 'next-themes';
 
 export default function SignUp() {
 	const { signup, authLoading } = useAuth();
-	const siteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!;
-	const { theme } = useTheme();
-	const router = useRouter();
 
 	const formSchema = z.object({
 		email: z.string().email().min(1, { message: 'Email is required' }).max(64, { message: 'Email must be at most 64 characters' }),
@@ -38,8 +33,8 @@ export default function SignUp() {
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		signup(values.email, values.password);
-		router.push('/dashboard/getting-started');
 	}
+
 	return (
 		<PageWrapper>
 			<Section variant='main' className='relative grid h-svh w-full place-items-center'>
@@ -76,8 +71,6 @@ export default function SignUp() {
 									</FormItem>
 								)}
 							/>
-
-							<div className='cf-turnstile *:border-none' data-sitekey={siteKey} data-theme={theme === 'dark' ? 'dark' : 'light'} data-size='flexible' />
 
 							<div className='mt-4 flex w-full items-center justify-center'>
 								<IconButton type='submit' variant='secondary' icon={authLoading ? <Loader2Icon className='animate-spin' /> : <LogInIcon />}>
