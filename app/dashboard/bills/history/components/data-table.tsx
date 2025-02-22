@@ -24,9 +24,9 @@ export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage
 
 	return (
 		<div>
-			<div className='rounded-md border'>
+			<div className='rounded-md border bg-muted/20'>
 				<Table>
-					<TableHeader>
+					<TableHeader className='bg-muted/50'>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
@@ -38,8 +38,10 @@ export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage
 					<TableBody>
 						{billLoading || loading ? (
 							<TableRow className='w-full'>
-								<TableCell colSpan={columns.length} className='flex h-24 w-full items-center justify-center'>
-									<Loader2Icon className='h-4 w-4 animate-spin' />
+								<TableCell colSpan={columns.length} className='h-24 text-center'>
+									<div className='flex items-center justify-center'>
+										<Loader2Icon className='h-4 w-4 animate-spin' />
+									</div>
 								</TableCell>
 							</TableRow>
 						) : table.getRowModel().rows?.length ? (
