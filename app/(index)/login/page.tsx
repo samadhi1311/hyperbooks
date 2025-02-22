@@ -14,12 +14,9 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useTheme } from 'next-themes';
 
 export default function Login() {
 	const { login, authLoading } = useAuth();
-	const siteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!;
-	const { theme } = useTheme();
 
 	const formSchema = z.object({
 		email: z.string().email().min(1, { message: 'Email is required' }).max(64, { message: 'Email must be at most 64 characters' }),
@@ -79,8 +76,6 @@ export default function Login() {
 							<Link href='#' className='mb-2 ml-auto text-sm text-muted-foreground underline-offset-4 hover:underline'>
 								Forgot your password?
 							</Link>
-
-							<div className='cf-turnstile *:border-none' data-sitekey={siteKey} data-theme={theme === 'dark' ? 'dark' : 'light'} data-size='flexible' />
 
 							<div className='mt-4 flex w-full items-center justify-center'>
 								<IconButton type='submit' variant='secondary' icon={authLoading ? <Loader2Icon className='animate-spin' /> : <LogInIcon />}>
