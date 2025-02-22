@@ -89,7 +89,7 @@ export default function Chart() {
 	return (
 		<div className='h-full rounded-lg bg-gradient-to-br from-orange-200/20 via-muted/80 to-violet-300/20 p-px'>
 			<div className='z-10 flex h-full min-h-[300px] w-full flex-col justify-between overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
-				<div className='mb-6 flex items-start justify-between'>
+				<div className='mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row'>
 					<div className='space-y-2'>
 						<div className='flex items-center gap-3 text-xl font-medium'>
 							<ChartColumnIncreasingIcon className='size-6' />
