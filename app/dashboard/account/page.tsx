@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PageWrapper, Section } from '@/components/ui/layout';
@@ -19,15 +18,16 @@ import { toast } from '@/hooks/use-toast';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useUserStore } from '@/store/use-user';
 import Link from 'next/link';
+import { IconButton } from '@/components/ui/icon-button';
 
 export default function Settings() {
 	const currentUser = auth.currentUser;
-	const { updateUser, getUser } = useFirestore();
+	const { updateUser, loading } = useFirestore();
 	const { userData } = useUserStore();
 
 	const [updating, setUpdating] = useState(false);
+	const [fetchingLink, setFetchingLink] = useState(false);
 	const [customCurrency, setCustomCurrency] = useState(false);
-	const [accUpdated, setAccUpdated] = useState(false);
 
 	const accSchema = z.object({
 		username: z.string().min(2, {
@@ -55,11 +55,11 @@ export default function Settings() {
 		},
 	});
 
-	function accOnSubmit(values: z.infer<typeof accSchema>) {
+	async function accOnSubmit(values: z.infer<typeof accSchema>) {
 		setUpdating(true);
 		try {
 			if (currentUser) {
-				updateProfile(currentUser, { displayName: values.username, photoURL: avatars[values.avatar - 1].url });
+				await updateProfile(currentUser, { displayName: values.username, photoURL: avatars[values.avatar - 1].url });
 				currentUser.reload();
 				toast({
 					variant: 'success',
@@ -80,12 +80,15 @@ export default function Settings() {
 	}
 
 	function appOnSubmit(values: z.infer<typeof appSchema>) {
-		setUpdating(true);
 		try {
-			updateUser({ currency: values.currency })
-				.then(() => getUser())
-				.then(() => setUpdating(false))
-				.then(() => setAccUpdated(true));
+			setUpdating(true);
+			updateUser({ currency: values.currency }).then(() => {
+				toast({
+					variant: 'success',
+					title: 'Currency updated.',
+					description: 'Your currency settings have been updated successfully.',
+				});
+			});
 		} catch {
 			toast({
 				variant: 'destructive',
@@ -98,6 +101,8 @@ export default function Settings() {
 	}
 
 	async function getPortalLink() {
+		setFetchingLink(true);
+
 		if (!userData) return;
 
 		const portalLink = await fetch('https://hyperbooks-api.hyperreal.cloud/customer-portal', {
@@ -106,10 +111,14 @@ export default function Settings() {
 		});
 
 		const response = await portalLink.json();
+
 		window.open(response.url, '_blank');
+
+		setFetchingLink(false);
 	}
 
 	if (!currentUser) return null;
+
 	return (
 		<PageWrapper>
 			<Section className='mx-auto max-w-screen-sm space-y-16'>
@@ -159,50 +168,35 @@ export default function Settings() {
 								)}
 							/>
 
-							<Button type='submit' className='flex items-center gap-2'>
-								{updating ? (
-									<>
-										<Loader2Icon className='animate-spin' />
-										Updating
-									</>
-								) : (
-									<>
-										<SendHorizonalIcon />
-										Update details
-									</>
-								)}
-							</Button>
+							<IconButton type='submit' icon={updating ? <Loader2Icon className='animate-spin' /> : <SendHorizonalIcon />} disabled={updating}>
+								{updating ? 'Updating' : 'Update details'}
+							</IconButton>
 						</form>
 					</Form>
 				</div>
 
-				<div className='flex flex-col gap-4'>
+				<div className='space-y-4'>
 					<H3 className='mb-1'>Change Password</H3>
-					<Button className='flex max-w-fit items-center gap-2'>
-						<KeySquareIcon />
-						Reset Password
-					</Button>
+					<IconButton icon={<KeySquareIcon />}>Reset Password</IconButton>
 					<Label className='text-muted-foreground'>To update/reset your current password, click the button above and follow the instructions.</Label>
 				</div>
 
-				<div className='flex flex-col gap-4'>
+				<div className='space-y-4'>
 					{userData?.subscription_status !== 'active' ? (
 						<>
 							<H3 className='mb-1'>Manage Subscription</H3>
-							<Button className='flex max-w-fit items-center gap-2' onClick={getPortalLink}>
-								<ShoppingCartIcon />
-								Open Customer Portal
-							</Button>
+							<IconButton icon={fetchingLink ? <Loader2Icon className='animate-spin' /> : <ShoppingCartIcon />} onClick={getPortalLink} disabled={fetchingLink}>
+								{fetchingLink ? 'Loading' : 'Open Customer Portal'}
+							</IconButton>
 							<Label className='text-muted-foreground'>To manage your current subscription, click the button above and follow the instructions.</Label>
 						</>
 					) : (
 						<>
 							<H3 className='mb-1'>Upgrade to Pro or Ultimate</H3>
 							<Link href='/dashboard/upgrade'>
-								<Button className='flex max-w-fit items-center gap-2'>
-									<ShoppingCartIcon />
+								<IconButton icon={<ShoppingCartIcon />} className='flex max-w-fit items-center gap-2'>
 									View Plans
-								</Button>
+								</IconButton>
 							</Link>
 						</>
 					)}
@@ -251,24 +245,9 @@ export default function Settings() {
 								)}
 							/>
 
-							<Button className='flex max-w-fit items-center gap-2' type='submit'>
-								{updating ? (
-									<>
-										<Loader2Icon className='animate-spin' />
-										Updating
-									</>
-								) : accUpdated ? (
-									<>
-										<SaveIcon />
-										Updated
-									</>
-								) : (
-									<>
-										<SaveIcon />
-										Apply Settings
-									</>
-								)}
-							</Button>
+							<IconButton icon={loading ? <Loader2Icon className='animate-spin' /> : <SaveIcon />} disabled={loading} type='submit'>
+								{loading ? 'Updating' : 'Apply Settings'}
+							</IconButton>
 						</form>
 					</Form>
 				</div>
