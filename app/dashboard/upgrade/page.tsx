@@ -7,12 +7,12 @@ import {} from '@/components/ui/typography';
 import { Badge } from '@/components/ui/badge';
 import FlickeringGrid from '@/components/ui/flickering-grid';
 import { MagicCard } from '@/components/ui/magic-card';
-import { CheckCircle2Icon, CircleXIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CheckCircle2Icon, CircleXIcon, SparkleIcon, SparklesIcon } from 'lucide-react';
 import { initializePaddle, Paddle } from '@paddle/paddle-js';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/hooks/use-auth';
+import { IconButton } from '@/components/ui/icon-button';
 
 export default function Upgrade() {
 	const [paddle, setPaddle] = useState<Paddle>();
@@ -109,7 +109,9 @@ export default function Upgrade() {
 								</li>
 							</ul>
 							<div className='flex flex-col items-center justify-end pt-4'>
-								<Button onClick={() => handleCheckout({ priceId: 'pri_01jkctkft82s247d8y3w6px2zj', plan: 'pro' })}>Upgrade to Pro</Button>
+								<IconButton icon={<SparkleIcon />} onClick={() => handleCheckout({ priceId: 'pri_01jkctkft82s247d8y3w6px2zj', plan: 'pro' })}>
+									Upgrade to Pro
+								</IconButton>
 							</div>
 						</div>
 						<FlickeringGrid
@@ -146,7 +148,9 @@ export default function Upgrade() {
 								</li>
 							</ul>
 							<div className='flex items-center justify-center pt-4'>
-								<Button onClick={() => handleCheckout({ priceId: 'pri_01jmcmeb4pwkj8ajfsmd1ks9w3', plan: 'ultimate' })}>Upgrade to Ultimate</Button>
+								<IconButton icon={<SparklesIcon />} onClick={() => handleCheckout({ priceId: 'pri_01jmcmeb4pwkj8ajfsmd1ks9w3', plan: 'ultimate' })}>
+									Upgrade to Ultimate
+								</IconButton>
 							</div>
 						</div>
 					</MagicCard>
