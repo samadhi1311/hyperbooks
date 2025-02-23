@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { H3 } from '@/components/ui/typography';
-import { CirclePlusIcon, DeleteIcon, DownloadIcon, RocketIcon, UndoDotIcon } from 'lucide-react';
+import { CirclePlusIcon, DeleteIcon, DownloadIcon, Loader2Icon, RocketIcon, UndoDotIcon } from 'lucide-react';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useInvoiceStore } from '@/store/use-invoice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { InvoiceData, ProfileData } from '@/lib/types';
 import { Textarea } from '@/components/ui/textarea';
 import { PrefixedInput } from '@/components/prefixed-input';
@@ -21,10 +21,12 @@ import { useProfileStore } from '@/store/use-profile';
 import { useToast } from '@/hooks/use-toast';
 import { Document, pdf } from '@react-pdf/renderer';
 import templates, { TemplateKey } from '@/templates';
+import { IconButton } from '@/components/ui/icon-button';
 
 export default function FormView() {
-	const { addInvoice } = useFirestore();
+	const { addInvoice, loading } = useFirestore();
 	const { invoiceData, updateInvoiceData, updateBilledToData, resetInvoiceData } = useInvoiceStore();
+	const [exporting, setExporting] = useState(false);
 	const { userData } = useUserStore();
 	const { selectedTemplate } = useTemplateStore();
 	const { profile } = useProfileStore();
@@ -139,6 +141,7 @@ export default function FormView() {
 	};
 
 	const handleExportPDF = async () => {
+		setExporting(true);
 		try {
 			const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
 			const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
@@ -164,6 +167,8 @@ export default function FormView() {
 				description: error as string,
 			});
 			console.error('PDF Export Error:', error);
+		} finally {
+			setExporting(false);
 		}
 	};
 
@@ -304,10 +309,9 @@ export default function FormView() {
 							))}
 
 							<div>
-								<Button type='button' variant='outline' onClick={addNewItem}>
-									<CirclePlusIcon />
+								<IconButton type='button' icon={<CirclePlusIcon />} variant='outline' onClick={addNewItem}>
 									Add Item
-								</Button>
+								</IconButton>
 							</div>
 						</div>
 
@@ -369,27 +373,31 @@ export default function FormView() {
 						</div>
 
 						<div className='flex items-center gap-4'>
-							<Button type='submit' size='lg' className='flex items-center gap-2'>
-								<RocketIcon />
+							<IconButton type='submit' size='lg' icon={loading ? <Loader2Icon className='animate-spin' /> : <RocketIcon />} disabled={loading}>
 								Create Invoice
-							</Button>
+							</IconButton>
 
-							<Button type='button' size='lg' variant='ghost' onClick={() => handleExportPDF()}>
-								<DownloadIcon />
-								Download as PDF
-							</Button>
-
-							<Button
+							<IconButton
 								type='button'
 								size='lg'
+								variant='ghost'
+								icon={exporting ? <Loader2Icon className='animate-spin' /> : <DownloadIcon />}
+								onClick={() => handleExportPDF()}
+								disabled={exporting}>
+								Download as PDF
+							</IconButton>
+
+							<IconButton
+								type='button'
+								size='lg'
+								icon={<UndoDotIcon />}
 								variant='ghost'
 								onClick={() => {
 									form.reset();
 									resetInvoiceData();
 								}}>
-								<UndoDotIcon />
 								Reset Form
-							</Button>
+							</IconButton>
 						</div>
 					</form>
 				</Form>
