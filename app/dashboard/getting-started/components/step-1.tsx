@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { H2, H3 } from '@/components/ui/typography';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +12,8 @@ import { updateProfile, User } from 'firebase/auth';
 import { avatars } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { IconButton } from '@/components/ui/icon-button';
+import { ArrowRightIcon, Loader2Icon } from 'lucide-react';
 
 export default function Step1({ handleNext, formAnimations }: { handleNext: () => void; formAnimations: object }) {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -49,11 +50,11 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 		}
 	}, [currentUser, form]);
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setUpdating(true);
 		try {
 			if (currentUser) {
-				updateProfile(currentUser, { displayName: values.username, photoURL: avatars[values.avatar - 1].url });
+				await updateProfile(currentUser, { displayName: values.username, photoURL: avatars[values.avatar - 1].url });
 				currentUser.reload();
 				toast({
 					variant: 'success',
@@ -126,7 +127,9 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 						)}
 					/>
 
-					<Button type='submit'>{updating ? 'Updating...' : 'Continue'}</Button>
+					<IconButton type='submit' icon={updating ? <Loader2Icon className='animate-spin' /> : <ArrowRightIcon />}>
+						{updating ? 'Updating...' : 'Continue'}
+					</IconButton>
 				</form>
 			</Form>
 		</motion.div>
