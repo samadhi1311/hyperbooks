@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
 import { A } from './ui/typography';
 import { motion, AnimatePresence } from 'motion/react';
+import { CookieIcon } from 'lucide-react';
+import { IconButton } from './ui/icon-button';
 
 const CookieConsent = () => {
 	const [showBanner, setShowBanner] = useState(false);
@@ -33,9 +34,9 @@ const CookieConsent = () => {
 					<p className='text-sm'>
 						We use cookies and local storage for core functionality. <A href='/privacy-policy'>Learn more</A>.
 					</p>
-					<Button onClick={acceptCookies} variant='secondary'>
+					<IconButton icon={<CookieIcon />} onClick={acceptCookies} variant='secondary'>
 						OK
-					</Button>
+					</IconButton>
 				</motion.div>
 			) : null}
 		</AnimatePresence>
