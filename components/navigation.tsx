@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { Badge } from './ui/badge';
 import { motion } from 'motion/react';
 import { useAuth } from '@/hooks/use-auth';
+import { IconButton } from './ui/icon-button';
 
 export default function Navigation() {
 	const hasAnimated = sessionStorage.getItem('navAnimated');
@@ -31,19 +32,17 @@ export default function Navigation() {
 		if (!authLoading && !user) {
 			return (
 				<Link href='/login'>
-					<Button variant='outline' className='flex items-center gap-3'>
-						<User2Icon />
+					<IconButton variant='outline' icon={<User2Icon />}>
 						Login
-					</Button>
+					</IconButton>
 				</Link>
 			);
 		} else {
 			return (
 				<Link href='/dashboard'>
-					<Button variant='outline' className='flex items-center gap-3'>
-						<SquareDashedMousePointerIcon className='scale-x-[-1]' />
+					<IconButton variant='outline' icon={<SquareDashedMousePointerIcon className='scale-x-[-1]' />}>
 						Dashboard
-					</Button>
+					</IconButton>
 				</Link>
 			);
 		}
@@ -54,7 +53,7 @@ export default function Navigation() {
 			className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 opacity-0 backdrop-blur-md'
 			initial={{ y: -100, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
-			transition={{ duration: 1, ease: [0.215, 0.61, 0.355, 1], delay: hasAnimated ? 0 : 1.5 }}
+			transition={{ duration: hasAnimated ? 0.5 : 1, ease: [0.215, 0.61, 0.355, 1], delay: hasAnimated ? 0 : 1.5 }}
 			onAnimationComplete={handleAnimationComplete}>
 			<nav className='mx-auto flex max-w-screen-2xl items-center justify-between gap-4'>
 				<span>
