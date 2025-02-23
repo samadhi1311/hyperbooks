@@ -1,8 +1,8 @@
 'use client';
+
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { CircleCheckIcon, ImagePlusIcon, Loader2Icon, SendHorizonalIcon, XCircleIcon } from 'lucide-react';
 import { H2 } from '@/components/ui/typography';
 import { useProfileStore } from '@/store/use-profile';
+import { IconButton } from '@/components/ui/icon-button';
 
 export default function Profile() {
 	const { user } = useAuth();
@@ -254,26 +255,28 @@ export default function Profile() {
 							)}
 						/>
 
-						<Button
+						<IconButton
 							type='submit'
 							disabled={loading}
-							className={`flex items-center gap-3 
+							icon={
+								uploadStatus === 'uploading' || loading ? (
+									<Loader2Icon className='animate-spin' />
+								) : uploadStatus === 'success' ? (
+									<CircleCheckIcon />
+								) : uploadStatus === 'error' ? (
+									<XCircleIcon />
+								) : (
+									<SendHorizonalIcon className='size-4' />
+								)
+							}
+							className={` 
                                 ${uploadStatus === 'uploading' ? 'cursor-not-allowed' : ''}
                                 ${uploadStatus === 'success' ? 'bg-emerald-500 cursor-not-allowed text-white' : ''}
                                 ${uploadStatus === 'error' ? 'bg-red-500' : ''}`}>
-							{uploadStatus === 'uploading' || loading ? (
-								<Loader2Icon className='animate-spin' />
-							) : uploadStatus === 'success' ? (
-								<CircleCheckIcon />
-							) : uploadStatus === 'error' ? (
-								<XCircleIcon />
-							) : (
-								<SendHorizonalIcon className='size-4' />
-							)}
 							{uploadStatus === 'uploading' || loading ? 'Uploading...' : ''}
 							{uploadStatus === 'success' ? 'Success' : uploadStatus === 'error' ? 'Error' : ''}
-							{uploadStatus === 'idle' ? 'Update' : ''}
-						</Button>
+							{uploadStatus === 'idle' ? 'Submit' : ''}
+						</IconButton>
 					</form>
 				</Form>
 			</Section>
