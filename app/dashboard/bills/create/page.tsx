@@ -2,7 +2,7 @@
 
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown, SendHorizonalIcon, UndoDotIcon } from 'lucide-react';
+import { Check, ChevronsUpDown, Loader2Icon, SendHorizonalIcon, UndoDotIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { PrefixedInput } from '@/components/prefixed-input';
 import { useBillStore } from '@/store/use-bill';
 import { useFirestore } from '@/hooks/use-firestore';
+import { IconButton } from '@/components/ui/icon-button';
 
 const FormSchema = z.object({
 	description: z
@@ -36,7 +37,7 @@ export default function CreateBill() {
 	const isMobile = useIsMobile();
 	const [open, setOpen] = useState(false);
 	const { bill, clearBill, setBill } = useBillStore();
-	const { addBill } = useFirestore();
+	const { addBill, loading } = useFirestore();
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -139,15 +140,15 @@ export default function CreateBill() {
 						/>
 
 						<div className='flex items-center gap-4 pt-8'>
-							<Button type='submit' size='lg' className='flex items-center gap-2'>
-								<SendHorizonalIcon />
+							<IconButton type='submit' size='lg' icon={loading ? <Loader2Icon className='animate-spin' /> : <SendHorizonalIcon />} disabled={loading}>
 								Create Expense
-							</Button>
+							</IconButton>
 
-							<Button
+							<IconButton
 								type='button'
 								size='lg'
 								variant='ghost'
+								icon={<UndoDotIcon />}
 								onClick={() => {
 									form.reset({
 										description: '',
@@ -156,9 +157,8 @@ export default function CreateBill() {
 									});
 									clearBill();
 								}}>
-								<UndoDotIcon />
 								Reset Form
-							</Button>
+							</IconButton>
 						</div>
 					</form>
 				</Form>
