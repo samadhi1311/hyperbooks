@@ -2,8 +2,9 @@
 
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Loader2Icon } from 'lucide-react';
+import { ArrowDownIcon, Loader2Icon } from 'lucide-react';
+import { IconButton } from '@/components/ui/icon-button';
+import { P } from '@/components/ui/typography';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -69,9 +70,14 @@ export function DataTable<TData, TValue>({ columns, data, hasMore, fetchNextPage
 				</Table>
 			</div>
 			<div className='flex items-center justify-end space-x-2 py-4'>
-				<Button variant='outline' size='sm' onClick={fetchNextPage} disabled={!hasMore || loading}>
-					{loading ? <Loader2Icon className='h-4 w-4 animate-spin' /> : 'Load More'}
-				</Button>
+				<IconButton icon={loading ? <Loader2Icon className='animate-spin' /> : <ArrowDownIcon />} variant='outline' onClick={fetchNextPage} disabled={!hasMore || loading}>
+					{loading ? 'Loading' : 'Load More'}
+				</IconButton>
+			</div>
+			<div className='flex items-center justify-center py-4'>
+				<P className='text-muted-foreground' variant='sm'>
+					{!hasMore && !loading && !billLoading && 'You have reached the end of the list.'}
+				</P>
 			</div>
 		</div>
 	);
