@@ -67,10 +67,10 @@ export default function Hero() {
 				</div>
 
 				<div className='hyperbooks-hero group mt-8 flex flex-col items-center gap-8 opacity-0'>
-					<Link href='/dashboard'>
-						<RainbowButton className='w-fit'>
+					<Link href='/dashboard' className='group'>
+						<RainbowButton className='w-auto font-semibold'>
+							<MousePointerClickIcon className='eas mr-3 size-6 scale-x-[-1] transition-transform duration-200 group-hover:translate-x-1' />
 							Get Started
-							<MousePointerClickIcon className='ml-2 size-5' />
 						</RainbowButton>
 					</Link>
 					<span>
