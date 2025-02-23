@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'motion/react';
 import { z } from 'zod';
@@ -17,11 +16,12 @@ import Compressor from 'compressorjs';
 import { ChangeEvent, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { CircleCheckIcon, ImagePlusIcon, Loader2Icon, SendHorizonalIcon, XCircleIcon } from 'lucide-react';
+import { ArrowLeftIcon, CircleCheckIcon, ImagePlusIcon, Loader2Icon, SendHorizonalIcon, XCircleIcon } from 'lucide-react';
 import { H2, P } from '@/components/ui/typography';
 import { Separator } from '@/components/ui/separator';
 import { useProfileStore } from '@/store/use-profile';
 import { useRouter } from 'next/navigation';
+import { IconButton } from '@/components/ui/icon-button';
 
 export default function Step2({ handlePrevious, formAnimations }: { handlePrevious: () => void; formAnimations: object }) {
 	const { user } = useAuth();
@@ -265,29 +265,31 @@ export default function Step2({ handlePrevious, formAnimations }: { handlePrevio
 					/>
 
 					<div className='flex items-center justify-between gap-4'>
-						<Button variant='ghost' onClick={handlePrevious}>
+						<IconButton variant='ghost' onClick={handlePrevious} icon={<ArrowLeftIcon />}>
 							Back
-						</Button>
-						<Button
+						</IconButton>
+						<IconButton
 							type='submit'
 							disabled={loading}
-							className={`flex items-center gap-3 
+							icon={
+								uploadStatus === 'uploading' || loading ? (
+									<Loader2Icon className='animate-spin' />
+								) : uploadStatus === 'success' ? (
+									<CircleCheckIcon />
+								) : uploadStatus === 'error' ? (
+									<XCircleIcon />
+								) : (
+									<SendHorizonalIcon className='size-4' />
+								)
+							}
+							className={` 
                                 ${uploadStatus === 'uploading' ? 'cursor-not-allowed' : ''}
                                 ${uploadStatus === 'success' ? 'bg-emerald-500 cursor-not-allowed text-white' : ''}
                                 ${uploadStatus === 'error' ? 'bg-red-500' : ''}`}>
-							{uploadStatus === 'uploading' || loading ? (
-								<Loader2Icon className='animate-spin' />
-							) : uploadStatus === 'success' ? (
-								<CircleCheckIcon />
-							) : uploadStatus === 'error' ? (
-								<XCircleIcon />
-							) : (
-								<SendHorizonalIcon className='size-4' />
-							)}
 							{uploadStatus === 'uploading' || loading ? 'Uploading...' : ''}
 							{uploadStatus === 'success' ? 'Success' : uploadStatus === 'error' ? 'Error' : ''}
 							{uploadStatus === 'idle' ? 'Submit' : ''}
-						</Button>
+						</IconButton>
 					</div>
 				</form>
 			</Form>
