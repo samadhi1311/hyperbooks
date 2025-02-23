@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BillData } from '@/lib/types';
 import { useBillPaginationStore } from '@/store/use-bill-pagination';
-import NumberFlow from '@number-flow/react';
+import { useUserStore } from '@/store/use-user';
 import { ListRestartIcon } from 'lucide-react';
 
 export default function RecentBills() {
+	const { userData } = useUserStore();
 	const { documents, loading } = useBillPaginationStore();
 	const data = documents as BillData[];
 
@@ -31,8 +32,8 @@ export default function RecentBills() {
 					))
 				) : data.length > 0 ? (
 					data.slice(0, 5).map((doc, index) => (
-						<div className='flex items-center gap-4' key={index}>
-							<Avatar className='hidden h-9 w-9 sm:flex'>
+						<div className='flex items-start gap-4' key={index}>
+							<Avatar className='size-8'>
 								<AvatarFallback className='bg-muted text-muted-foreground'>
 									{doc.description
 										.split(' ')
@@ -42,6 +43,7 @@ export default function RecentBills() {
 								</AvatarFallback>
 							</Avatar>
 							<div className='grid gap-0.5'>
+								<span className='inline-block font-medium sm:hidden'>{userData?.currency + ' ' + doc.amount.toFixed(2)}</span>
 								<p className='w-[200px] truncate pb-px text-sm font-medium leading-none'>{doc.description}</p>
 								<p className='text-sm text-muted-foreground'>
 									{doc.createdAt?.toDate().toLocaleString('en-US', {
@@ -54,9 +56,7 @@ export default function RecentBills() {
 									})}
 								</p>
 							</div>
-							<div className='ml-auto font-medium'>
-								<NumberFlow value={doc.amount} format={{ style: 'currency', currency: 'LKR' }} />
-							</div>
+							<span className='ml-auto hidden font-medium sm:inline-block'>{userData?.currency + ' ' + doc.amount.toFixed(2)}</span>
 						</div>
 					))
 				) : (

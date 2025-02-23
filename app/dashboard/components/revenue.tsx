@@ -6,9 +6,11 @@ import NumberFlow from '@number-flow/react';
 import { useEffect, useState } from 'react';
 import { useAnalyticsStore } from '@/store/use-analytics';
 import { cn } from '@/lib/utils';
+import { useUserStore } from '@/store/use-user';
 
 export default function Revenue() {
 	const { analytics } = useAnalyticsStore();
+	const { userData } = useUserStore();
 	const [revenue, setRevenue] = useState(0);
 	const [outstanding, setOutstanding] = useState(0);
 	const [outstandingCount, setOutstandingCount] = useState(0);
@@ -28,9 +30,9 @@ export default function Revenue() {
 				<DollarSign className='h-4 w-4 text-muted-foreground' />
 			</CardHeader>
 			<CardContent>
-				<NumberFlow className='text-2xl font-bold' format={{ notation: 'standard', style: 'currency', currency: 'LKR' }} value={revenue} />
+				<NumberFlow className='text-2xl font-bold' format={{ style: 'currency', currency: 'LKR' }} value={revenue} />
 				<span className='flex items-center gap-2 text-sm text-muted-foreground'>
-					Outstanding: <NumberFlow className='text-sm text-muted-foreground' format={{ notation: 'standard', style: 'currency', currency: 'LKR' }} value={outstanding} />
+					Outstanding: {userData?.currency + ' ' + outstanding.toFixed(2)}
 					{outstandingCount > 1 ? <TrendingUpIcon className='h-4 w-4 text-muted-foreground' /> : <TrendingDownIcon className='h-4 w-4 text-muted-foreground' />}
 				</span>
 			</CardContent>
