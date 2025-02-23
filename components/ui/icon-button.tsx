@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { Button } from './button';
+import clsx from 'clsx';
 
 function IconButton({
 	className,
@@ -11,6 +12,7 @@ function IconButton({
 	type = 'button',
 	variant = 'default',
 	size = 'default',
+	disabled = false,
 }: {
 	className?: string;
 	children?: React.ReactNode;
@@ -19,10 +21,11 @@ function IconButton({
 	type?: 'button' | 'submit' | 'reset';
 	variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 	size?: 'default' | 'sm' | 'lg' | 'icon';
+	disabled?: boolean;
 }) {
 	return (
-		<Button className={cn('group flex items-center gap-3', className)} size={size} variant={variant} type={type} onClick={onClick}>
-			<span className='size-4 transition-all duration-300 group-hover:translate-x-1'>{icon}</span>
+		<Button className={cn('group flex items-center gap-3', className)} size={size} variant={variant} type={type} onClick={onClick} disabled={disabled}>
+			<span className={clsx('size-4 transition-all duration-300', !disabled && 'group-hover:translate-x-1')}>{icon}</span>
 			{children}
 		</Button>
 	);
