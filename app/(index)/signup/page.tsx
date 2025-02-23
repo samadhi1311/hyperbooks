@@ -73,7 +73,7 @@ export default function SignUp() {
 							/>
 
 							<div className='mt-4 flex w-full items-center justify-center'>
-								<IconButton type='submit' variant='secondary' icon={authLoading ? <Loader2Icon className='animate-spin' /> : <LogInIcon />}>
+								<IconButton type='submit' variant='secondary' icon={authLoading ? <Loader2Icon className='animate-spin' /> : <LogInIcon />} disabled={authLoading}>
 									Sign Up
 								</IconButton>
 							</div>
