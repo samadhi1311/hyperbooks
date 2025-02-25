@@ -8,15 +8,15 @@ function H1({ children, className, variant = 'base' }: Readonly<{ children: Reac
 		base: 'text-4xl md:text-5xl',
 		hero: 'text-5xl md:text-7xl',
 	}[variant];
-	return <h1 className={cn('font-semibold tracking-tighter leading-none', variants, className)}>{children}</h1>;
+	return <h1 className={cn('font-display font-light tracking-tight leading-none', variants, className)}>{children}</h1>;
 }
 
 function H2({ children, className }: Readonly<{ children: React.ReactNode; className?: string }>) {
-	return <h2 className={cn('text-2xl md:text-3xl font-semibold tracking-tight leading-none', className)}>{children}</h2>;
+	return <h2 className={cn('font-display text-2xl md:text-3xl font-light tracking-tight leading-none', className)}>{children}</h2>;
 }
 
 function H3({ children, className }: Readonly<{ children: React.ReactNode; className?: string }>) {
-	return <h3 className={cn('text-lg md:text-xl font-semibold tracking-normal leading-none', className)}>{children}</h3>;
+	return <h3 className={cn('font-display text-lg md:text-xl font-medium tracking-normal leading-none', className)}>{children}</h3>;
 }
 
 function P({ children, className, variant = 'base' }: Readonly<{ children: React.ReactNode; className?: string; variant?: 'sm' | 'base' | 'lg' }>) {
