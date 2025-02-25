@@ -16,7 +16,7 @@ export const useBillStore = create<BillStore>()(
 			clearBill: () => set({ bill: null }),
 		}),
 		{
-			name: 'bill-storage',
+			name: 'hyperbooks-bill-storage',
 			storage: {
 				getItem: (key) => {
 					const value = sessionStorage.getItem(key);
