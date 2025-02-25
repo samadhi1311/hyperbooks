@@ -16,7 +16,7 @@ export const useUserStore = create<UserStore>()(
 			clearUser: () => set({ userData: null }),
 		}),
 		{
-			name: 'user-storage',
+			name: 'hyperbooks-user-storage',
 			storage: {
 				getItem: (key) => {
 					const value = sessionStorage.getItem(key);
