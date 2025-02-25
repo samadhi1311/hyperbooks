@@ -15,17 +15,17 @@ export const useAnalyticsStore = create<AnalyticsStore>()(
 			clearAnalytics: () => set({ analytics: null }),
 		}),
 		{
-			name: 'analytics-storage',
+			name: 'hyperbooks-analytics-storage',
 			storage: {
 				getItem: (key) => {
-					const value = localStorage.getItem(key);
+					const value = sessionStorage.getItem(key);
 					return value ? JSON.parse(value) : null;
 				},
 				setItem: (key, value) => {
-					localStorage.setItem(key, JSON.stringify(value));
+					sessionStorage.setItem(key, JSON.stringify(value));
 				},
 				removeItem: (key) => {
-					localStorage.removeItem(key);
+					sessionStorage.removeItem(key);
 				},
 			},
 		}
