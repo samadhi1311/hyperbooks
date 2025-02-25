@@ -16,7 +16,7 @@ export const useProfileStore = create<ProfileStore>()(
 			clearProfile: () => set({ profile: null }),
 		}),
 		{
-			name: 'profile-storage',
+			name: 'hyperbooks-profile-storage',
 			storage: {
 				getItem: (key) => {
 					const value = sessionStorage.getItem(key);
