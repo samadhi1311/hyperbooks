@@ -17,26 +17,23 @@ import { useAnalyticsStore } from '@/store/use-analytics';
 export default function Dashboard() {
 	const { user, authLoading } = useAuth();
 	const { getUser, getProfile, getAnalytics } = useFirestore();
-	const { setUser } = useUserStore();
-	const { setProfile } = useProfileStore();
-	const { setAnalytics } = useAnalyticsStore();
+	const { userData } = useUserStore();
+	const { profile } = useProfileStore();
+	const { analytics } = useAnalyticsStore();
 
 	useEffect(() => {
 		async function fetchData() {
 			if (user?.uid) {
-				const userdata = await getUser();
-				if (userdata) {
-					setUser(userdata);
+				if (!analytics) {
+					await getAnalytics();
 				}
 
-				const profile = await getProfile();
-				if (profile) {
-					setProfile(profile);
+				if (!userData) {
+					await getUser();
 				}
 
-				const analytics = await getAnalytics();
-				if (analytics) {
-					setAnalytics(analytics);
+				if (!profile) {
+					await getProfile();
 				}
 			}
 		}
