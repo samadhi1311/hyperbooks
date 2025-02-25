@@ -82,7 +82,7 @@ export const useInvoiceStore = create<InvoiceStore>()(
 			resetInvoiceData: () => set({ invoiceData: defaultInvoiceData }),
 		}),
 		{
-			name: 'invoice-storage',
+			name: 'hyperbooks-invoice-storage',
 			partialize: (state) => ({
 				invoiceData: state.invoiceData,
 			}),
