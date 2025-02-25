@@ -21,9 +21,9 @@ export default function Features() {
 					<div className='pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-b from-neutral-200/50 to-transparent opacity-0 transition duration-200 group-hover/feature:opacity-100 dark:from-neutral-800/30' />
 				)}
 				<div className='relative z-10 mb-4 px-8 text-muted-foreground'>{icon}</div>
-				<div className='relative z-10 mb-4 px-8 text-lg font-bold'>
+				<div className='relative z-10 mb-4 px-8 text-lg font-medium text-foreground'>
 					<div className='absolute inset-y-0 left-0 h-6 w-1 origin-center rounded-br-full rounded-tr-full bg-neutral-300 transition-all duration-200 group-hover/feature:h-8 group-hover/feature:bg-violet-500 dark:bg-neutral-700' />
-					<h3 className='inline-block text-neutral-800 transition duration-200 group-hover/feature:translate-x-2 dark:text-neutral-100'>{title}</h3>
+					<h3 className='font-display inline-block text-neutral-800 transition duration-200 group-hover/feature:translate-x-2 dark:text-neutral-100'>{title}</h3>
 				</div>
 				<p className='relative z-10 px-8 text-sm text-muted-foreground'>{description}</p>
 			</div>
