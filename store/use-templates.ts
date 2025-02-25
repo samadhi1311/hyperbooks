@@ -2,13 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { TemplateKey } from '@/templates';
 
-// Store interface
 interface TemplateStore {
 	selectedTemplate: TemplateKey;
 	setTemplate: (template: TemplateKey) => void;
 }
 
-// Create Zustand store with persistence
 export const useTemplateStore = create<TemplateStore>()(
 	persist(
 		(set) => ({
@@ -16,7 +14,7 @@ export const useTemplateStore = create<TemplateStore>()(
 			setTemplate: (template) => set({ selectedTemplate: template }),
 		}),
 		{
-			name: 'pdf-template-storage', // localStorage key
+			name: 'hyperbooks-template-storage',
 			partialize: (state) => ({ selectedTemplate: state.selectedTemplate }),
 		}
 	)
