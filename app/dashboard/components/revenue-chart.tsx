@@ -92,7 +92,7 @@ export default function Chart() {
 				<div className='mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row'>
 					<div className='space-y-2'>
 						<div className='flex items-center gap-3 text-xl font-medium'>
-							<ChartColumnIncreasingIcon className='size-6' />
+							<ChartColumnIncreasingIcon className='size-5' />
 							Statistics
 						</div>
 						<div className='text-sm text-muted-foreground'>
