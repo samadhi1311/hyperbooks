@@ -7,10 +7,14 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/c
 import { ModeToggle } from './theme-toggle';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/use-user';
+import { Badge } from './ui/badge';
+import { TextShimmer } from './ui/text-shimmer';
 
 export function UserMenu() {
 	const { isMobile } = useSidebar();
 	const { user, logout } = useAuth();
+	const { userData } = useUserStore();
 	const router = useRouter();
 	if (!user) return null;
 	return (
@@ -36,6 +40,11 @@ export function UserMenu() {
 						align='end'
 						sideOffset={4}>
 						<DropdownMenuLabel className='p-0 font-normal'>
+							<div className='flex justify-end p-1'>
+								<Badge className='capitalize' variant='secondary'>
+									<TextShimmer duration={3}>{userData?.plan?.toString() || ''}</TextShimmer>
+								</Badge>
+							</div>
 							<div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
 								<Avatar className='flex size-8 items-center justify-center rounded-full border border-muted-foreground bg-muted'>
 									<AvatarImage className='size-6 object-contain' src={user.photoURL!} alt={user.displayName!} />
@@ -47,13 +56,17 @@ export function UserMenu() {
 								</div>
 							</div>
 						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem onClick={() => router.push('/dashboard/upgrade')}>
-								<Sparkles />
-								Upgrade to Pro
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
+						{userData?.plan === 'starter' && (
+							<>
+								<DropdownMenuSeparator />
+								<DropdownMenuGroup>
+									<DropdownMenuItem onClick={() => router.push('/dashboard/upgrade')}>
+										<Sparkles />
+										Upgrade to Pro
+									</DropdownMenuItem>
+								</DropdownMenuGroup>
+							</>
+						)}
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
