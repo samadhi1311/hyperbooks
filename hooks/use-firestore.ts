@@ -19,7 +19,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 	const { setProfile, clearProfile } = useProfileStore();
 	const { userData, setUser, clearUser } = useUserStore();
-	const { setAnalytics } = useAnalyticsStore();
+	const { setAnalytics, clearAnalytics } = useAnalyticsStore();
 
 	const { resetPagination } = useInvoicePagination({ userId: user?.uid || '', pageSize: 10 });
 	const { resetPagination: resetBillsPagination } = useBillsPagination({ userId: user?.uid || '', pageSize: 10 });
@@ -157,7 +157,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Commit batch updates
 			await batch.commit();
 
+			// Clear affected local cache
 			clearUser();
+			resetPagination();
+			clearAnalytics();
 
 			toast({
 				variant: 'success',
@@ -280,6 +283,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Extract user data
 			if (userDocSnap.exists()) {
 				const userData = userDocSnap.data() as UserData;
+				console.log(userData);
 				setUser(userData);
 			}
 
@@ -483,51 +487,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				title: 'Invoice Deleted',
 				description: 'Invoice successfully deleted from Firestore.',
 			});
-		} catch (err) {
-			const error = err as Error;
-			setError(error);
-			toast({
-				variant: 'destructive',
-				title: 'Error Deleting Invoice',
-				description: error.message,
-			});
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const getSubscriptionStatus = async () => {
-		if (!user) {
-			toast({
-				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to access your subscription.',
-			});
-			return null;
-		}
-
-		setLoading(true);
-		setError(null);
-
-		try {
-			const subscriptionDocRef = doc(db, 'users', user.uid);
-			const subscriptionDocSnap = await getDoc(subscriptionDocRef);
-
-			if (subscriptionDocSnap.exists()) {
-				const subscriptionData = subscriptionDocSnap.data();
-				const newUserData = {
-					...userData,
-					customerId: subscriptionData.customer_id,
-					tier: subscriptionData.subscription_status === 'active' ? 'pro' : 'starter',
-					subscriptionStatus: subscriptionData.subscription_status,
-					productId: subscriptionData.product_id,
-					priceId: subscriptionData.price_id,
-					validUntil: subscriptionData.scheduled_change,
-				} as UserData;
-				setUser(newUserData);
-
-				return newUserData;
-			}
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
@@ -802,5 +761,5 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getSubscriptionStatus, getProfile, updateProfile, getUser, updateUser, getAnalytics, loading, error };
+	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getProfile, updateProfile, getUser, updateUser, getAnalytics, loading, error };
 };
