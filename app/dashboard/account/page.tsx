@@ -182,7 +182,7 @@ export default function Settings() {
 				</div>
 
 				<div className='space-y-4'>
-					{userData?.subscription_status !== 'active' ? (
+					{userData?.subscription_status === 'active' ? (
 						<>
 							<H3 className='mb-1'>Manage Subscription</H3>
 							<IconButton icon={fetchingLink ? <Loader2Icon className='animate-spin' /> : <ShoppingCartIcon />} onClick={getPortalLink} disabled={fetchingLink}>
