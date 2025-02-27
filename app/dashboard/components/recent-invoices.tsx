@@ -7,11 +7,14 @@ import { InvoiceData } from '@/lib/types';
 import { usePaginationStore } from '@/store/use-pagination';
 import { useUserStore } from '@/store/use-user';
 import { ListRestartIcon } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
 
 export default function RecentInvoices() {
 	const { userData } = useUserStore();
 	const { documents, loading } = usePaginationStore();
 	const data = documents as InvoiceData[];
+
+	if (!data) return null;
 
 	return (
 		<Card className='relative z-10 h-full bg-background/60 shadow-md backdrop-blur-sm'>
@@ -47,15 +50,17 @@ export default function RecentInvoices() {
 							<div className='grid gap-0.5'>
 								<span className='inline-block font-medium sm:hidden'>{userData?.currency + ' ' + doc.total.toFixed(2)}</span>
 								<p className='w-[200px] truncate pb-px text-sm font-medium leading-none'>{doc.billedTo.name}</p>
-								<p className='text-sm text-muted-foreground'>
-									{doc.createdAt?.toDate().toLocaleString('en-US', {
-										year: 'numeric',
-										month: 'short',
-										day: 'numeric',
-										hour: '2-digit',
-										minute: '2-digit',
-										hour12: true,
-									})}
+								<p className='text-xs text-muted-foreground'>
+									{doc.createdAt && Timestamp.prototype.isPrototypeOf(doc.createdAt)
+										? doc.createdAt.toDate().toLocaleString('en-US', {
+												year: 'numeric',
+												month: 'short',
+												day: 'numeric',
+												hour: '2-digit',
+												minute: '2-digit',
+												hour12: true,
+										  })
+										: 'Date not available'}
 								</p>
 							</div>
 							<span className='ml-auto hidden font-medium sm:inline-block'>{userData?.currency + ' ' + doc.total.toFixed(2)}</span>
