@@ -5,6 +5,7 @@ import { BillData } from '@/lib/types';
 import { useBillPaginationStore } from '@/store/use-bill-pagination';
 import { useUserStore } from '@/store/use-user';
 import { ListRestartIcon } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
 
 export default function RecentBills() {
 	const { userData } = useUserStore();
@@ -45,15 +46,17 @@ export default function RecentBills() {
 							<div className='grid gap-0.5'>
 								<span className='inline-block font-medium sm:hidden'>{userData?.currency + ' ' + doc.amount.toFixed(2)}</span>
 								<p className='w-[200px] truncate pb-px text-sm font-medium leading-none'>{doc.description}</p>
-								<p className='text-sm text-muted-foreground'>
-									{doc.createdAt?.toDate().toLocaleString('en-US', {
-										year: 'numeric',
-										month: 'short',
-										day: 'numeric',
-										hour: '2-digit',
-										minute: '2-digit',
-										hour12: true,
-									})}
+								<p className='text-xs text-muted-foreground'>
+									{doc.createdAt && Timestamp.prototype.isPrototypeOf(doc.createdAt)
+										? doc.createdAt.toDate().toLocaleString('en-US', {
+												year: 'numeric',
+												month: 'short',
+												day: 'numeric',
+												hour: '2-digit',
+												minute: '2-digit',
+												hour12: true,
+										  })
+										: 'Date not available'}
 								</p>
 							</div>
 							<span className='ml-auto hidden font-medium sm:inline-block'>{userData?.currency + ' ' + doc.amount.toFixed(2)}</span>
