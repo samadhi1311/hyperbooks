@@ -10,12 +10,6 @@ type UserData = {
 	email: string;
 	currency?: string;
 
-	totalIncome?: number;
-	totalRevenue?: number;
-	totalInvoiceCount?: number;
-	totalOutstandingCount?: number;
-	totalOutstandingAmount?: number;
-
 	plan?: Plan;
 	customer_id?: string;
 	price_id?: string;
