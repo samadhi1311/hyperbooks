@@ -7,8 +7,9 @@ import { format, subDays } from 'date-fns';
 import { ChartColumnIncreasingIcon, Loader2Icon } from 'lucide-react';
 import { useAnalyticsStore } from '@/store/use-analytics';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { memo } from 'react';
 
-export default function Chart() {
+function Chart() {
 	const [selectedPeriod, setSelectedPeriod] = useState('lastMonth');
 	const [chartData, setChartData] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -179,3 +180,5 @@ export default function Chart() {
 		</div>
 	);
 }
+
+export default memo(Chart);
