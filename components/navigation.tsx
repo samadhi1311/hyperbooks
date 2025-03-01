@@ -50,7 +50,7 @@ export default function Navigation() {
 
 	return (
 		<motion.header
-			className='fixed top-0 z-50 w-full border-b border-border px-8 py-4 opacity-0 backdrop-blur-md'
+			className='fixed top-0 z-50 w-full border-b border-foreground/10 px-4 py-2 opacity-0 backdrop-blur-md md:px-8 md:py-4'
 			initial={{ y: -100, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ duration: hasAnimated ? 0.5 : 1, ease: [0.215, 0.61, 0.355, 1], delay: hasAnimated ? 0 : 1.5 }}
@@ -85,7 +85,7 @@ export default function Navigation() {
 							<SheetHeader>
 								<SheetTitle className='flex flex-col items-center gap-2'>
 									<Badge className='w-fit'>Early Access</Badge>
-									Invoice Generator
+									hyperbooks.
 								</SheetTitle>
 								<SheetDescription asChild></SheetDescription>
 							</SheetHeader>
