@@ -13,11 +13,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<Sidebar {...props}>
-			<SidebarHeader>
+			<SidebarHeader className='hidden md:block'>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<Card>
-							<CardContent className='flex h-full w-full flex-col items-center justify-center gap-4 p-6'>
+						<Card className='sm:pt-4 md:pt-6'>
+							<CardContent className='flex h-full w-full flex-col items-center justify-center gap-4'>
 								<img src='/logo.svg' alt='hyperreal logo' className='mr-2 size-5' />
 								<P className='font-medium tracking-tight text-muted-foreground'>hyperbooks.</P>
 							</CardContent>
