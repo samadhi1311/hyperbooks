@@ -141,7 +141,7 @@ const Sidebar = React.forwardRef<
 
 	if (collapsible === 'none') {
 		return (
-			<div className={cn('flex h-full w-[--sidebar-width] flex-col bg-sidebar/50 text-sidebar-foreground backdrop-blur-md', className)} ref={ref} {...props}>
+			<div className={cn('flex h-full w-[--sidebar-width] flex-col bg-sidebar sm:bg-sidebar/50 text-sidebar-foreground backdrop-blur-none sm:backdrop-blur-md', className)} ref={ref} {...props}>
 				{children}
 			</div>
 		);
@@ -156,7 +156,7 @@ const Sidebar = React.forwardRef<
 					data-sidebar='sidebar'
 					data-mobile='true'
 					aria-describedby=''
-					className='w-[--sidebar-width] bg-sidebar/50 p-0 text-sidebar-foreground [&>button]:hidden backdrop-blur-md'
+					className='w-[--sidebar-width] bg-sidebar sm:bg-sidebar/50 p-0 text-sidebar-foreground [&>button]:hidden backdrop-blur-none sm:backdrop-blur-md'
 					style={
 						{
 							'--sidebar-width': SIDEBAR_WIDTH_MOBILE,
