@@ -10,10 +10,12 @@ import { FlaskConicalIcon, MousePointerClickIcon } from 'lucide-react';
 import { stagger, useAnimate } from 'motion/react';
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 
 export default function Hero() {
 	const [scope, animate] = useAnimate();
-	const description = 'Your Invoicing, Simplified.'.split('');
+	const { theme } = useTheme();
+	const description = 'Smart, simple and stress-free bookkeeping.';
 
 	useEffect(() => {
 		const hasAnimated = sessionStorage.getItem('heroAnimated');
@@ -41,43 +43,44 @@ export default function Hero() {
 	}, []);
 
 	return (
-		<Section ref={scope} className='relative grid h-svh w-full place-items-center'>
-			<div className='space-y-16 text-center'>
-				<div className='flex flex-col gap-8'>
-					<div className='hyperbooks-hero mx-auto w-fit rounded-full border border-border bg-background px-2 py-1 text-sm opacity-0'>
-						<AnimatedShinyText className='inline-flex items-center justify-center gap-2 px-4 py-1'>
+		<Section ref={scope} className='relative grid w-full place-items-center'>
+			<div className='mt-8 space-y-16 text-center sm:mt-32'>
+				<div className='mx-auto flex max-w-screen-lg flex-col gap-6 md:gap-8'>
+					<div className='hyperbooks-hero mx-auto w-fit rounded-full border border-border bg-foreground/5 px-2 py-1 text-sm opacity-0 backdrop-blur-md'>
+						<AnimatedShinyText className='inline-flex items-center justify-center gap-2 px-4 py-1 text-sm text-muted-foreground md:text-base'>
 							<span>
-								<FlaskConicalIcon className='size-4 text-muted-foreground/70' />
+								<FlaskConicalIcon className='size-4' />
 							</span>
-							<hr className='mx-2 h-4 w-px shrink-0 bg-muted-foreground/50' />
+							<hr className='mx-2 h-4 w-px shrink-0 bg-muted-foreground' />
 							Early Access
 						</AnimatedShinyText>
 					</div>
 
-					<h1 className='font-display overflow-y-clip text-5xl font-light leading-none tracking-tighter text-foreground md:text-7xl'>
-						{description.map((char, index) => (
-							<span key={index} className='hyperbooks-hero-title inline-block whitespace-pre py-2.5 opacity-0'>
-								{char}
+					<h1 className='font-display text-3xl font-light tracking-tighter text-foreground md:text-5xl xl:text-7xl'>
+						{description.split(' ').map((char, index) => (
+							<span key={index} className='hyperbooks-hero-title inline-block whitespace-pre opacity-0'>
+								{char + ' '}
 							</span>
 						))}
 					</h1>
-					<P variant='lg' className='hyperbooks-hero mx-auto max-w-md text-muted-foreground opacity-0'>
-						Create, manage, and export professional invoices in seconds—anytime, anywhere.
+					<P className='hyperbooks-hero mx-auto max-w-screen-sm text-sm text-muted-foreground opacity-0 md:text-base'>
+						Whether you’re an individual, freelancer, a business owner, or just need a better way to track your money, hyperbooks make it effortless.
 					</P>
 				</div>
 
-				<div className='hyperbooks-hero group mt-8 flex flex-col items-center gap-8 opacity-0'>
-					<Link href='/dashboard' className='group'>
-						<RainbowButton className='w-auto font-semibold'>
-							<MousePointerClickIcon className='eas mr-3 size-6 scale-x-[-1] transition-transform duration-200 group-hover:translate-x-1' />
+				<div className='hyperbooks-hero group mt-8 flex flex-col items-center gap-16 opacity-0'>
+					<Link href='/dashboard' className='group flex items-center pb-4 md:overflow-hidden md:pb-10'>
+						<RainbowButton className='w-auto overflow-x-clip text-sm font-semibold md:text-base'>
+							<MousePointerClickIcon className='mr-3 size-6 scale-x-[-1] transition-transform duration-200 group-hover:translate-x-1' />
 							Get Started
 						</RainbowButton>
 					</Link>
-					<span>
-						<P variant='sm' className='font-normal text-muted-foreground/60'>
-							No credit card required.
-						</P>
-					</span>
+
+					<img
+						src={theme === 'dark' ? 'dashboard-dark.png' : 'dashboard-light.png'}
+						className='skew-y-6 scale-90 transform-gpu rounded-lg border border-border drop-shadow-2xl filter transition-transform duration-300 hover:skew-y-0 hover:scale-100'
+						alt='hyperbooks dashboard'
+					/>
 				</div>
 			</div>
 
