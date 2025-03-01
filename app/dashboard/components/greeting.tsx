@@ -20,14 +20,14 @@ export default function Greeting() {
 	}
 
 	return (
-		<Card className='relative z-10 bg-background/60 shadow-md backdrop-blur-sm'>
-			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-				<CardTitle className='text-sm font-medium'>{greeting}</CardTitle>
-				<HeartHandshakeIcon className='h-4 w-4 text-muted-foreground' />
+		<Card className='relative z-10 bg-background/60 shadow-none backdrop-blur-none sm:shadow-md sm:backdrop-blur-sm'>
+			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-0 md:pb-2'>
+				<CardTitle className='text-xs font-medium md:text-sm'>{greeting}</CardTitle>
+				<HeartHandshakeIcon className='size-3 text-muted-foreground md:size-4' />
 			</CardHeader>
 			<CardContent>
-				<div className='bg-gradient-to-r from-violet-500 to-orange-400 bg-clip-text text-2xl font-bold text-transparent dark:to-orange-300'>{user?.displayName}</div>
-				<p className='text-sm text-muted-foreground'>Welcome to your hyperbooks dashboard.</p>
+				<div className='bg-gradient-to-r from-violet-500 to-orange-400 bg-clip-text text-base font-bold text-transparent dark:to-orange-300 md:text-2xl'>{user?.displayName}</div>
+				<p className='text-xs text-muted-foreground md:text-sm'>Welcome to your hyperbooks dashboard.</p>
 			</CardContent>
 		</Card>
 	);
