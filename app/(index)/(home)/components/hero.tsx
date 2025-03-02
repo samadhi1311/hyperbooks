@@ -15,7 +15,7 @@ export default function Hero() {
 	const [scope, animate] = useAnimate();
 	const { theme } = useTheme();
 	const dashboardRef = useRef<HTMLDivElement>(null);
-	const description = 'Smart, simple and stress-free bookkeeping.';
+	const description = 'Smart, simple & stress-free bookkeeping.';
 
 	useEffect(() => {
 		const hasAnimated = sessionStorage.getItem('heroAnimated');
@@ -76,7 +76,7 @@ export default function Hero() {
 	}, []);
 
 	return (
-		<section ref={scope} className='relative grid w-full place-items-center'>
+		<section ref={scope} className='relative grid w-full place-items-center pb-8 md:pb-12 lg:pb-16'>
 			<div className='mt-24 flex flex-col gap-8 text-center md:mt-32'>
 				<div className='mx-auto flex max-w-screen-lg flex-col gap-8'>
 					<div className='hyperbooks-hero mx-auto w-fit rounded-full border border-border bg-muted text-sm opacity-0 md:px-2 md:py-1'>
@@ -97,7 +97,8 @@ export default function Hero() {
 						))}
 					</h1>
 					<P className='hyperbooks-hero mx-auto max-w-screen-sm text-sm text-muted-foreground opacity-0 md:text-base'>
-						Whether you’re an individual, freelancer, a business owner, or just need a better way to track your money, hyperbooks make it effortless.
+						Whether you&apos;re a freelancer, business owner, or just someone trying to get your finances in order, <span className='font-semibold'>hyperbooks</span> makes tracking your
+						money easy — and even enjoyable.
 					</P>
 				</div>
 
@@ -109,7 +110,7 @@ export default function Hero() {
 						</RainbowButton>
 					</Link>
 
-					<div ref={dashboardRef} className='transform-gpu overflow-hidden rounded transition-transform duration-300 ease-out md:aspect-video'>
+					<div ref={dashboardRef} className='transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out md:aspect-video'>
 						<img src={theme === 'dark' ? 'dashboard-dark.png' : 'dashboard-light.png'} alt='hyperbooks dashboard' />
 					</div>
 				</div>
