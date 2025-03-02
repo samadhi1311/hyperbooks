@@ -17,7 +17,7 @@ function PageWrapper({ children, className }: { children: React.ReactNode; class
 
 function Section({ children, className, variant = 'normal', ref }: { children: React.ReactNode; className?: string; variant?: 'normal' | 'main'; ref?: React.Ref<HTMLDivElement> }) {
 	const variants = {
-		normal: 'py-16',
+		normal: 'py-8 md:py-16',
 		main: 'py-0',
 	}[variant];
 	return (
