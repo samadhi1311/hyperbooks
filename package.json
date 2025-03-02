@@ -40,7 +40,7 @@
 		"firebase-admin": "^13.0.2",
 		"lucide-react": "^0.468.0",
 		"motion": "^11.15.0",
-		"next": "15.1.6",
+		"next": "15.2.0",
 		"next-themes": "^0.4.4",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
