@@ -64,7 +64,6 @@ export default function Navigation() {
 				</span>
 
 				<span className='hidden space-x-12 md:inline'>
-					<A href='/#'>Templates</A>
 					<A href='/#features'>Features</A>
 					<A href='/#pricing'>Pricing</A>
 				</span>
@@ -91,7 +90,6 @@ export default function Navigation() {
 							</SheetHeader>
 
 							<div className='flex flex-col items-center gap-8'>
-								<A href='/#'>Templates</A>
 								<A href='/#'>Features</A>
 								<A href='/#'>Pricing</A>
 							</div>
@@ -99,9 +97,9 @@ export default function Navigation() {
 							<div className='flex flex-col gap-8'></div>
 
 							<SheetFooter>
-								<div className='flex w-full flex-col items-center justify-center gap-8'>
+								<div className='flex w-full flex-1 flex-col items-center justify-center gap-8'>
 									<AuthButton />
-									<ModeToggle />
+									<ModeToggle variant='secondary' />
 								</div>
 							</SheetFooter>
 						</SheetContent>
