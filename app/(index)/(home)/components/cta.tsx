@@ -8,11 +8,9 @@ import { SquareDashedMousePointerIcon } from 'lucide-react';
 export default function CTA() {
 	return (
 		<Section className='relative'>
-			<div className='flex flex-col items-center gap-4 py-8'>
-				<H2>Start Creating Beautiful Invoices Today!</H2>
-				<P className='max-w-2xl text-center text-muted-foreground'>
-					Take the stress out of invoicing with our simple yet powerful tools. Sign up today and make your billing as polished as your business!
-				</P>
+			<div className='flex flex-col items-center gap-4 py-8 text-center lg:py-16'>
+				<H2>Start Tracking Smarter — Join hyperbooks Today!</H2>
+				<P className='max-w-2xl text-muted-foreground'>It’s free to get started. What are you waiting for?</P>
 				<IconButton variant='secondary' className='mt-4' icon={<SquareDashedMousePointerIcon className='scale-x-[-1]' />}>
 					Get Started
 				</IconButton>
