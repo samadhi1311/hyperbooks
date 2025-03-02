@@ -5,6 +5,7 @@ const env = process.env.NEXT_CONFIG_ENV || 'production';
 const config: Record<string, Partial<NextConfig>> = {
 	development: {
 		output: 'export',
+		devIndicators: false,
 	},
 	production: {
 		output: 'export',
