@@ -149,15 +149,15 @@ export default function Settings() {
 									<FormItem>
 										<FormLabel>Avatar</FormLabel>
 										<FormControl>
-											<div {...field} className='grid-col-3 grid gap-2 md:grid-cols-6'>
+											<div {...field} className='grid grid-cols-3 place-items-center gap-6 md:grid-cols-6'>
 												{avatars.map((avatar) => (
 													<div
 														key={avatar.id}
 														onClick={() => field.onChange(avatar.id)}
-														className={`flex size-20 items-center justify-center rounded-full transition-all border-2 duration-200 ${
+														className={`flex aspect-square size-12 md:size-20 items-center justify-center rounded-full transition-all border-2 duration-200 ${
 															field.value === avatar.id ? 'border-sidebar-ring bg-foreground' : 'border-input bg-transparent'
 														}`}>
-														<img src={avatar.url} alt={`Avatar ${avatar.id}`} className='size-16 object-contain' />
+														<img src={avatar.url} alt={`Avatar ${avatar.id}`} className='size-8 object-contain md:size-16' />
 													</div>
 												))}
 											</div>
@@ -175,34 +175,35 @@ export default function Settings() {
 					</Form>
 				</div>
 
-				<div className='space-y-4'>
+				<div className='flex flex-col gap-3 md:gap-4'>
 					<H3 className='mb-1'>Change Password</H3>
 					<IconButton icon={<KeySquareIcon />}>Reset Password</IconButton>
 					<Label className='text-muted-foreground'>To update/reset your current password, click the button above and follow the instructions.</Label>
 				</div>
 
-				<div className='space-y-4'>
+				<>
 					{userData?.subscription_status === 'active' ? (
-						<>
+						<div className='flex flex-col gap-3 md:gap-4'>
 							<H3 className='mb-1'>Manage Subscription</H3>
 							<IconButton icon={fetchingLink ? <Loader2Icon className='animate-spin' /> : <ShoppingCartIcon />} onClick={getPortalLink} disabled={fetchingLink}>
 								{fetchingLink ? 'Loading' : 'Open Customer Portal'}
 							</IconButton>
 							<Label className='text-muted-foreground'>To manage your current subscription, click the button above and follow the instructions.</Label>
-						</>
+						</div>
 					) : (
-						<>
+						<div className='flex flex-col gap-3 md:gap-4'>
 							<H3 className='mb-1'>Upgrade to Pro or Ultimate</H3>
 							<Link href='/dashboard/upgrade'>
 								<IconButton icon={<ShoppingCartIcon />} className='flex max-w-fit items-center gap-2'>
 									View Plans
 								</IconButton>
 							</Link>
-						</>
+							<Label className='text-muted-foreground'>Upgrade your plan and receive more features.</Label>
+						</div>
 					)}
-				</div>
+				</>
 
-				<div className='flex flex-col gap-4'>
+				<div className='flex flex-col gap-3 md:gap-4'>
 					<H3 className='mb-1'>App Settings</H3>
 					<Form {...appForm}>
 						<form onSubmit={appForm.handleSubmit(appOnSubmit)} className='space-y-4'>
