@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Installer } from '@/components/installer';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
@@ -38,7 +39,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 							</Breadcrumb>
 						</div>
 					</header>
-					<div className='max-w-[100svw]'>{children}</div>
+					<div className='max-w-[100svw]'>
+						<Installer />
+						{children}
+					</div>
 				</SidebarInset>
 				<div className='hyperbooks-gradient-blob-1 pointer-events-none absolute right-0 top-0 aspect-square w-1/2 opacity-100 dark:opacity-10 md:left-0 md:w-1/3 md:opacity-20' aria-hidden />
 				<div
