@@ -10,12 +10,14 @@ import { stagger, useAnimate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Hero() {
 	const [scope, animate] = useAnimate();
 	const { theme } = useTheme();
 	const dashboardRef = useRef<HTMLDivElement>(null);
 	const description = 'Smart, simple & stress-free bookkeeping.';
+	const isMobile = useIsMobile();
 
 	useEffect(() => {
 		const hasAnimated = sessionStorage.getItem('heroAnimated');
@@ -110,9 +112,15 @@ export default function Hero() {
 						</RainbowButton>
 					</Link>
 
-					<div ref={dashboardRef} className='transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out md:aspect-video'>
-						<img src={theme === 'dark' ? 'dashboard-dark.png' : 'dashboard-light.png'} alt='hyperbooks dashboard' />
-					</div>
+					{isMobile ? (
+						<div ref={dashboardRef} className='aspect-auto transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
+							<img src={theme === 'dark' ? 'dashboard-mobile-dark.png' : 'dashboard-mobile-light.png'} alt='hyperbooks dashboard' />
+						</div>
+					) : (
+						<div ref={dashboardRef} className='aspect-video transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
+							<img src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'} alt='hyperbooks dashboard' />
+						</div>
+					)}
 				</div>
 			</div>
 
