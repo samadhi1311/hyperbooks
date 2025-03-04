@@ -27,7 +27,9 @@ export default function Greeting() {
 			</CardHeader>
 			<CardContent>
 				<div className='bg-gradient-to-r from-violet-500 to-orange-400 bg-clip-text text-base font-bold text-transparent dark:to-orange-300 md:text-2xl'>{user?.displayName}</div>
-				<p className='text-xs text-muted-foreground md:text-sm'>Welcome to your hyperbooks dashboard.</p>
+				<p className='text-xs text-muted-foreground md:text-sm'>
+					Welcome back to <span className='hidden md:inline-block'>your hyperbooks</span> dashboard.
+				</p>
 			</CardContent>
 		</Card>
 	);
