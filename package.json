@@ -4,6 +4,16 @@
 		"name": "Samadhi Gunasinghe",
 		"url": "https://hyperreal.cloud"
 	},
+	"contributors": [
+		{
+			"name": "Samadhi Gunasinghe",
+			"url": "https://samadhi-gunasinghe.com"
+		},
+		{
+			"name": "Nipuni Gamage",
+			"url": "https://nipuni.is-a.dev"
+		}
+	],
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
