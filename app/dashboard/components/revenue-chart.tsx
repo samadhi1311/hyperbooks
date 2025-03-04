@@ -88,8 +88,8 @@ function Chart() {
 	} satisfies ChartConfig;
 
 	return (
-		<div className='h-full rounded-lg bg-gradient-to-br from-orange-200/20 via-muted/80 to-violet-300/20 p-px'>
-			<div className='z-10 flex h-full min-h-[300px] w-full flex-col justify-between overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
+		<div className='h-full w-full rounded-lg bg-gradient-to-br from-border to-border p-px xl:from-orange-200/20 xl:via-muted/80 xl:to-violet-300/20'>
+			<div className='z-10 flex h-full min-h-[200px] w-full flex-col justify-between overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
 				<div className='mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row'>
 					<div className='space-y-2'>
 						<div className='flex items-center gap-3 text-xl font-medium'>
@@ -119,8 +119,8 @@ function Chart() {
 					</div>
 				</div>
 				<div className='relative'>
-					<ChartContainer config={chartConfig} className='h-full min-h-[400px] w-full'>
-						<AreaChart accessibilityLayer data={chartData} className='h-full'>
+					<ChartContainer config={chartConfig} className='h-full min-h-[200px] w-full'>
+						<AreaChart accessibilityLayer data={chartData} className='h-full w-full'>
 							<CartesianGrid vertical={false} />
 							<XAxis dataKey='date' tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
 							<ChartTooltip
