@@ -50,15 +50,14 @@ export default function Dashboard() {
 					<Outstanding />
 					<Invoices />
 				</div>
-				<div className='grid h-full grid-cols-1 grid-rows-1 gap-2 md:gap-8 xl:grid-cols-5 xl:grid-rows-2 xl:gap-y-8 2xl:grid-cols-3'>
-					<div className='h-full xl:col-span-3 xl:row-span-2 2xl:col-span-2'>
+				<div className='grid grid-cols-1 grid-rows-2 gap-4 md:grid-cols-2 xl:grid-cols-5'>
+					<div className='col-span-1 row-span-1 md:col-span-2 xl:col-span-3 xl:row-span-2'>
 						<Chart />
 					</div>
-
-					<div className='xl:col-span-2 2xl:col-span-1'>
+					<div className='col-span-1 row-span-2 md:col-span-1 xl:col-span-2 xl:row-span-1'>
 						<RecentInvoices />
 					</div>
-					<div className='xl:col-span-2 2xl:col-span-1'>
+					<div className='col-span-1 row-span-2 md:col-span-1 xl:col-span-2 xl:row-span-1'>
 						<RecentBills />
 					</div>
 				</div>
