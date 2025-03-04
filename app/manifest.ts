@@ -9,9 +9,14 @@ export default function manifest(): MetadataRoute.Manifest {
 		description: 'Smart, simple & stress-free bookkeeping.',
 		start_url: '/dashboard',
 		display: 'fullscreen',
-		background_color: '#ffffff',
-		theme_color: '#000000',
+		background_color: '#252525',
+		theme_color: '#252525',
 		icons: [
+			{
+				src: '/favicon.ico',
+				sizes: '64x64',
+				type: 'image/x-icon',
+			},
 			{
 				src: '/logo-192.png',
 				sizes: '192x192',
