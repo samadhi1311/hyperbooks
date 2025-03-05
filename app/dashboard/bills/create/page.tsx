@@ -2,7 +2,7 @@
 
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown, Loader2Icon, SendHorizonalIcon, UndoDotIcon } from 'lucide-react';
+import { Check, ChevronsUpDown, Loader2Icon, SendHorizonalIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,7 @@ import { PrefixedInput } from '@/components/prefixed-input';
 import { useBillStore } from '@/store/use-bill';
 import { useFirestore } from '@/hooks/use-firestore';
 import { IconButton } from '@/components/ui/icon-button';
+import { DialogTitle } from '@/components/ui/dialog';
 
 const FormSchema = z.object({
 	description: z
@@ -139,26 +140,25 @@ export default function CreateBill() {
 							)}
 						/>
 
-						<div className='flex items-center gap-4 pt-8'>
+						<div className='flex flex-col items-center gap-4 pt-8 md:flex-row'>
 							<IconButton type='submit' size='lg' icon={loading ? <Loader2Icon className='animate-spin' /> : <SendHorizonalIcon />} disabled={loading}>
 								Create Expense
 							</IconButton>
 
-							<IconButton
+							<Button
 								type='button'
 								size='lg'
 								variant='ghost'
-								icon={<UndoDotIcon />}
 								onClick={() => {
 									form.reset({
 										description: '',
 										category: '',
-										amount: undefined, // or 0 if you want a numeric fallback
+										amount: undefined,
 									});
 									clearBill();
 								}}>
 								Reset Form
-							</IconButton>
+							</Button>
 						</div>
 					</form>
 				</Form>
@@ -172,6 +172,7 @@ function CategoryList({ setOpen, form }: { setOpen: (open: boolean) => void; for
 		<Command>
 			<CommandInput placeholder='Search category...' />
 			<CommandList>
+				<DialogTitle className='sr-only'>Select category</DialogTitle>
 				<CommandEmpty>No category found.</CommandEmpty>
 				<CommandGroup>
 					{expenseCategories.map((category) => (
