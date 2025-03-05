@@ -92,16 +92,16 @@ function Chart() {
 			<div className='z-10 flex h-full min-h-[200px] w-full flex-col justify-between overflow-hidden rounded-lg bg-background/90 p-4 shadow-xl md:p-6 lg:p-8'>
 				<div className='mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row'>
 					<div className='space-y-2'>
-						<div className='flex items-center gap-3 text-xl font-medium'>
-							<ChartColumnIncreasingIcon className='size-5' />
+						<div className='flex items-center gap-3 text-sm font-medium md:text-base'>
+							<ChartColumnIncreasingIcon className='size-4 md:size-5' />
 							Statistics
 						</div>
-						<div className='text-sm text-muted-foreground'>
+						<div className='text-xs text-muted-foreground md:text-sm'>
 							Your income and expenses in the
 							{selectedPeriod === 'lastWeek' ? ' last week' : ''}
 							{selectedPeriod === 'lastTwoWeeks' ? ' last two weeks' : ''}
 							{selectedPeriod === 'lastMonth' ? ' last month' : ''}
-							{selectedPeriod === 'allTime' ? ' all time' : ''}
+							{selectedPeriod === 'allTime' ? ' all time' : ''}.
 						</div>
 					</div>
 					<div>
