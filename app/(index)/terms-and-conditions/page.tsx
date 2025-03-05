@@ -8,7 +8,7 @@ export default function TermsAndConditions() {
 				<div className='space-y-4 text-center'>
 					<H1>Terms and Conditions</H1>
 					<P className='text-muted-foreground' variant='sm'>
-						Last updated: 22 <sup>st</sup> February, 2025
+						Last updated: 5 <sup>th</sup> March, 2025
 					</P>
 				</div>
 
@@ -56,7 +56,10 @@ export default function TermsAndConditions() {
 					<H2>Subscription and Refund Policy</H2>
 					<ul className='list-inside list-disc pl-8'>
 						<li>The Service operates on a subscription model.</li>
-						<li>We do not offer refunds for subscription payments.</li>
+						<li>
+							Our order process is conducted by our online reseller <A href='https://paddle.com'>Paddle.com</A>. Paddle.com is the Merchant of Record for all our orders. Paddle provides
+							all customer service inquiries and handles returns.
+						</li>
 						<li>You may cancel your subscription anytime via the account settings page. Cancellation prevents future charges but does not provide refunds for prior payments.</li>
 					</ul>
 				</div>
