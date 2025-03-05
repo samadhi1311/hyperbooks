@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 		url: 'https://hyperbooks.app',
 		images: [
 			{
-				url: 'https://hyperbooks.app/og-image.jpg',
+				url: 'https://hyperbooks.app/og-image.png',
 				width: 1200,
 				height: 630,
 				alt: 'Bookkeeping Dashboard Preview',
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
 		card: 'summary_large_image',
 		title: 'hyperbooks. | Smart, simple & stress-free bookkeeping.',
 		description: 'Simplify your bookkeeping with real-time insights, secure data storage, and professional invoicing. Access your finances anytime, anywhere.',
-		images: ['https://hyperbooks.app/twitter-image.jpg'],
+		images: ['https://hyperbooks.app/og-image.jpng'],
 	},
 };
 
