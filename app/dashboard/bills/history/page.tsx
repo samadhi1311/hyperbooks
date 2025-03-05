@@ -24,7 +24,7 @@ export default function History() {
 	return (
 		<PageWrapper>
 			<Section>
-				<H2 className='mb-4'>History</H2>
+				<H2 className='mb-4'>Your past expenses</H2>
 				<DataTable columns={columns({ deleteBill })} data={data} fetchNextPage={fetchNextPage} hasMore={hasMore} loading={loading} billLoading={billLoading} />
 			</Section>
 		</PageWrapper>
