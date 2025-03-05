@@ -36,7 +36,7 @@ export default function History() {
 	return (
 		<PageWrapper>
 			<Section>
-				<H2 className='mb-4'>History</H2>
+				<H2 className='mb-4'>Your past income</H2>
 				<DataTable
 					columns={columns({ expandedRow, toggleRow, profile, selectedTemplate, toast, updateStatus, deleteInvoice })}
 					data={data}
