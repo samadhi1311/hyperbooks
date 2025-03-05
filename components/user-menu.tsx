@@ -35,7 +35,7 @@ export function UserMenu() {
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-muted/10 backdrop-blur-none sm:backdrop-blur-md'
+						className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-background backdrop-blur-none sm:bg-muted/10 sm:backdrop-blur-md'
 						side={isMobile ? 'bottom' : 'right'}
 						align='end'
 						sideOffset={4}>
