@@ -43,8 +43,8 @@ export default function RecentInvoices() {
 	return (
 		<Card className='relative z-10 h-full bg-background/60 shadow-none backdrop-blur-none sm:shadow-md sm:backdrop-blur-sm'>
 			<CardHeader>
-				<CardTitle className='flex items-center gap-3 text-base text-muted-foreground'>
-					<ListRestartIcon className='size-5' />
+				<CardTitle className='flex items-center gap-3 text-sm text-muted-foreground md:text-base'>
+					<ListRestartIcon className='size-4 md:size-5' />
 					Recent Invoices
 				</CardTitle>
 			</CardHeader>
@@ -61,16 +61,16 @@ export default function RecentInvoices() {
 					))
 				) : data.length > 0 ? (
 					memoizedData.map((doc, index) => (
-						<div className='flex items-start gap-4' key={index}>
+						<div className='flex items-center gap-4 md:items-start' key={index}>
 							<Avatar className='size-8'>
-								<AvatarFallback className='bg-muted text-muted-foreground'>{doc.initials}</AvatarFallback>
+								<AvatarFallback className='bg-muted text-sm text-muted-foreground md:text-base'>{doc.initials}</AvatarFallback>
 							</Avatar>
 							<div className='grid gap-0.5'>
-								<span className='inline-block font-medium sm:hidden'>{userData?.currency + ' ' + doc.total.toFixed(2)}</span>
-								<p className='w-[200px] truncate pb-px text-sm font-medium leading-none'>{doc.billedTo.name}</p>
+								<span className='inline-block text-sm font-medium xl:hidden'>{userData?.currency + ' ' + doc.total.toFixed(2)}</span>
+								<p className='w-[200px] truncate pb-px text-xs font-medium leading-none text-muted-foreground md:text-sm xl:text-foreground'>{doc.billedTo.name}</p>
 								<p className='text-xs text-muted-foreground'>{doc.formattedDate}</p>
 							</div>
-							<span className='ml-auto hidden font-medium sm:inline-block'>{userData?.currency + ' ' + doc.total.toFixed(2)}</span>
+							<span className='ml-auto hidden font-medium xl:inline-block'>{userData?.currency + ' ' + doc.total.toFixed(2)}</span>
 						</div>
 					))
 				) : (
