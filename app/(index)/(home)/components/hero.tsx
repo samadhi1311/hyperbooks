@@ -113,12 +113,13 @@ export default function Hero() {
 					</Link>
 
 					{isMobile ? (
-						<div ref={dashboardRef} className='aspect-auto transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
-							<img src={theme === 'dark' ? 'dashboard-mobile-dark.png' : 'dashboard-mobile-light.png'} alt='hyperbooks dashboard' />
+						<div ref={dashboardRef} className='relative aspect-auto transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
+							<img src={theme === 'dark' ? 'dashboard-mobile-dark.png' : 'dashboard-mobile-light.png'} alt='hyperbooks mobile dashboard' />
+							<div className='absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-background via-transparent to-transparent' />
 						</div>
 					) : (
 						<div ref={dashboardRef} className='aspect-video transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
-							<img src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'} alt='hyperbooks dashboard' />
+							<img src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'} alt='hyperbooks desktop dashboard' />
 						</div>
 					)}
 				</div>
