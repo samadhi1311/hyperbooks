@@ -38,7 +38,7 @@ export default function RecentInvoices() {
 		[data]
 	);
 
-	if (!data) return null;
+	if (!memoizedData) return null;
 
 	return (
 		<Card className='relative z-10 h-full bg-background/60 shadow-none backdrop-blur-none sm:shadow-md sm:backdrop-blur-sm'>
