@@ -15,7 +15,7 @@ export default function Footer() {
 						<A href='/#features'>Features</A>
 						<A href='/#pricing'>Pricing</A>
 						<A href='/privacy-policy'>Privacy Policy</A>
-						<A href='/terms-of-service'>Terms of Service</A>
+						<A href='/terms-and-conditions'>Terms & Conditions</A>
 					</div>
 					<p>
 						&copy; 2025{' '}
