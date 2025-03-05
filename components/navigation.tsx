@@ -10,8 +10,10 @@ import { Badge } from './ui/badge';
 import { motion } from 'motion/react';
 import { useAuth } from '@/hooks/use-auth';
 import { IconButton } from './ui/icon-button';
+import { useState } from 'react';
 
 export default function Navigation() {
+	const [open, setOpen] = useState(false);
 	const hasAnimated = sessionStorage.getItem('navAnimated');
 
 	const handleAnimationComplete = () => {
@@ -19,6 +21,10 @@ export default function Navigation() {
 	};
 
 	const { user, authLoading } = useAuth();
+
+	const handleClose = () => {
+		setOpen(!open);
+	};
 
 	const AuthButton = () => {
 		if (authLoading) {
@@ -31,7 +37,7 @@ export default function Navigation() {
 		}
 		if (!authLoading && !user) {
 			return (
-				<Link href='/login'>
+				<Link href='/login' onClick={handleClose}>
 					<IconButton variant='outline' icon={<User2Icon />}>
 						Login
 					</IconButton>
@@ -39,7 +45,7 @@ export default function Navigation() {
 			);
 		} else {
 			return (
-				<Link href='/dashboard'>
+				<Link href='/dashboard' onClick={handleClose}>
 					<IconButton variant='outline' icon={<SquareDashedMousePointerIcon className='scale-x-[-1]' />}>
 						Dashboard
 					</IconButton>
@@ -74,7 +80,7 @@ export default function Navigation() {
 				</span>
 
 				<span className='inline md:hidden'>
-					<Sheet>
+					<Sheet open={open} onOpenChange={(open) => setOpen(open)}>
 						<SheetTrigger asChild>
 							<Button variant='outline' size='icon'>
 								<MenuIcon className='size-5' />
@@ -83,18 +89,22 @@ export default function Navigation() {
 						<SheetContent side='left' className='flex flex-col items-center justify-around'>
 							<SheetHeader>
 								<SheetTitle className='flex flex-col items-center gap-2'>
-									<Badge className='w-fit'>Early Access</Badge>
+									<Badge variant='secondary' className='w-fit'>
+										Early Access
+									</Badge>
 									hyperbooks.
 								</SheetTitle>
 								<SheetDescription asChild></SheetDescription>
 							</SheetHeader>
 
 							<div className='flex flex-col items-center gap-8'>
-								<A href='/#'>Features</A>
-								<A href='/#'>Pricing</A>
+								<A href='/#features' onClick={handleClose}>
+									Features
+								</A>
+								<A href='/#pricing' onClick={handleClose}>
+									Pricing
+								</A>
 							</div>
-
-							<div className='flex flex-col gap-8'></div>
 
 							<SheetFooter>
 								<div className='flex w-full flex-1 flex-col items-center justify-center gap-8'>
