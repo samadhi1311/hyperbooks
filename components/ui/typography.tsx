@@ -28,9 +28,9 @@ function P({ children, className, variant = 'base' }: Readonly<{ children: React
 	return <p className={cn(variants, className)}>{children}</p>;
 }
 
-function A({ children, href, className }: Readonly<{ children: React.ReactNode; href: string; className?: string }>) {
+function A({ children, href, className, onClick }: Readonly<{ children: React.ReactNode; href: string; className?: string; onClick?: () => void }>) {
 	return (
-		<NextLink href={href} className={cn('transition-colors duration-300 hover:text-foreground/60', className)}>
+		<NextLink href={href} className={cn('transition-colors duration-300 hover:text-foreground/60', className)} onClick={onClick}>
 			{children}
 		</NextLink>
 	);
