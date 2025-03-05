@@ -11,7 +11,7 @@ export default function Footer() {
 						<img src='/logo.svg' alt='Logo' width={64} height={64} className='size-8 transition-all hover:opacity-75' />
 						<H3>hyperbooks.</H3>
 					</A>
-					<div className='mb-6 flex flex-col gap-4 text-sm text-muted-foreground underline underline-offset-4 md:mb-0 md:flex-row'>
+					<div className='mb-6 flex flex-col items-center gap-4 text-sm text-muted-foreground underline underline-offset-4 md:mb-0 md:flex-row'>
 						<A href='/#features'>Features</A>
 						<A href='/#pricing'>Pricing</A>
 						<A href='/privacy-policy'>Privacy Policy</A>
