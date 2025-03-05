@@ -283,7 +283,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			// Extract user data
 			if (userDocSnap.exists()) {
 				const userData = userDocSnap.data() as UserData;
-				console.log(userData);
 				setUser(userData);
 			}
 
