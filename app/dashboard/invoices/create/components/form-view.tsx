@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { H3 } from '@/components/ui/typography';
-import { CirclePlusIcon, DeleteIcon, DownloadIcon, Loader2Icon, RocketIcon, UndoDotIcon } from 'lucide-react';
+import { CirclePlusIcon, DeleteIcon, Loader2Icon, RocketIcon } from 'lucide-react';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useInvoiceStore } from '@/store/use-invoice';
 import { useEffect, useState } from 'react';
@@ -372,32 +372,26 @@ export default function FormView() {
 							</span>
 						</div>
 
-						<div className='flex items-center gap-4'>
+						<div className='flex flex-col items-center gap-4 md:flex-row'>
 							<IconButton type='submit' size='lg' icon={loading ? <Loader2Icon className='animate-spin' /> : <RocketIcon />} disabled={loading}>
 								Create Invoice
 							</IconButton>
 
-							<IconButton
-								type='button'
-								size='lg'
-								variant='ghost'
-								icon={exporting ? <Loader2Icon className='animate-spin' /> : <DownloadIcon />}
-								onClick={() => handleExportPDF()}
-								disabled={exporting}>
+							<Button className='flex items-center gap-2' type='button' size='lg' variant='ghost' onClick={() => handleExportPDF()} disabled={exporting}>
+								{exporting && <Loader2Icon className='animate-spin' />}
 								Download as PDF
-							</IconButton>
+							</Button>
 
-							<IconButton
+							<Button
 								type='button'
 								size='lg'
-								icon={<UndoDotIcon />}
 								variant='ghost'
 								onClick={() => {
 									form.reset();
 									resetInvoiceData();
 								}}>
 								Reset Form
-							</IconButton>
+							</Button>
 						</div>
 					</form>
 				</Form>
