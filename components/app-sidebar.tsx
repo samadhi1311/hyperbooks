@@ -1,7 +1,7 @@
 'use client';
 
 import { BriefcaseBusinessIcon, LayoutListIcon, PlusCircleIcon, RocketIcon, SwatchBookIcon } from 'lucide-react';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { UserMenu } from './user-menu';
@@ -10,6 +10,7 @@ import { Card, CardContent } from './ui/card';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
+	const { setOpenMobile } = useSidebar();
 
 	return (
 		<Sidebar {...props}>
@@ -33,7 +34,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							<SidebarMenuButton
 								className={pathname === '/dashboard' ? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5' : ''}
 								asChild>
-								<Link href='/dashboard' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<RocketIcon />
 									Dashboard
 								</Link>
@@ -53,7 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: ''
 								}
 								asChild>
-								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/invoices/create' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<PlusCircleIcon />
 									Create a new Invoice
 								</Link>
@@ -67,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: ''
 								}
 								asChild>
-								<Link href='/dashboard/invoices/history' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/invoices/history' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<LayoutListIcon />
 									Invoice History
 								</Link>
@@ -87,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: ''
 								}
 								asChild>
-								<Link href='/dashboard/bills/create' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/bills/create' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<PlusCircleIcon />
 									Create a new Bill
 								</Link>
@@ -101,7 +102,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: ''
 								}
 								asChild>
-								<Link href='/dashboard/bills/history' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/bills/history' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<LayoutListIcon />
 									Bill History
 								</Link>
@@ -121,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										: ''
 								}
 								asChild>
-								<Link href='/dashboard/templates' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/templates' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<SwatchBookIcon />
 									Templates
 								</Link>
@@ -133,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									pathname === '/dashboard/profile' ? 'bg-gradient-to-r from-muted-foreground/20 dark:from-muted-foreground/15 to-muted-foreground/5 dark:to-muted-foreground/5' : ''
 								}
 								asChild>
-								<Link href='/dashboard/profile' className='flex h-full items-center gap-3'>
+								<Link href='/dashboard/profile' className='flex h-full items-center gap-3' onClick={() => setOpenMobile(false)}>
 									<BriefcaseBusinessIcon />
 									Business Profile
 								</Link>
