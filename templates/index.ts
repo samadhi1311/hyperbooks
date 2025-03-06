@@ -10,21 +10,21 @@ const templates = {
 		render: renderAzureTemplate,
 		title: 'Azure',
 		description: 'A blue-themed bold design.',
-		preview: '/bg-gradient.png',
-	},
-	quiet: {
-		component: QuietTemplate,
-		render: renderQuietTemplate,
-		title: 'Quiet',
-		description: 'A minimal design with light colors.',
-		preview: '/bg-gradient.png',
+		preview: '/template-data/previews/azure.png',
 	},
 	midnight: {
 		component: MidnightTemplate,
 		render: renderMidnightTemplate,
 		title: 'Midnight',
 		description: 'A minimal design with dark colors.',
-		preview: '/bg-gradient.png',
+		preview: '/template-data/previews/midnight.png',
+	},
+	quiet: {
+		component: QuietTemplate,
+		render: renderQuietTemplate,
+		title: 'Quiet',
+		description: 'A minimal design with light colors.',
+		preview: '/template-data/previews/quiet.png',
 	},
 };
 
