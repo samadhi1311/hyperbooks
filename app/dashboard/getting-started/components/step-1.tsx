@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { Input } from '@/components/ui/input';
-import { H2, H3 } from '@/components/ui/typography';
+import { H2, P } from '@/components/ui/typography';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -80,8 +80,8 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 	return (
 		<motion.div {...formAnimations} className='w-full space-y-12'>
 			<div className='space-y-2'>
-				<H2>Hello there!</H2>
-				<H3>Welcome to hyperbooks.</H3>
+				<H2>Welcome to hyperbooks.</H2>
+				<P>We have sent a confirmation email to you. Please check your inbox.</P>
 			</div>
 
 			<Form {...form}>
