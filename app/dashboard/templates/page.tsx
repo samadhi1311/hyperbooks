@@ -12,11 +12,6 @@ export default function SelectTemplate() {
 
 	return (
 		<PageWrapper>
-			<select value={selectedTemplate} onChange={(e) => setTemplate(e.target.value as TemplateKey)}>
-				<option value='minimal'>Minimal</option>
-				<option value='classic'>Classic</option>
-			</select>
-
 			<Suspense fallback={<Loader />}>
 				<Section className='grid grid-cols-2 gap-4 lg:grid-cols-3'>
 					{Object.entries(templates).map(([key, template]) => (
