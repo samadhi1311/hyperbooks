@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import Splash from '@/components/splash';
 import CookieConsent from '@/components/cookie-consent';
-import { ReactScan } from '@/components/react-scan';
+// import { ReactScan } from '@/components/react-scan';
 
 const sans = Inter({
 	variable: '--font-sans',
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang='en'>
-			<ReactScan />
+			{/* <ReactScan /> */}
 			<body className={`${sans.className} ${display.variable} antialiased`}>
 				<ThemeProvider attribute='class' defaultTheme='dark'>
 					<Splash />
