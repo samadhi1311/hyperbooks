@@ -11,16 +11,17 @@ import { motion } from 'motion/react';
 import { useAuth } from '@/hooks/use-auth';
 import { IconButton } from './ui/icon-button';
 import { useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Navigation() {
+	const { user, authLoading } = useAuth();
+	const isMobile = useIsMobile();
 	const [open, setOpen] = useState(false);
 	const hasAnimated = sessionStorage.getItem('navAnimated');
 
 	const handleAnimationComplete = () => {
 		sessionStorage.setItem('navAnimated', 'true');
 	};
-
-	const { user, authLoading } = useAuth();
 
 	const handleClose = () => {
 		setOpen(!open);
@@ -37,7 +38,7 @@ export default function Navigation() {
 		}
 		if (!authLoading && !user) {
 			return (
-				<Link href='/login' onClick={handleClose}>
+				<Link href='/login' onClick={isMobile ? handleClose : () => {}}>
 					<IconButton variant='outline' icon={<User2Icon />}>
 						Login
 					</IconButton>
@@ -45,8 +46,8 @@ export default function Navigation() {
 			);
 		} else {
 			return (
-				<Link href='/dashboard' onClick={handleClose}>
-					<IconButton variant='outline' icon={<SquareDashedMousePointerIcon className='scale-x-[-1]' />}>
+				<Link href='/dashboard' onClick={isMobile ? handleClose : () => {}}>
+					<IconButton type='button' variant='outline' icon={<SquareDashedMousePointerIcon className='scale-x-[-1]' />}>
 						Dashboard
 					</IconButton>
 				</Link>
