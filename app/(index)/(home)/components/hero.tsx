@@ -23,15 +23,15 @@ export default function Hero() {
 		const hasAnimated = sessionStorage.getItem('heroAnimated');
 
 		function intro() {
-			animate('.hyperreal-hero-bg', { opacity: [0, 1] }, { duration: 1 });
-			animate('.hyperbooks-hero', { opacity: [0, 1] }, { duration: 1, ease: [0, 0, 0.2, 1], delay: 0.5 });
+			animate('.hyperreal-hero-bg', { opacity: [0, 1] }, { duration: 1, delay: 1 });
+			animate('.hyperbooks-hero', { opacity: [0, 1] }, { duration: 1, ease: [0, 0, 0.2, 1], delay: 1.5 });
 			animate('.hyperbooks-hero-title', { y: [15, 0], opacity: [0, 1] }, { duration: 1, ease: [0.215, 0.61, 0.355, 1], delay: stagger(0.05) });
 			sessionStorage.setItem('heroAnimated', 'true');
 		}
 
 		setTimeout(
 			() => {
-				if (hasAnimated) {
+				if (hasAnimated === null) {
 					intro();
 				} else {
 					// Immediately show elements without animation
@@ -40,7 +40,7 @@ export default function Hero() {
 					animate('.hyperbooks-hero-title', { y: 0, opacity: 1 }, { duration: 1 });
 				}
 			},
-			hasAnimated ? 0 : 3000
+			hasAnimated ? 0 : 2000
 		);
 	}, []);
 
