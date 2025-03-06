@@ -10,7 +10,7 @@ interface TemplateStore {
 export const useTemplateStore = create<TemplateStore>()(
 	persist(
 		(set) => ({
-			selectedTemplate: 'minimal',
+			selectedTemplate: 'quiet',
 			setTemplate: (template) => set({ selectedTemplate: template }),
 		}),
 		{
