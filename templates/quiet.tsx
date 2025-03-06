@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
+
 import { Button } from '@/components/ui/button';
 import { InvoiceData, placeholders, ProfileData } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-export const MinimalTemplate = ({
+export const QuietTemplate = ({
 	data,
 	profile,
 	removeItem,
@@ -249,7 +250,7 @@ export const MinimalTemplate = ({
 					</div>
 					<div style={styles.billedTo}>
 						<div style={styles.billedField}>
-							<img src='/template-data/icons/email.png' style={styles.icon} />
+							<img src='/template-data/icons/email-dark.png' style={styles.icon} />
 							<input
 								className='editable'
 								type='email'
@@ -260,7 +261,7 @@ export const MinimalTemplate = ({
 							/>
 						</div>
 						<div style={styles.billedField}>
-							<img src='/template-data/icons/phone.png' style={styles.icon} />
+							<img src='/template-data/icons/phone-dark.png' style={styles.icon} />
 							<input
 								className='editable'
 								type='text'
@@ -398,7 +399,7 @@ export const MinimalTemplate = ({
 };
 
 // PDF View
-export const renderMinimalTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData | null }) => {
+export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData | null }) => {
 	const { billedTo, items, tax, discount, total } = data;
 
 	Font.register({
@@ -444,11 +445,11 @@ export const renderMinimalTemplate = ({ data, profile }: { data: InvoiceData; pr
 					</View>
 					<View style={styles.billedTo}>
 						<View style={styles.billedField}>
-							<Image src={'/template-data/icons/email.png'} style={styles.icon} />
+							<Image src={'/template-data/icons/email-dark.png'} style={styles.icon} />
 							<Text style={styles.billedTextSecondary}>{billedTo.email}</Text>
 						</View>
 						<View style={styles.billedField}>
-							<Image src={'/template-data/icons/phone.png'} style={styles.icon} />
+							<Image src={'/template-data/icons/phone-dark.png'} style={styles.icon} />
 							<Text style={styles.billedTextSecondary}>{billedTo.phone}</Text>
 						</View>
 					</View>
