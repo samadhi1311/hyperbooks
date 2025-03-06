@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { avatars } from '@/lib/types';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { auth } from '@/firebase.config';
 import { KeySquareIcon, Loader2Icon, SaveIcon, SendHorizonalIcon, ShoppingCartIcon } from 'lucide-react';
@@ -177,7 +177,9 @@ export default function Settings() {
 
 				<div className='flex flex-col gap-3 md:gap-4'>
 					<H3 className='mb-1'>Change Password</H3>
-					<IconButton icon={<KeySquareIcon />}>Reset Password</IconButton>
+					<IconButton icon={<KeySquareIcon />} onClick={() => sendPasswordResetEmail(auth, currentUser.email!)}>
+						Reset Password
+					</IconButton>
 					<Label className='text-muted-foreground'>To update/reset your current password, click the button above and follow the instructions.</Label>
 				</div>
 
