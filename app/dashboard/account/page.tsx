@@ -3,16 +3,16 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PageWrapper, Section } from '@/components/ui/layout';
-import { H2, H3 } from '@/components/ui/typography';
+import { H2, H3, P } from '@/components/ui/typography';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { avatars } from '@/lib/types';
-import { updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { updateProfile, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { auth } from '@/firebase.config';
-import { KeySquareIcon, Loader2Icon, SaveIcon, SendHorizonalIcon, ShoppingCartIcon } from 'lucide-react';
+import { CircleAlertIcon, KeySquareIcon, Loader2Icon, SaveIcon, SendHorizonalIcon, ShoppingCartIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { useFirestore } from '@/hooks/use-firestore';
@@ -28,6 +28,7 @@ export default function Settings() {
 	const [updating, setUpdating] = useState(false);
 	const [fetchingLink, setFetchingLink] = useState(false);
 	const [customCurrency, setCustomCurrency] = useState(false);
+	const [emailSent, setEmailSent] = useState(false);
 
 	const accSchema = z.object({
 		username: z.string().min(2, {
@@ -117,6 +118,25 @@ export default function Settings() {
 		setFetchingLink(false);
 	}
 
+	async function sendEmail() {
+		try {
+			await sendEmailVerification(currentUser!);
+			toast({
+				variant: 'success',
+				title: 'Email sent.',
+				description: 'Please check your email inbox.',
+			});
+			setEmailSent(true);
+		} catch (error) {
+			toast({
+				variant: 'destructive',
+				title: 'An error occured.',
+				description: `Couldn't send verification email. Please try again.`,
+			});
+			console.error(error);
+		}
+	}
+
 	if (!currentUser) return null;
 
 	return (
@@ -124,7 +144,18 @@ export default function Settings() {
 			<Section className='mx-auto max-w-screen-sm space-y-16'>
 				<div className='w-full space-y-8'>
 					<H2>Account Settings</H2>
-
+					{!currentUser.emailVerified ||
+						(emailSent && (
+							<div className='my-4 space-y-2 rounded-lg border border-border bg-muted/60 p-4'>
+								<P variant='sm' className='flex items-center gap-2 text-destructive'>
+									<CircleAlertIcon className='size-4' />
+									Your email is not verified yet. Please check your email inbox.
+								</P>
+								<IconButton type='button' variant='outline' icon={<SendHorizonalIcon />} onClick={sendEmail}>
+									Resend email
+								</IconButton>
+							</div>
+						))}
 					<Form {...accForm}>
 						<form onSubmit={accForm.handleSubmit(accOnSubmit)} className='space-y-6'>
 							<FormField
