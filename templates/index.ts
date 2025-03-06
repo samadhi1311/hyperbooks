@@ -1,21 +1,29 @@
-import { ClassicTemplate, renderClassicTemplate } from './classic';
-import { MinimalTemplate, renderMinimalTemplate } from './minimal';
+import { AzureTemplate, renderAzureTemplate } from './azure';
+import { MidnightTemplate, renderMidnightTemplate } from './midnight';
+import { QuietTemplate, renderQuietTemplate } from './quiet';
 
-export type TemplateKey = 'classic' | 'minimal';
+export type TemplateKey = 'azure' | 'midnight' | 'quiet';
 
 const templates = {
-	classic: {
-		component: ClassicTemplate,
-		render: renderClassicTemplate,
-		title: 'Classic',
-		description: 'The classic invoice template.',
+	azure: {
+		component: AzureTemplate,
+		render: renderAzureTemplate,
+		title: 'Azure',
+		description: 'A blue-themed bold design.',
 		preview: '/bg-gradient.png',
 	},
-	minimal: {
-		component: MinimalTemplate,
-		render: renderMinimalTemplate,
-		title: 'Minimal',
-		description: 'The minimal invoice template.',
+	quiet: {
+		component: QuietTemplate,
+		render: renderQuietTemplate,
+		title: 'Quiet',
+		description: 'A minimal design with light colors.',
+		preview: '/bg-gradient.png',
+	},
+	midnight: {
+		component: MidnightTemplate,
+		render: renderMidnightTemplate,
+		title: 'Midnight',
+		description: 'A minimal design with dark colors.',
 		preview: '/bg-gradient.png',
 	},
 };
