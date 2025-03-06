@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
+
 import { Button } from '@/components/ui/button';
 import { InvoiceData, placeholders, ProfileData } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
@@ -8,19 +9,19 @@ const styles = StyleSheet.create({
 	page: {
 		position: 'relative',
 		padding: '16pt',
-		backgroundColor: '#f9fafb',
-		color: '#2d3748',
-		lineHeight: '1.5',
+		backgroundColor: '#ffffff',
+		color: '#000000',
+		lineHeight: '1',
 		fontSize: '12pt',
 		fontFamily: 'Inter',
 	},
 	header: {
-		backgroundColor: '#4a5568',
+		backgroundColor: '#458cd1',
 		color: '#ffffff',
-		padding: '24pt',
+		padding: '16pt',
 		display: 'flex',
 		flexDirection: 'column',
-		borderRadius: '8pt',
+		borderRadius: '4pt',
 		width: '100%',
 	},
 	headerRow: {
@@ -32,27 +33,32 @@ const styles = StyleSheet.create({
 		gap: '16pt',
 	},
 	logo: {
-		width: '90pt',
-		height: '90pt',
-		borderRadius: '8pt',
+		width: '96pt',
+		height: '96pt',
+		borderRadius: '2pt',
 	},
 	profile: {
+		marginLeft: '16pt',
 		display: 'flex',
 		flexDirection: 'column',
 		gap: '2pt',
+		backgroundColor: 'transparent',
 	},
 	profileTextMain: {
 		fontSize: '20pt',
 		fontWeight: 'bold',
+		backgroundColor: 'transparent',
 	},
 	profileTextSecondary: {
 		fontSize: '12pt',
+		backgroundColor: 'transparent',
 	},
 	billedTo: {
 		marginTop: '16pt',
 		display: 'flex',
 		flexDirection: 'column',
 		gap: '2pt',
+		backgroundColor: 'transparent',
 	},
 	billedToRow: {
 		display: 'flex',
@@ -64,69 +70,44 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		gap: '8pt',
 		alignItems: 'center',
+		justifyContent: 'flex-start',
+		width: '100%',
 	},
 	billedTextMain: {
 		fontSize: '12pt',
 		fontWeight: 'bold',
+		backgroundColor: 'transparent',
 	},
 	billedTextSecondary: {
 		fontSize: '12pt',
+		backgroundColor: 'transparent',
+		textAlign: 'left',
 	},
 	icon: {
 		width: '14pt',
 		height: '14pt',
 	},
 	items: {
-		marginTop: '30pt',
+		marginTop: '32pt',
 		marginBottom: '16pt',
 		width: '100%',
 	},
 	theading: {
-		fontSize: '11pt',
-		letterSpacing: '0.6pt',
-		color: '#1a202c',
+		fontSize: '10pt',
+		letterSpacing: '1pt',
+		color: '#458cd1',
 		textAlign: 'center',
+		backgroundColor: 'transparent',
 		fontWeight: 'bold',
 	},
 	tbody: {
-		marginTop: '14pt',
+		marginTop: '16pt',
 	},
 	trow: {
 		fontSize: '12pt',
 		lineHeight: '24pt',
 		textAlign: 'left',
-	},
-	total: {
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginTop: '16pt',
-		fontSize: '12pt',
-		fontWeight: 'bold',
-	},
-	totalColumn: {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'stretch',
-		gap: '8pt',
-	},
-	totalField: {
-		display: 'flex',
-		flexDirection: 'row',
-		gap: '32pt',
-		justifyContent: 'space-between',
-	},
-	footer: {
-		position: 'absolute',
-		backgroundColor: '#2d3748',
-		color: '#ffffff',
-		fontSize: '10pt',
-		padding: '10pt',
-		borderRadius: '8pt',
-		textAlign: 'center',
-		bottom: '16pt',
-		left: '16pt',
-		right: '16pt',
+		backgroundColor: 'transparent',
 	},
 	headdesc: {
 		width: '50%',
@@ -175,9 +156,41 @@ const styles = StyleSheet.create({
 		width: '26pt',
 		height: '24pt',
 	},
+	total: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: '16pt',
+		fontSize: '12pt',
+		fontWeight: 'bold',
+	},
+	totalColumn: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'stretch',
+		gap: '8pt',
+	},
+	totalField: {
+		display: 'flex',
+		flexDirection: 'row',
+		gap: '32pt',
+		justifyContent: 'space-between',
+	},
+	footer: {
+		position: 'absolute',
+		backgroundColor: '#458cd1',
+		color: '#ffffff',
+		fontSize: '10pt',
+		padding: '8pt',
+		borderRadius: '2pt',
+		textAlign: 'center',
+		bottom: '8pt',
+		left: '8pt',
+		right: '8pt',
+	},
 });
 
-export const ClassicTemplate = ({
+export const AzureTemplate = ({
 	data,
 	profile,
 	removeItem,
@@ -237,7 +250,7 @@ export const ClassicTemplate = ({
 					</div>
 					<div style={styles.billedTo}>
 						<div style={styles.billedField}>
-							<img src='/template-data/icons/email.png' style={styles.icon} />
+							<img src='/template-data/icons/email-light.png' style={styles.icon} />
 							<input
 								className='editable'
 								type='email'
@@ -248,7 +261,7 @@ export const ClassicTemplate = ({
 							/>
 						</div>
 						<div style={styles.billedField}>
-							<img src='/template-data/icons/phone.png' style={styles.icon} />
+							<img src='/template-data/icons/phone-light.png' style={styles.icon} />
 							<input
 								className='editable'
 								type='text'
@@ -386,7 +399,7 @@ export const ClassicTemplate = ({
 };
 
 // PDF View
-export const renderClassicTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData | null }) => {
+export const renderAzureTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData | null }) => {
 	const { billedTo, items, tax, discount, total } = data;
 
 	Font.register({
@@ -432,11 +445,11 @@ export const renderClassicTemplate = ({ data, profile }: { data: InvoiceData; pr
 					</View>
 					<View style={styles.billedTo}>
 						<View style={styles.billedField}>
-							<Image src={'/template-data/icons/email.png'} style={styles.icon} />
+							<Image src={'/template-data/icons/email-light.png'} style={styles.icon} />
 							<Text style={styles.billedTextSecondary}>{billedTo.email}</Text>
 						</View>
 						<View style={styles.billedField}>
-							<Image src={'/template-data/icons/phone.png'} style={styles.icon} />
+							<Image src={'/template-data/icons/phone-light.png'} style={styles.icon} />
 							<Text style={styles.billedTextSecondary}>{billedTo.phone}</Text>
 						</View>
 					</View>
