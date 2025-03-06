@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { useUserStore } from '@/store/use-user';
 import { useProfileStore } from '@/store/use-profile';
 import { useAnalyticsStore } from '@/store/use-analytics';
+import { toast } from '@/hooks/use-toast';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
@@ -29,6 +30,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		async function fetchData() {
 			if (user?.uid) {
+				if (!user.emailVerified) {
+					toast({
+						title: 'Email is not verified yet.',
+						description: 'Please check your email inbox.',
+						variant: 'destructive',
+					});
+				}
 				if (!analytics) {
 					await getAnalytics();
 				}
@@ -41,8 +49,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 					const profileData = await getProfile();
 					if (profileData?.name) {
 						setProfile(profileData);
-						console.log('profileData', profileData);
-					} else if (pathname !== '/dashboard/getting-started') {
+					} else {
 						router.replace('/dashboard/getting-started');
 					}
 				}
