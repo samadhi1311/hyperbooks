@@ -5,13 +5,53 @@ import { ProtectedRoute } from '@/components/protected-route';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Installer } from '@/components/installer';
+import { useAuth } from '@/hooks/use-auth';
+import { useFirestore } from '@/hooks/use-firestore';
+import { useEffect } from 'react';
+import { useUserStore } from '@/store/use-user';
+import { useProfileStore } from '@/store/use-profile';
+import { useAnalyticsStore } from '@/store/use-analytics';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
 	const path = pathname.split('/');
+	const router = useRouter();
+
+	const { user, authLoading } = useAuth();
+	const { getUser, getProfile, getAnalytics } = useFirestore();
+	const { userData } = useUserStore();
+	const { profile, setProfile } = useProfileStore();
+	const { analytics } = useAnalyticsStore();
+
+	useEffect(() => {
+		async function fetchData() {
+			if (user?.uid) {
+				if (!analytics) {
+					await getAnalytics();
+				}
+
+				if (!userData) {
+					await getUser();
+				}
+
+				if (!profile) {
+					const profileData = await getProfile();
+					if (profileData?.name) {
+						setProfile(profileData);
+						console.log('profileData', profileData);
+					} else if (pathname !== '/dashboard/getting-started') {
+						router.replace('/dashboard/getting-started');
+					}
+				}
+			}
+		}
+
+		fetchData();
+	}, [user, authLoading]);
+
 	return (
 		<ProtectedRoute>
 			<SidebarProvider className='relative min-h-svh overflow-hidden'>
