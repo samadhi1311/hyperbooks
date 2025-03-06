@@ -14,7 +14,6 @@ import { auth, storage } from '@/firebase.config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Compressor from 'compressorjs';
 import { ChangeEvent, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { CircleCheckIcon, ImagePlusIcon, Loader2Icon, SendHorizonalIcon, XCircleIcon } from 'lucide-react';
 import { H2 } from '@/components/ui/typography';
@@ -157,27 +156,25 @@ export default function Profile() {
 						{/* Logo Upload */}
 						<div>
 							<Label>Business Logo</Label>
-							<Card className='mt-2 aspect-square w-64 overflow-hidden border border-input'>
-								<CardContent className='aspect-square h-full w-64 p-0'>
-									<Input name='image' id='image' type='file' accept='image/jpeg,image/png' onChange={handleImageChange} className='hidden' />
-									<Label htmlFor='image' className='group relative flex h-full w-full cursor-pointer items-center justify-center'>
-										{selectedImage ? (
-											<img
-												className='pointer-events-none absolute h-full w-full overflow-hidden object-cover brightness-75 transition-all duration-300 group-hover:scale-105 group-hover:brightness-50'
-												src={URL.createObjectURL(selectedImage)}
-												alt='Preview'
-											/>
-										) : profile?.logo ? (
-											<img src={profile.logo} alt='Preview' className='h-full w-full object-cover' />
-										) : (
-											<div className='z-10 flex items-center justify-center gap-2'>
-												<ImagePlusIcon className='size-5' />
-												Select a Logo
-											</div>
-										)}
-									</Label>
-								</CardContent>
-							</Card>
+							<div className='relative mt-2 aspect-square h-full w-64 overflow-hidden rounded-lg border border-input'>
+								<Input name='image' id='image' type='file' accept='image/jpeg,image/png' onChange={handleImageChange} className='hidden' />
+								<Label htmlFor='image' className='group relative flex h-full w-full cursor-pointer items-center justify-center'>
+									{selectedImage ? (
+										<img
+											className='pointer-events-none absolute h-full w-full overflow-hidden object-cover brightness-75 transition-all duration-300 group-hover:scale-105 group-hover:brightness-50'
+											src={URL.createObjectURL(selectedImage)}
+											alt='Preview'
+										/>
+									) : profile?.logo ? (
+										<img src={profile.logo} alt='Preview' className='h-full w-full object-cover' />
+									) : (
+										<div className='z-10 flex items-center justify-center gap-2'>
+											<ImagePlusIcon className='size-5' />
+											Select a Logo
+										</div>
+									)}
+								</Label>
+							</div>
 							<p className='mt-2 text-sm text-muted-foreground'>
 								(Optional) Upload a JPG or PNG file. Image will be compressed upon upload. Image with transparent background is Recommended.
 							</p>
