@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from 'firebase/auth';
+import {
+	User,
+	onAuthStateChanged,
+	signInWithEmailAndPassword,
+	signOut,
+	createUserWithEmailAndPassword,
+	signInWithPopup,
+	GoogleAuthProvider,
+	sendPasswordResetEmail,
+	sendEmailVerification,
+} from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '@/firebase.config';
 import { useToast } from '@/hooks/use-toast';
@@ -125,9 +135,10 @@ const useAuth = () => {
 					title: 'You are signed up successfully.',
 					description: `Welcome to hyperbooks. Let's start invoicing.`,
 				});
+				sendEmailVerification(user!);
+				router.push('/dashboard/getting-started');
+				return userCredentials.user;
 			}
-			router.push('/dashboard/getting-started');
-			return userCredentials.user;
 		} catch (error) {
 			if (error instanceof FirebaseError) {
 				toast({
@@ -153,9 +164,9 @@ const useAuth = () => {
 					title: 'You are logged in successfully.',
 					description: `Welcome to hyperbooks. Let's get started.`,
 				});
-			}
 
-			return userCredentials.user;
+				return userCredentials.user;
+			}
 		} catch (error) {
 			if (error instanceof FirebaseError) {
 				toast({
