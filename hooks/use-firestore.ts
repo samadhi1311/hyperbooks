@@ -28,8 +28,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to add an invoice.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -76,9 +76,9 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			if (invoiceCount >= planLimit) {
 				toast({
-					title: 'Limit Reached',
-					description: `You’ve reached your ${planLimit} invoices per month limit. Upgrade to create more invoices.`,
 					variant: 'destructive',
+					title: 'Limit Reached.',
+					description: `You’ve reached your ${planLimit} invoices per month limit. Upgrade to create more invoices.`,
 				});
 				return null;
 			}
@@ -164,8 +164,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			toast({
 				variant: 'success',
-				title: 'Invoice Added',
-				description: 'Invoice successfully added to Firestore.',
+				title: 'Great Job on the sale!',
+				description: `Your latest invoice is now securely saved in the cloud.`,
 			});
 
 			return invoiceRef;
@@ -174,9 +174,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Adding Invoice',
-				description: error.message,
+				title: 'An error occurred.',
+				description: `Something went wrong. Please try again.`,
 			});
+			console.error(error);
 			return null;
 		} finally {
 			setLoading(false);
@@ -187,8 +188,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to get profile data.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -211,9 +212,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Getting Profile',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
+			console.error(error);
 			return null;
 		} finally {
 			setLoading(false);
@@ -224,8 +226,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to update profile.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -240,8 +242,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			toast({
 				variant: 'success',
-				title: 'Profile Updated',
-				description: 'Profile successfully updated in Firestore.',
+				title: 'Profile details Updated.',
+				description: 'Your profile details have been updated successfully.',
 			});
 
 			clearProfile();
@@ -252,8 +254,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Updating Profile',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 			return null;
 		} finally {
@@ -265,8 +267,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to get User data.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -292,9 +294,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Getting User Data',
-				description: error.message,
+				title: 'An error occured',
+				description: 'Something went wrong. Please try again.',
 			});
+			console.error(error);
 			return null;
 		} finally {
 			setLoading(false);
@@ -305,8 +308,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to update User data.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -325,14 +328,20 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				...cleanData,
 			} as UserData);
 
+			toast({
+				variant: 'success',
+				title: 'User details Updated.',
+				description: 'Your user details have been updated successfully.',
+			});
+
 			return updatedUserData;
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Updaing User Data',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 			return null;
 		} finally {
@@ -344,8 +353,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to update the invoice status.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -368,7 +377,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			if (currentStatus === status) {
 				toast({
 					variant: 'default',
-					title: 'No Update Needed',
+					title: 'No update needed.',
 					description: 'Invoice status is already set to the selected value.',
 				});
 				return null;
@@ -403,8 +412,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			clearUser();
 
 			toast({
-				variant: 'default',
-				title: 'Status Updated!',
+				variant: 'success',
+				title: 'Status updated!',
 				description: `Invoice status has been updated to ${status ? 'completed' : 'incomplete'}.`,
 			});
 		} catch (err) {
@@ -412,8 +421,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Updating Status',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 		} finally {
 			setLoading(false);
@@ -424,8 +433,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to delete an invoice.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -483,16 +492,16 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			toast({
 				variant: 'success',
-				title: 'Invoice Deleted',
-				description: 'Invoice successfully deleted from Firestore.',
+				title: 'Invoice deleted.',
+				description: 'Invoice has been deleted from your transactions successfully.',
 			});
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Deleting Invoice',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 		} finally {
 			setLoading(false);
@@ -503,8 +512,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to add a bill.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -613,8 +622,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			toast({
 				variant: 'success',
-				title: 'Bill Added',
-				description: 'Bill successfully added to Firestore.',
+				title: 'Bill added.',
+				description: `Your latest bill is now securely saved in the cloud.`,
 			});
 
 			return billRef;
@@ -623,8 +632,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Adding Bill',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 			return null;
 		} finally {
@@ -636,8 +645,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to delete a bill.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -694,16 +703,16 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			toast({
 				variant: 'success',
-				title: 'Bill Deleted',
-				description: 'Bill successfully deleted from Firestore.',
+				title: 'Bill deleted.',
+				description: 'Bill has been deleted from your transactions successfully.',
 			});
 		} catch (err) {
 			const error = err as Error;
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Deleting Bill',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 		} finally {
 			setLoading(false);
@@ -714,8 +723,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to get User data.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return null;
 		}
@@ -751,8 +760,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Getting Analytics',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 			return null;
 		} finally {
@@ -764,8 +773,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		if (!user || !userData) {
 			toast({
 				variant: 'destructive',
-				title: 'Authentication Error',
-				description: 'You must be logged in to export.',
+				title: 'An error occurred.',
+				description: 'You need to be logged in first.',
 			});
 			return false;
 		}
@@ -828,8 +837,8 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'Error Tracking Export',
-				description: error.message,
+				title: 'An error occured.',
+				description: 'Something went wrong. Please try again.',
 			});
 			return false;
 		} finally {
