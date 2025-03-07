@@ -15,7 +15,7 @@ export default function Menu() {
 	const { invoiceData, resetInvoiceData } = useInvoiceStore();
 	const { selectedTemplate } = useTemplateStore();
 	const { profile } = useProfileStore();
-	const { addInvoice, loading, error, incrementExportCount } = useFirestore<Partial<InvoiceData>>();
+	const { addInvoice, loading, incrementExportCount } = useFirestore<Partial<InvoiceData>>();
 	const { toast } = useToast();
 	const { view, setView } = useViewStore();
 
@@ -47,37 +47,21 @@ export default function Menu() {
 			URL.revokeObjectURL(link.href);
 			toast({
 				variant: 'default',
-				title: 'Invoice Ready to Share!',
-				description: `PDF created successfully! You're just one step away from getting paid.`,
+				title: 'Invoice ready to share!',
+				description: `Your invoice has been exported successfully as PDF!`,
 			});
 		} catch (error) {
 			toast({
 				variant: 'destructive',
 				title: 'An error occurred.',
-				description: error as string,
+				description: `Couldn't export to PDF. Please try again.`,
 			});
-			console.error('PDF Export Error:', error);
+			console.error(error);
 		}
 	};
 
 	const handleUpload = async () => {
-		const docRef = await addInvoice(invoiceData);
-
-		if (docRef) {
-			toast({
-				variant: 'default',
-				title: 'Great Job on the Sale!',
-				description: `Your latest invoice is now securely saved in the cloud. Keep the momentum going!`,
-			});
-		}
-
-		if (error) {
-			toast({
-				variant: 'destructive',
-				title: 'An error occurred.',
-				description: error.message,
-			});
-		}
+		await addInvoice(invoiceData);
 	};
 
 	return (
