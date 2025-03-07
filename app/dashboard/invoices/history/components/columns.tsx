@@ -194,14 +194,14 @@ export const columns = ({
 					URL.revokeObjectURL(link.href);
 					toast({
 						variant: 'default',
-						title: 'Invoice Ready to Share!',
-						description: `PDF created successfully! You're just one step away from getting paid.`,
+						title: 'Invoice ready to share!',
+						description: `Your invoice has been exported successfully as PDF!`,
 					});
 				} catch (error) {
 					toast({
 						variant: 'destructive',
 						title: 'An error occurred.',
-						description: error as string,
+						description: `Couldn't export to PDF. Please try again.`,
 					});
 					console.error('Error exporting PDF:', error);
 				}
