@@ -760,5 +760,82 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 		}
 	};
 
-	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getProfile, updateProfile, getUser, updateUser, getAnalytics, loading, error };
+	const incrementExportCount = async () => {
+		if (!user || !userData) {
+			toast({
+				variant: 'destructive',
+				title: 'Authentication Error',
+				description: 'You must be logged in to export.',
+			});
+			return false;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const usageRef = doc(db, 'users', user.uid);
+			const usageSnap = await getDoc(usageRef);
+
+			let exportCount = 0;
+			let lastReset = null;
+
+			if (usageSnap.exists()) {
+				const data = usageSnap.data();
+				exportCount = data.exportCount || 0;
+				lastReset = data.lastReset?.toDate() || new Date(0);
+			}
+
+			const now = new Date();
+			const currentMonth = now.getMonth();
+			const lastResetMonth = lastReset.getMonth();
+
+			if (currentMonth !== lastResetMonth) {
+				await setDoc(
+					usageRef,
+					{
+						exportCount: 0,
+						lastReset: serverTimestamp(),
+					},
+					{ merge: true }
+				);
+				exportCount = 0;
+			}
+
+			const userPlan = userData?.plan || 'starter';
+			const planLimit = PLAN_LIMITS[userPlan as keyof typeof PLAN_LIMITS].exports;
+
+			if (exportCount >= planLimit) {
+				toast({
+					title: 'Export Limit Reached',
+					description: `You've reached your ${planLimit} exports per month limit. Upgrade to export more invoices.`,
+					variant: 'destructive',
+				});
+				return false;
+			}
+
+			await setDoc(
+				usageRef,
+				{
+					exportCount: increment(1),
+				},
+				{ merge: true }
+			);
+
+			return true;
+		} catch (err) {
+			const error = err as Error;
+			setError(error);
+			toast({
+				variant: 'destructive',
+				title: 'Error Tracking Export',
+				description: error.message,
+			});
+			return false;
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { addInvoice, deleteInvoice, updateStatus, addBill, deleteBill, getProfile, updateProfile, getUser, updateUser, getAnalytics, incrementExportCount, loading, error };
 };
