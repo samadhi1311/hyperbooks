@@ -58,7 +58,7 @@ export default function Step1({ handleNext, formAnimations }: { handleNext: () =
 				currentUser.reload();
 				toast({
 					variant: 'success',
-					title: 'Account updated.',
+					title: 'Account details updated.',
 					description: 'Your account details have been updated successfully.',
 				});
 			}
