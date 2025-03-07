@@ -64,7 +64,7 @@ export default function Settings() {
 				currentUser.reload();
 				toast({
 					variant: 'success',
-					title: 'Account updated.',
+					title: 'Account details updated.',
 					description: 'Your account details have been updated successfully.',
 				});
 			}
@@ -72,7 +72,7 @@ export default function Settings() {
 			toast({
 				variant: 'destructive',
 				title: 'An error occured.',
-				description: `Couldn't update your account details. Please try again.`,
+				description: 'Something went wrong. Please try again.',
 			});
 			console.error(error);
 		} finally {
@@ -80,25 +80,8 @@ export default function Settings() {
 		}
 	}
 
-	function appOnSubmit(values: z.infer<typeof appSchema>) {
-		try {
-			setUpdating(true);
-			updateUser({ currency: values.currency }).then(() => {
-				toast({
-					variant: 'success',
-					title: 'Currency updated.',
-					description: 'Your currency settings have been updated successfully.',
-				});
-			});
-		} catch {
-			toast({
-				variant: 'destructive',
-				title: 'An error occured.',
-				description: `Couldn't update your app settings. Please try again.`,
-			});
-		} finally {
-			setUpdating(false);
-		}
+	async function appOnSubmit(values: z.infer<typeof appSchema>) {
+		await updateUser({ currency: values.currency });
 	}
 
 	async function getPortalLink() {
@@ -123,15 +106,15 @@ export default function Settings() {
 			await sendEmailVerification(currentUser!);
 			toast({
 				variant: 'success',
-				title: 'Email sent.',
-				description: 'Please check your email inbox.',
+				title: 'Email verification sent.',
+				description: 'Please check your email inbox and verify your email.',
 			});
 			setEmailSent(true);
 		} catch (error) {
 			toast({
 				variant: 'destructive',
 				title: 'An error occured.',
-				description: `Couldn't send verification email. Please try again.`,
+				description: 'Something went wrong. Please try again.',
 			});
 			console.error(error);
 		}
