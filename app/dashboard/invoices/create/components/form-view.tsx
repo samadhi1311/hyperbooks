@@ -24,7 +24,7 @@ import templates, { TemplateKey } from '@/templates';
 import { IconButton } from '@/components/ui/icon-button';
 
 export default function FormView() {
-	const { addInvoice, loading } = useFirestore();
+	const { addInvoice, loading, incrementExportCount } = useFirestore();
 	const { invoiceData, updateInvoiceData, updateBilledToData, resetInvoiceData } = useInvoiceStore();
 	const [exporting, setExporting] = useState(false);
 	const { userData } = useUserStore();
@@ -102,7 +102,7 @@ export default function FormView() {
 		});
 
 		return () => subscription.unsubscribe();
-	}, [form.watch, updateInvoiceData, updateBilledToData]);
+	}, [form, updateInvoiceData, updateBilledToData]);
 
 	const { fields, append, remove } = useFieldArray({ control: form.control, name: 'items' });
 
@@ -143,6 +143,9 @@ export default function FormView() {
 	const handleExportPDF = async () => {
 		setExporting(true);
 		try {
+			const canExport = await incrementExportCount();
+			if (!canExport) return;
+
 			const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
 			const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
 
