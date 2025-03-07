@@ -15,7 +15,7 @@ export default function Menu() {
 	const { invoiceData, resetInvoiceData } = useInvoiceStore();
 	const { selectedTemplate } = useTemplateStore();
 	const { profile } = useProfileStore();
-	const { addInvoice, loading, error } = useFirestore<Partial<InvoiceData>>();
+	const { addInvoice, loading, error, incrementExportCount } = useFirestore<Partial<InvoiceData>>();
 	const { toast } = useToast();
 	const { view, setView } = useViewStore();
 
@@ -30,6 +30,9 @@ export default function Menu() {
 
 	const handleExportPDF = async () => {
 		try {
+			const canExport = await incrementExportCount();
+			if (!canExport) return;
+
 			const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
 			const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
 
