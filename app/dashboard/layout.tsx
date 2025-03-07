@@ -32,9 +32,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 			if (user?.uid) {
 				if (!user.emailVerified) {
 					toast({
+						variant: 'default',
 						title: 'Email is not verified yet.',
-						description: 'Please check your email inbox.',
-						variant: 'destructive',
+						description: 'Please check your email inbox for verification email.',
 					});
 				}
 				if (!analytics) {
