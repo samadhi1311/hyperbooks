@@ -81,7 +81,7 @@ export default function Hero() {
 		<section ref={scope} className='relative grid w-full place-items-center pb-8 md:pb-12 lg:pb-16'>
 			<div className='mt-24 flex flex-col gap-8 text-center md:mt-32'>
 				<div className='mx-auto flex max-w-screen-lg flex-col gap-8'>
-					<div className='hyperbooks-hero mx-auto w-fit rounded-full border border-border bg-muted text-sm opacity-0 md:px-2 md:py-1'>
+					<div className='hyperbooks-hero mx-auto w-fit transform-gpu rounded-full border border-border bg-muted text-sm opacity-0 will-change-transform md:px-2 md:py-1'>
 						<AnimatedShinyText className='inline-flex items-center justify-center gap-1 px-2 py-1 text-xs text-muted-foreground md:gap-2 md:px-4'>
 							<span>
 								<FlaskConicalIcon className='size-4' />
@@ -113,12 +113,14 @@ export default function Hero() {
 					</Link>
 
 					{isMobile ? (
-						<div ref={dashboardRef} className='relative aspect-auto transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
+						<div
+							ref={dashboardRef}
+							className='relative aspect-auto transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out will-change-transform'>
 							<img src={theme === 'dark' ? 'dashboard-mobile-dark.png' : 'dashboard-mobile-light.png'} alt='hyperbooks mobile dashboard' />
 							<div className='absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-background via-transparent to-transparent' />
 						</div>
 					) : (
-						<div ref={dashboardRef} className='aspect-video transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out'>
+						<div ref={dashboardRef} className='aspect-video transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out will-change-transform'>
 							<img src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'} alt='hyperbooks desktop dashboard' />
 						</div>
 					)}
