@@ -35,5 +35,35 @@ export default function manifest(): MetadataRoute.Manifest {
 		orientation: 'portrait-primary',
 		display_override: ['standalone', 'fullscreen', 'window-controls-overlay', 'minimal-ui', 'browser'],
 		categories: ['finance', 'productivity'],
+		screenshots: [
+			{
+				src: '/dashboard-desktop-dark.png',
+				platform: 'windows',
+				type: 'image/png',
+				sizes: '1920x1080',
+				label: 'Main dashboard',
+			},
+			{
+				src: '/dashboard-desktop-dark.png',
+				platform: 'macos',
+				type: 'image/png',
+				sizes: '1920x1080',
+				label: 'Main dashboard',
+			},
+			{
+				src: '/dashboard-mobile-dark.png',
+				platform: 'android',
+				type: 'image/png',
+				sizes: '850x1572',
+				label: 'Main dashboard',
+			},
+			{
+				src: '/dashboard-mobile-dark.png',
+				platform: 'ios',
+				type: 'image/png',
+				sizes: '850x1572',
+				label: 'Main dashboard',
+			},
+		],
 	};
 }
