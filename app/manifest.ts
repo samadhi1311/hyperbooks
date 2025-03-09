@@ -4,11 +4,14 @@ export const dynamic = 'force-static';
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
+		id: '/dashboard/?source=manifest',
 		name: 'hyperbooks',
 		short_name: 'hyperbooks',
 		description: 'Smart, simple & stress-free bookkeeping.',
 		start_url: '/dashboard',
-		display: 'fullscreen',
+		scope: '/',
+		lang: 'en',
+		display: 'standalone',
 		background_color: '#252525',
 		theme_color: '#252525',
 		icons: [
@@ -28,5 +31,9 @@ export default function manifest(): MetadataRoute.Manifest {
 				type: 'image/png',
 			},
 		],
+		dir: 'ltr',
+		orientation: 'portrait-primary',
+		display_override: ['standalone', 'fullscreen', 'window-controls-overlay', 'minimal-ui', 'browser'],
+		categories: ['finance', 'productivity'],
 	};
 }
