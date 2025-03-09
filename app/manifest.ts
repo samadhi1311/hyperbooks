@@ -35,6 +35,9 @@ export default function manifest(): MetadataRoute.Manifest {
 		orientation: 'portrait-primary',
 		display_override: ['standalone', 'fullscreen', 'window-controls-overlay', 'minimal-ui', 'browser'],
 		categories: ['finance', 'productivity'],
+		launch_handler: {
+			client_mode: 'navigate-existing',
+		},
 		screenshots: [
 			{
 				src: '/dashboard-desktop-dark.png',
