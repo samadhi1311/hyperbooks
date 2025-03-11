@@ -3,39 +3,66 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { IconButton } from './ui/icon-button';
-import { HardDriveDownloadIcon } from 'lucide-react';
+import { HardDriveDownloadIcon, Share2Icon } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function Installer() {
-	const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+	const [deferredPrompt, setDeferredPrompt] = useState(null);
 	const [showBanner, setShowBanner] = useState(false);
+	const [isIOS, setIsIOS] = useState(false);
+	const [isStandalone, setIsStandalone] = useState(false);
 
 	useEffect(() => {
+		// Check if already installed as PWA
+		setIsStandalone(window.matchMedia('(display-mode: standalone)').matches);
+
+		// Check if iOS
+		// @ts-expect-error (window.MSStream is a property of the window object)
+		const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+		setIsIOS(iOS);
+
+		// Don't show if user opted out
 		const neverShow = localStorage.getItem('hyperbooks-pwa-never-show');
-		if (neverShow === 'true') return;
+		if (neverShow === 'true' || isStandalone) return;
 
-		const handler = (e: any) => {
-			e.preventDefault();
-			setDeferredPrompt(e);
-			setShowBanner(true);
-		};
+		// For non-iOS, listen for install prompt
+		if (!iOS) {
+			const handler = (e: any) => {
+				e.preventDefault();
+				setDeferredPrompt(e);
+				setShowBanner(true);
+			};
 
-		window.addEventListener('beforeinstallprompt', handler);
+			window.addEventListener('beforeinstallprompt', handler);
+			return () => window.removeEventListener('beforeinstallprompt', handler);
+		} else {
+			// For iOS, check if in Safari
+			const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-		return () => {
-			window.removeEventListener('beforeinstallprompt', handler);
-		};
+			// Only show prompt in Safari and not in standalone mode
+			// @ts-expect-error (navigator.standalone is a property of the navigator object)
+			if (isSafari && !navigator.standalone) {
+				// Delay showing the prompt to avoid immediate dismissal
+				const timer = setTimeout(() => setShowBanner(true), 1000);
+				return () => clearTimeout(timer);
+			}
+		}
 	}, []);
 
 	const handleInstallClick = async () => {
-		if (!deferredPrompt) return;
+		if (isIOS) {
+			// Can't programmatically trigger install on iOS, just show instructions
+			alert('To install: tap the share icon in your browser and select "Add to Home Screen"');
+		} else if (deferredPrompt) {
+			// @ts-expect-error (deferredPrompt is a property of the window object)
+			deferredPrompt.prompt();
+			// @ts-expect-error (deferredPrompt is a property of the window object)
+			const { outcome } = await deferredPrompt.userChoice;
 
-		deferredPrompt.prompt();
-		const { outcome } = await deferredPrompt.userChoice;
-
-		if (outcome === 'accepted') {
-			setDeferredPrompt(null);
-			setShowBanner(false);
+			if (outcome === 'accepted') {
+				setDeferredPrompt(null);
+				setShowBanner(false);
+			}
 		}
 	};
 
@@ -58,10 +85,14 @@ export function Installer() {
 			exit={{ opacity: 0, y: '100%' }}
 			transition={{ duration: 0.75, delay: 2, ease: 'backInOut' }}>
 			<h3 className='mb-2 flex flex-row items-center gap-2 font-semibold'>
-				<HardDriveDownloadIcon className='size-4' />
-				Install hyperbooks.
+				{isIOS ? <Share2Icon className='size-4' /> : <HardDriveDownloadIcon className='size-4' />}
+				Install hyperbooks
 			</h3>
-			<p className='mb-4 text-sm text-muted-foreground'>Install hyperbooks on your device for quick and easy access to your bookkeeping.</p>
+			<p className='mb-4 text-sm text-muted-foreground'>
+				{isIOS
+					? "Add hyperbooks to your home screen for quick access. Tap the share button and select 'Add to Home Screen'."
+					: 'Install hyperbooks on your device for quick and easy access to your bookkeeping.'}
+			</p>
 			<div className='flex justify-end gap-2'>
 				<Button variant='ghost' onClick={handleDontAskAgain}>
 					Don&apos;t ask again
@@ -69,8 +100,8 @@ export function Installer() {
 				<Button variant='ghost' onClick={handleDismiss}>
 					Not now
 				</Button>
-				<IconButton icon={<HardDriveDownloadIcon />} onClick={handleInstallClick}>
-					Install
+				<IconButton icon={isIOS ? <Share2Icon /> : <HardDriveDownloadIcon />} onClick={handleInstallClick}>
+					{isIOS ? 'Show me how' : 'Install'}
 				</IconButton>
 			</div>
 		</motion.div>
