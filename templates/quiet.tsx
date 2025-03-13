@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 import { Button } from '@/components/ui/button';
-import { InvoiceData, placeholders, ProfileData } from '@/lib/types';
+import { InvoiceData, placeholders, ProfileData, Template } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
 import { PlusCircleIcon, XCircleIcon } from 'lucide-react';
 
@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
 		fontFamily: 'Inter',
 	},
 	header: {
-		backgroundColor: 'whitesmoke',
-		color: 'black',
+		backgroundColor: '#f1f1f1',
+		color: '#5c5c5c',
 		padding: '16pt',
 		display: 'flex',
 		flexDirection: 'column',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
 	theading: {
 		fontSize: '10pt',
 		letterSpacing: '1pt',
-		color: '#afafaf',
+		color: '#5c5c5c',
 		textAlign: 'center',
 		backgroundColor: 'transparent',
 		fontWeight: 'bold',
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
 	footer: {
 		position: 'absolute',
 		backgroundColor: 'whitesmoke',
-		color: '#afafaf',
+		color: '#5c5c5c',
 		fontSize: '10pt',
 		padding: '8pt',
 		borderRadius: '4pt',
@@ -190,33 +190,72 @@ const styles = StyleSheet.create({
 	},
 });
 
+const applyCustomStyles = (baseStyles: any, customization?: Template) => {
+	if (!customization || !customization.colors) return baseStyles;
+
+	// Create a deep copy of the styles to avoid modifying the original
+	const customizedStyles = JSON.parse(JSON.stringify(baseStyles));
+
+	// Apply color customizations
+	if (customization.colors) {
+		if (customization.colors.foreground) {
+			customizedStyles.page.color = customization.colors.foreground;
+		}
+
+		if (customization.colors.background) {
+			customizedStyles.page.backgroundColor = customization.colors.background;
+		}
+
+		if (customization.colors.foregroundMuted) {
+			customizedStyles.header.color = customization.colors.foregroundMuted;
+			customizedStyles.footer.color = customization.colors.foregroundMuted;
+			customizedStyles.theading.color = customization.colors.foregroundMuted;
+		}
+
+		if (customization.colors.backgroundMuted) {
+			customizedStyles.header.backgroundColor = customization.colors.backgroundMuted;
+			customizedStyles.footer.backgroundColor = customization.colors.backgroundMuted;
+		}
+	}
+
+	return customizedStyles;
+};
+
 export const QuietTemplate = ({
 	data,
 	profile,
 	removeItem,
 	onEdit,
 	onArrayEdit,
+	customization,
 }: {
 	data: InvoiceData;
 	profile: ProfileData;
 	removeItem: (index: number) => void;
 	onEdit: (field: keyof InvoiceData | string | keyof ProfileData, value: any) => void;
 	onArrayEdit: (path: string, index: number, value: any, field?: string) => void;
+	customization?: Template;
 }) => {
 	const { billedTo, items, discount, tax, total } = data;
 
+	const customizedStyles = applyCustomStyles(styles, customization);
+
+	const fontFamily = customization?.font?.regular || 'Inter';
+
 	return (
-		<div className='editor-light' style={{ ...styles.page, width: '595pt', height: '842pt', borderStyle: 'dashed', borderWidth: '1pt', borderColor: '#afafaf', borderRadius: '12pt' }}>
+		<div
+			className='editor-light'
+			style={{ ...customizedStyles.page, width: '595pt', height: '842pt', borderStyle: 'dashed', borderWidth: '1pt', borderColor: '#afafaf', borderRadius: '12pt', fontFamily: fontFamily }}>
 			{/* Header */}
-			<div style={styles.header}>
-				<div style={styles.headerRow}>
-					<img src={profile.logo} className='editable' alt='hyperbooks Logo' style={styles.logo} />
-					<div style={styles.profile}>
-						<p className='editable' style={styles.profileTextMain}>
+			<div style={customizedStyles.header}>
+				<div style={customizedStyles.headerRow}>
+					<img src={profile.logo} className='editable' alt='hyperbooks Logo' style={customizedStyles.logo} />
+					<div style={customizedStyles.profile}>
+						<p className='editable' style={customizedStyles.profileTextMain}>
 							{profile.name ?? placeholders.company.name}
 						</p>
 						{profile.address?.map((line, index) => (
-							<p className='editable' key={index} style={styles.profileTextSecondary}>
+							<p className='editable' key={index} style={customizedStyles.profileTextSecondary}>
 								{line ?? placeholders.company.address[index]}
 							</p>
 						))}
@@ -224,13 +263,13 @@ export const QuietTemplate = ({
 				</div>
 
 				{/* BilledTo */}
-				<div style={styles.billedToRow}>
-					<div style={styles.billedTo}>
+				<div style={customizedStyles.billedToRow}>
+					<div style={customizedStyles.billedTo}>
 						<p className='editable'>Billed to:</p>
 
 						<input
 							className='editable'
-							style={styles.billedTextMain}
+							style={customizedStyles.billedTextMain}
 							value={billedTo.name}
 							placeholder={placeholders.billedTo.name}
 							onChange={(e) => onEdit('billedTo.name', e.target.value)}
@@ -241,31 +280,31 @@ export const QuietTemplate = ({
 								type='text'
 								className='editable'
 								key={index}
-								style={styles.billedTextSecondary}
+								style={customizedStyles.billedTextSecondary}
 								value={line ?? ''}
 								placeholder={placeholders.billedTo.address[index]}
 								onChange={(e) => onArrayEdit('billedTo.address', index, e.target.value)}
 							/>
 						))}
 					</div>
-					<div style={styles.billedTo}>
-						<div style={styles.billedField}>
-							<img src='/template-data/icons/email-dark.png' style={styles.icon} />
+					<div style={customizedStyles.billedTo}>
+						<div style={customizedStyles.billedField}>
+							<img src='/template-data/icons/email-dark.png' style={customizedStyles.icon} />
 							<input
 								className='editable'
 								type='email'
-								style={styles.billedTextSecondary}
+								style={customizedStyles.billedTextSecondary}
 								value={billedTo.email}
 								placeholder={placeholders.billedTo.email}
 								onChange={(e) => onEdit('billedTo.email', e.target.value)}
 							/>
 						</div>
-						<div style={styles.billedField}>
-							<img src='/template-data/icons/phone-dark.png' style={styles.icon} />
+						<div style={customizedStyles.billedField}>
+							<img src='/template-data/icons/phone-dark.png' style={customizedStyles.icon} />
 							<input
 								className='editable'
 								type='text'
-								style={styles.billedTextSecondary}
+								style={customizedStyles.billedTextSecondary}
 								value={billedTo.phone}
 								placeholder={placeholders.billedTo.phone}
 								onChange={(e) => onEdit('billedTo.phone', e.target.value)}
@@ -276,21 +315,21 @@ export const QuietTemplate = ({
 			</div>
 
 			{/* Items Table */}
-			<div className='items' style={styles.items}>
+			<div className='items' style={customizedStyles.items}>
 				<table style={{ width: '100%', tableLayout: 'fixed' }}>
-					<thead style={styles.theading}>
+					<thead style={customizedStyles.theading}>
 						<tr>
-							<th style={styles.headdesc}>DESCRIPTION</th>
-							<th style={styles.headqty}>QTY</th>
-							<th style={styles.headunit}>UNIT PRICE</th>
-							<th style={styles.headtotal}>TOTAL</th>
+							<th style={customizedStyles.headdesc}>DESCRIPTION</th>
+							<th style={customizedStyles.headqty}>QTY</th>
+							<th style={customizedStyles.headunit}>UNIT PRICE</th>
+							<th style={customizedStyles.headtotal}>TOTAL</th>
 						</tr>
 					</thead>
-					<tbody style={styles.tbody}>
+					<tbody style={customizedStyles.tbody}>
 						{items.map((item, index) => (
-							<tr key={index} style={styles.trow}>
-								<td style={styles.itemdesc}>
-									<Button variant='outline' size='icon' style={styles.removebutton} className='shadow-md hover:shadow-xl' onClick={() => removeItem(index)}>
+							<tr key={index} style={customizedStyles.trow}>
+								<td style={customizedStyles.itemdesc}>
+									<Button variant='outline' size='icon' style={customizedStyles.removebutton} className='shadow-md hover:shadow-xl' onClick={() => removeItem(index)}>
 										<XCircleIcon />
 									</Button>
 									<input
@@ -301,7 +340,7 @@ export const QuietTemplate = ({
 										onChange={(e) => onArrayEdit('items', index, e.target.value, 'description')}
 									/>
 								</td>
-								<td style={styles.itemqty}>
+								<td style={customizedStyles.itemqty}>
 									<input
 										style={{ width: '100%', textAlign: 'center' }}
 										type='number'
@@ -313,7 +352,7 @@ export const QuietTemplate = ({
 										onChange={(e) => onArrayEdit('items', index, e.target.value ? +e.target.value : undefined, 'quantity')}
 									/>
 								</td>
-								<td style={styles.itemunit}>
+								<td style={customizedStyles.itemunit}>
 									<input
 										style={{ width: '100%', textAlign: 'right' }}
 										type='number'
@@ -326,23 +365,23 @@ export const QuietTemplate = ({
 										onChange={(e) => onArrayEdit('items', index, e.target.value ? +e.target.value : undefined, 'amount')}
 									/>
 								</td>
-								<td style={styles.itemtotal}>{item.quantity && item.amount ? (item.quantity * item.amount).toFixed(2) : ''}</td>
+								<td style={customizedStyles.itemtotal}>{item.quantity && item.amount ? (item.quantity * item.amount).toFixed(2) : ''}</td>
 							</tr>
 						))}
 					</tbody>
 				</table>
-				<Button style={styles.addbutton} className='shadow-md hover:shadow-xl' onClick={() => onArrayEdit('items', -1, { description: '', quantity: 0, amount: 0 })}>
+				<Button style={customizedStyles.addbutton} className='shadow-md hover:shadow-xl' onClick={() => onArrayEdit('items', -1, { description: '', quantity: 0, amount: 0 })}>
 					<PlusCircleIcon />
 					Add Item
 				</Button>
-				<div style={styles.total}>
+				<div style={customizedStyles.total}>
 					<div></div>
-					<div style={styles.totalColumn}>
-						<div style={styles.totalField}>
+					<div style={customizedStyles.totalColumn}>
+						<div style={customizedStyles.totalField}>
 							<p>Subtotal:</p>
 							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0).toFixed(2)}</p>
 						</div>
-						<div style={styles.totalField}>
+						<div style={customizedStyles.totalField}>
 							<p>{'Tax: '}</p>
 							<div className='input-wrapper'>
 								<input
@@ -361,7 +400,7 @@ export const QuietTemplate = ({
 
 							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</p>
 						</div>
-						<div style={styles.totalField}>
+						<div style={customizedStyles.totalField}>
 							<p>{'Discount: '}</p>
 							<div className='input-wrapper'>
 								<input
@@ -382,7 +421,7 @@ export const QuietTemplate = ({
 						<div>
 							<hr />
 						</div>
-						<div style={styles.totalField}>
+						<div style={customizedStyles.totalField}>
 							<p>{'Total: '}</p>
 							<p>{total.toFixed(2)}</p>
 						</div>
@@ -391,7 +430,7 @@ export const QuietTemplate = ({
 			</div>
 
 			{/* Footer */}
-			<div style={styles.footer}>
+			<div style={customizedStyles.footer}>
 				<p>Invoice generated by hyperbooks.</p>
 			</div>
 		</div>
@@ -399,31 +438,39 @@ export const QuietTemplate = ({
 };
 
 // PDF View
-export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; profile: ProfileData | null }) => {
+export const renderQuietTemplate = ({ data, profile, customization }: { data: InvoiceData; profile: ProfileData | null; customization?: Template }) => {
 	const { billedTo, items, tax, discount, total } = data;
 
+	const customizedStyles = applyCustomStyles(styles, customization);
+
+	const fontFamily = 'Inter';
+	const regularFontUrl = customization?.font?.regular || 'https://cdn.jsdelivr.net/npm/inter-font@3.19.0/ttf/Inter-Medium.ttf';
+	const boldFontUrl = customization?.font?.bold || 'https://cdn.jsdelivr.net/npm/inter-font@3.19.0/ttf/Inter-SemiBold.ttf';
+
 	Font.register({
-		family: 'Inter',
+		family: fontFamily,
 		fonts: [
 			{
-				src: 'https://cdn.jsdelivr.net/npm/inter-font@3.19.0/ttf/Inter-Medium.ttf',
+				src: regularFontUrl,
+				fontWeight: 'normal',
 			},
 			{
-				src: 'https://cdn.jsdelivr.net/npm/inter-font@3.19.0/ttf/Inter-SemiBold.ttf',
+				src: boldFontUrl,
 				fontWeight: 'bold',
 			},
 		],
 	});
+
 	return (
-		<Page size='A4' style={styles.page}>
+		<Page size='A4' style={customizedStyles.page}>
 			{/* Header */}
-			<View style={styles.header}>
-				<View style={styles.headerRow}>
-					{profile?.logo && <Image src={profile.logo} style={styles.logo} />}
-					<View style={styles.profile}>
-						<Text style={styles.profileTextMain}>{profile?.name}</Text>
+			<View style={customizedStyles.header}>
+				<View style={customizedStyles.headerRow}>
+					{profile?.logo && <Image src={profile.logo} style={customizedStyles.logo} />}
+					<View style={customizedStyles.profile}>
+						<Text style={customizedStyles.profileTextMain}>{profile?.name}</Text>
 						{profile?.address?.map((line, index) => (
-							<Text style={styles.profileTextSecondary} key={index}>
+							<Text style={customizedStyles.profileTextSecondary} key={index}>
 								{line}
 								{index === profile.address!.length - 1 ? '' : ','}
 							</Text>
@@ -432,32 +479,32 @@ export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; prof
 				</View>
 
 				{/* Billed To */}
-				<View style={styles.billedToRow}>
-					<View style={styles.billedTo}>
-						<Text style={styles.billedTextSecondary}>Billed to:</Text>
-						<Text style={styles.billedTextMain}>{billedTo.name}</Text>
+				<View style={customizedStyles.billedToRow}>
+					<View style={customizedStyles.billedTo}>
+						<Text style={customizedStyles.billedTextSecondary}>Billed to:</Text>
+						<Text style={customizedStyles.billedTextMain}>{billedTo.name}</Text>
 						{billedTo.address?.map((line, index) => (
-							<Text style={styles.billedTextSecondary} key={index}>
+							<Text style={customizedStyles.billedTextSecondary} key={index}>
 								{line}
 								{index === billedTo.address!.length - 1 ? '' : ','}
 							</Text>
 						))}
 					</View>
-					<View style={styles.billedTo}>
-						<View style={styles.billedField}>
-							<Image src={'/template-data/icons/email-dark.png'} style={styles.icon} />
-							<Text style={styles.billedTextSecondary}>{billedTo.email}</Text>
+					<View style={customizedStyles.billedTo}>
+						<View style={customizedStyles.billedField}>
+							<Image src={'/template-data/icons/email-dark.png'} style={customizedStyles.icon} />
+							<Text style={customizedStyles.billedTextSecondary}>{billedTo.email}</Text>
 						</View>
-						<View style={styles.billedField}>
-							<Image src={'/template-data/icons/phone-dark.png'} style={styles.icon} />
-							<Text style={styles.billedTextSecondary}>{billedTo.phone}</Text>
+						<View style={customizedStyles.billedField}>
+							<Image src={'/template-data/icons/phone-dark.png'} style={customizedStyles.icon} />
+							<Text style={customizedStyles.billedTextSecondary}>{billedTo.phone}</Text>
 						</View>
 					</View>
 				</View>
 			</View>
 
 			{/* Items Table Equivalent */}
-			<View style={styles.items}>
+			<View style={customizedStyles.items}>
 				{/* Table Header */}
 				<View style={{ ...styles.theading, flexDirection: 'row', width: '100%' }}>
 					<Text style={{ ...styles.headdesc, flex: 5 }}>DESCRIPTION</Text>
@@ -467,7 +514,7 @@ export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; prof
 				</View>
 
 				{/* Table Body */}
-				<View style={styles.tbody}>
+				<View style={customizedStyles.tbody}>
 					{items.map((item, index) => (
 						<View key={index} style={{ ...styles.trow, flexDirection: 'row', width: '100%' }}>
 							<Text style={{ ...styles.itemdesc, flex: 5, textAlign: 'left' }}>{item.description}</Text>
@@ -478,20 +525,20 @@ export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; prof
 					))}
 				</View>
 
-				<View style={styles.total}>
+				<View style={customizedStyles.total}>
 					<View></View>
-					<View style={styles.totalColumn}>
-						<View style={styles.totalField}>
+					<View style={customizedStyles.totalColumn}>
+						<View style={customizedStyles.totalField}>
 							<Text>Subtotal:</Text>
 							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0).toFixed(2)}</Text>
 						</View>
 
-						<View style={styles.totalField}>
+						<View style={customizedStyles.totalField}>
 							<Text>{`Tax: ${tax}%`}</Text>
 							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</Text>
 						</View>
 
-						<View style={styles.totalField}>
+						<View style={customizedStyles.totalField}>
 							<Text>{`Discount: ${discount}%`}</Text>
 							<Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0).toFixed(2)}</Text>
 						</View>
@@ -500,7 +547,7 @@ export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; prof
 							<Line x1='0%' y1='1' x2='100%' y2='1' strokeWidth={1} stroke='#252525' />
 						</Svg>
 
-						<View style={styles.totalField}>
+						<View style={customizedStyles.totalField}>
 							<Text>Total: </Text>
 							<Text>{total.toFixed(2)}</Text>
 						</View>
@@ -509,7 +556,7 @@ export const renderQuietTemplate = ({ data, profile }: { data: InvoiceData; prof
 			</View>
 
 			{/* Footer */}
-			<View style={styles.footer} fixed>
+			<View style={customizedStyles.footer} fixed>
 				<Text>Invoice generated by hyperbooks.</Text>
 			</View>
 		</Page>
