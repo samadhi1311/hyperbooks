@@ -13,6 +13,7 @@ function IconButton({
 	variant = 'default',
 	size = 'default',
 	disabled = false,
+	asChild = false,
 }: {
 	className?: string;
 	children?: React.ReactNode;
@@ -22,11 +23,14 @@ function IconButton({
 	variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 	size?: 'default' | 'sm' | 'lg' | 'icon';
 	disabled?: boolean;
+	asChild?: boolean;
 }) {
 	return (
-		<Button className={cn('group flex items-center gap-3', className)} size={size} variant={variant} type={type} onClick={onClick} disabled={disabled}>
-			<span className={clsx('size-4 transition-all duration-300', !disabled && 'group-hover:translate-x-1')}>{icon}</span>
-			{children}
+		<Button size={size} variant={variant} type={type} onClick={onClick} disabled={disabled} asChild={asChild}>
+			<span className={cn('group flex items-center gap-3', className)}>
+				<span className={clsx('size-4 transition-all duration-300', !disabled && 'group-hover:translate-x-1')}>{icon}</span>
+				{children}
+			</span>
 		</Button>
 	);
 }
