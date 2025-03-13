@@ -1,8 +1,34 @@
+import { Plan, Template } from '@/lib/types';
 import { AzureTemplate, renderAzureTemplate } from './azure';
 import { MidnightTemplate, renderMidnightTemplate } from './midnight';
 import { QuietTemplate, renderQuietTemplate } from './quiet';
 
 export type TemplateKey = 'azure' | 'midnight' | 'quiet';
+
+const CUSTOMIZABLE_PLANS: Plan[] = ['pro', 'ultimate'];
+
+export const canCustomizeTemplates = (plan?: Plan): boolean => {
+	if (!plan) return false;
+	return CUSTOMIZABLE_PLANS.includes(plan);
+};
+
+export const applyTemplateCustomization = (templateKey: TemplateKey, customization?: Template, userPlan?: Plan) => {
+	// Only apply customizations for eligible plans
+	if (!canCustomizeTemplates(userPlan) || !customization) {
+		return {};
+	}
+
+	// Only apply customizations if they match the current template
+	if (customization.templateKey !== templateKey) {
+		return {};
+	}
+
+	// Return customization properties
+	return {
+		colors: customization.colors || {},
+		font: customization.font || {},
+	};
+};
 
 const templates = {
 	azure: {
