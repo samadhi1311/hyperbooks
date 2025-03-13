@@ -89,7 +89,7 @@ export default function Settings() {
 
 		if (!userData) return;
 
-		const portalLink = await fetch('https://hyperbooks-api.hyperreal.cloud/customer-portal', {
+		const portalLink = await fetch('https://hyperbooks.hyperreal.cloud/customer-portal', {
 			method: 'POST',
 			body: JSON.stringify({ customer_id: userData.customer_id }),
 		});
