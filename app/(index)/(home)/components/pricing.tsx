@@ -73,16 +73,16 @@ export default function Pricing() {
 						</div>
 					</div>
 				</MagicCard>
-				<MagicCard className='flex-col items-center justify-center bg-card-foreground dark:bg-card-foreground' gradientColor={theme === 'dark' ? '#cfcfcf' : '#202020'}>
-					<div className='relative flex flex-col gap-8 p-8 text-background dark:text-background'>
+				<MagicCard className='flex-col items-center justify-center border-2 border-border bg-muted dark:bg-muted' gradientColor={theme === 'dark' ? '#353535' : '#cfcfcf'}>
+					<div className='relative flex flex-col gap-8 p-8 text-foreground dark:text-foreground'>
 						<div className='flex-1 space-y-4'>
-							<Badge variant='secondary'>Pro</Badge>
+							<Badge>Pro</Badge>
 
 							<H3 className='mt-4 flex items-baseline'>
 								<span className='text-2xl font-semibold tracking-tight md:text-3xl'>$3.99</span>
 								<span className='ml-1 text-base font-semibold md:text-xl'>/month</span>
 							</H3>
-							<p className='mt-6 text-sm text-muted md:text-base'>The essentials for freelancers.</p>
+							<p className='mt-6 text-sm text-muted-foreground md:text-base'>The essentials for freelancers.</p>
 
 							<ul role='list' className='mt-6 space-y-6 border-t border-muted-foreground pt-6 dark:border-muted-foreground'>
 								<span className='text-sm font-semibold text-muted-foreground md:text-base'>What&apos;s included?</span>
