@@ -17,6 +17,8 @@ type UserData = {
 	subscription_status?: SubscriptionStatus;
 	scheduled_change?: Date;
 	updated_at?: Date;
+
+	template?: string;
 };
 
 type InvoiceData = {
@@ -50,6 +52,20 @@ type BillData = {
 	category: string;
 	amount: number;
 	createdAt?: Timestamp;
+};
+
+type Template = {
+	templateKey: string;
+	colors?: {
+		foreground?: string;
+		background?: string;
+		backgroundMuted?: string;
+		foregroundMuted?: string;
+	};
+	font?: {
+		regular?: string;
+		bold?: string;
+	};
 };
 
 const expenseCategories = [
@@ -98,4 +114,4 @@ const avatars = [
 	{ id: 6, url: '/avatars/microbe-6.svg' },
 ];
 
-export { type InvoiceData, type ProfileData, type UserData, type Plan, type SubscriptionStatus, type BillData, expenseCategories, placeholders, avatars };
+export { type InvoiceData, type ProfileData, type UserData, type Plan, type SubscriptionStatus, type BillData, type Template, expenseCategories, placeholders, avatars };
