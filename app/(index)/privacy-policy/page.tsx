@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
 				<div className='space-y-4 text-center'>
 					<H1>Privacy Policy</H1>
 					<P className='text-muted-foreground' variant='sm'>
-						Last updated: 21 <sup>st</sup> February, 2025
+						Last updated: 13 <sup>th</sup> March, 2025
 					</P>
 				</div>
 
@@ -49,7 +49,7 @@ export default function PrivacyPolicy() {
 							<li>Service refers to the Application or the Website or both.</li>
 							<li>Service Provider means any natural or legal person processing the data on behalf of the Company.</li>
 							<li>Usage Data refers to data collected automatically from the Service or its infrastructure.</li>
-							<li>Website refers to hyperbooks, accessible from https://hyperbooks.hyperreal.cloud </li>
+							<li>Website refers to hyperbooks, accessible from https://hyperbooks.app </li>
 							<li>You means the individual accessing or using the Service.</li>
 						</ul>
 					</div>
