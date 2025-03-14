@@ -49,7 +49,7 @@ export default function Hero() {
 		if (!element) return;
 
 		// Set initial skew
-		element.style.transform = 'perspective(1000px) skewY(3deg)';
+		element.style.transform = 'perspective(1000px) translateZ(0) skewY(3deg)';
 
 		const handleMouseMove = (e: MouseEvent) => {
 			const rect = element.getBoundingClientRect();
@@ -61,11 +61,11 @@ export default function Hero() {
 			const xPercent = (x / (rect.width + padding * 2) - 0.5) * 2;
 			const yPercent = (y / (rect.height + padding * 2) - 0.5) * 2;
 
-			element.style.transform = `perspective(1000px) rotateX(${yPercent * -3}deg) rotateY(${xPercent * 3}deg)`;
+			element.style.transform = `perspective(1000px) translateZ(0) rotateX(${yPercent * -3}deg) rotateY(${xPercent * 3}deg)`;
 		};
 
 		const handleMouseLeave = () => {
-			element.style.transform = 'perspective(1000px) skewY(3deg)';
+			element.style.transform = 'perspective(1000px) translateZ(0) skewY(3deg)';
 		};
 
 		element.addEventListener('mousemove', handleMouseMove);
@@ -116,12 +116,22 @@ export default function Hero() {
 						<div
 							ref={dashboardRef}
 							className='relative aspect-auto transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out will-change-transform'>
-							<img src={theme === 'dark' ? 'dashboard-mobile-dark.png' : 'dashboard-mobile-light.png'} alt='hyperbooks mobile dashboard' />
+							<img
+								className='transform-gpu will-change-transform'
+								src={theme === 'dark' ? 'dashboard-mobile-dark.png' : 'dashboard-mobile-light.png'}
+								alt='hyperbooks mobile dashboard'
+							/>
 							<div className='absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-background via-transparent to-transparent' />
 						</div>
 					) : (
-						<div ref={dashboardRef} className='aspect-video transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out will-change-transform'>
-							<img src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'} alt='hyperbooks desktop dashboard' />
+						<div
+							ref={dashboardRef}
+							className='aspect-video scale-[2] transform-gpu overflow-hidden rounded-lg border border-border blur-0 transition-transform duration-300 ease-out will-change-transform'>
+							<img
+								className='transform-gpu will-change-transform'
+								src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'}
+								alt='hyperbooks desktop dashboard'
+							/>
 						</div>
 					)}
 				</div>
