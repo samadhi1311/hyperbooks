@@ -109,7 +109,7 @@ export default function Upgrade() {
 								</li>
 							</ul>
 							<div className='flex flex-col items-center justify-end pt-4'>
-								<IconButton icon={<SparkleIcon />} onClick={() => handleCheckout({ priceId: 'pri_01jkctkft82s247d8y3w6px2zj', plan: 'pro' })}>
+								<IconButton icon={<SparkleIcon />} onClick={() => handleCheckout({ priceId: 'pri_01jnn26q26hsz815nwa7fdzke1', plan: 'pro' })}>
 									Upgrade to Pro
 								</IconButton>
 							</div>
@@ -148,7 +148,7 @@ export default function Upgrade() {
 								</li>
 							</ul>
 							<div className='flex items-center justify-center pt-4'>
-								<IconButton icon={<SparklesIcon />} onClick={() => handleCheckout({ priceId: 'pri_01jmcmeb4pwkj8ajfsmd1ks9w3', plan: 'ultimate' })}>
+								<IconButton icon={<SparklesIcon />} onClick={() => handleCheckout({ priceId: 'pri_01jnn28fcbdyda07k4k0rm1yx2', plan: 'ultimate' })}>
 									Upgrade to Ultimate
 								</IconButton>
 							</div>
