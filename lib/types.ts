@@ -16,6 +16,7 @@ type UserData = {
 	product_id?: string;
 	subscription_status?: SubscriptionStatus;
 	scheduled_change?: Date;
+	customer_email?: string;
 	updated_at?: Date;
 
 	template?: string;
