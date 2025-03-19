@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { avatars } from '@/lib/types';
+import { avatars } from '@/lib/constants';
 import { updateProfile, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { auth } from '@/firebase.config';

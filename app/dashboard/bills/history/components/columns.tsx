@@ -1,12 +1,13 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { BillData, expenseCategories } from '@/lib/types';
+import { BillData } from '@/lib/types';
 import { P } from '@/components/ui/typography';
 import { Timestamp } from 'firebase/firestore';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { expenseCategories } from '@/lib/constants';
 
 export const columns = ({ deleteBill }: { deleteBill: (billId: string) => void }): ColumnDef<BillData>[] => [
 	{

@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 import { Button } from '@/components/ui/button';
-import { InvoiceData, placeholders, ProfileData, Template } from '@/lib/types';
+import { placeholders } from '@/lib/constants';
+import { InvoiceData, ProfileData, Template } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
 import { PlusCircleIcon, XCircleIcon } from 'lucide-react';
 

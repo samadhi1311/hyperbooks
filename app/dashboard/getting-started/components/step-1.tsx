@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { auth } from '@/firebase.config';
 import { updateProfile, User } from 'firebase/auth';
-import { avatars } from '@/lib/types';
+import { avatars } from '@/lib/constants';
 import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { IconButton } from '@/components/ui/icon-button';

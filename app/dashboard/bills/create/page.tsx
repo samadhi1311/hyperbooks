@@ -11,7 +11,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import { BillData, expenseCategories } from '@/lib/types';
+import { BillData } from '@/lib/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 import { H3, P } from '@/components/ui/typography';
@@ -21,6 +21,7 @@ import { useBillStore } from '@/store/use-bill';
 import { useFirestore } from '@/hooks/use-firestore';
 import { IconButton } from '@/components/ui/icon-button';
 import { DialogTitle } from '@/components/ui/dialog';
+import { expenseCategories } from '@/lib/constants';
 
 const FormSchema = z.object({
 	description: z
