@@ -47,8 +47,8 @@ export default function Features() {
 			icon: <CloudUploadIcon />,
 		},
 		{
-			title: 'Access From Anywhere',
-			description: 'Whether you&apos;re at the office, home, or on the move, access your financial records anytime with our cloud-based platform. Stay in control, wherever you are.',
+			title: 'Access from any device — anywhere',
+			description: `Whether you're at the office, home, or on the move, access your financial records anytime with our cloud-based platform. Stay in control, wherever you are.`,
 			icon: <EarthIcon />,
 		},
 		{
@@ -57,7 +57,7 @@ export default function Features() {
 			icon: <ScrollTextIcon />,
 		},
 		{
-			title: 'AI-Powered insights and suggestions',
+			title: 'AI-Powered insights and suggestions (Coming soon.)',
 			description: 'Unlock smarter insights with AI-driven analytics and suggestions. Detect patterns, optimize cash flow, and get proactive recommendations tailored to your business.',
 			icon: <BrainCircuitIcon />,
 		},
