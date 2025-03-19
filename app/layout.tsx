@@ -6,7 +6,6 @@ import './globals.css';
 import Splash from '@/components/splash';
 import CookieConsent from '@/components/cookie-consent';
 import Script from 'next/script';
-// import { ReactScan } from '@/components/react-scan';
 
 const sans = Inter({
 	variable: '--font-sans',
@@ -73,7 +72,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang='en'>
-			{/* <ReactScan /> */}
 			<Script src='https://cdn.peasy.so/peasy.js' data-website-id='01jpf4qvbw89v1aa172pr8dfrm' async></Script>
 			<body className={`${sans.className} ${display.variable} antialiased`}>
 				<ThemeProvider attribute='class' defaultTheme='dark'>
