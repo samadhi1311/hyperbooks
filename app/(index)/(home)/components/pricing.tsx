@@ -6,38 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { MagicCard } from '@/components/ui/magic-card';
 import { CheckCircle2Icon, CircleXIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { starterPerks, proPerks, ultimatePerks } from '@/lib/constants';
 
 export default function Pricing() {
 	const { theme } = useTheme();
-	const starterPerks = [
-		'Total of 10 records per month',
-		'Select any free templates from the library',
-		'20 invoice exports per month',
-		'Daily analytics for the last 30 days.',
-		'Monthly analytics for all time.',
-		'hyperbooks branding.',
-		'No AI Powered Insights.',
-	];
-
-	const proPerks = [
-		'Total of 50 records per month',
-		'Unlimited invoice exports',
-		'Daily analytics for the last 90 days',
-		'Monthly analytics for all time',
-		'AI-Powered Insights',
-		'Custom-made invoice template',
-		'No hyperreal banding',
-	];
-
-	const ultimatePerks = [
-		'Total of 1000 records per month',
-		'Unlimited invoice exports',
-		'Daily analytics for the last 365 days',
-		'Monthly analytics for all time',
-		'AI-Powered Insights',
-		'Custom-made invoice template',
-		'No hyperreal banding',
-	];
 
 	return (
 		<Section>
