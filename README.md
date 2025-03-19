@@ -23,7 +23,7 @@ Whether you're a freelancer, business owner, or just someone trying to get your 
 5. Implement authentication. (100%)
 6. Implement database. (100%)
 7. Implement Cloud Storage. (100%)
-8. Implement payment processing. (90%)
+8. Implement payment processing. (100%)
 
 ### Important Notes
 
