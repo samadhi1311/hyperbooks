@@ -770,7 +770,7 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 	};
 
 	const incrementExportCount = async () => {
-		if (!user || !userData) {
+		if (!user) {
 			toast({
 				variant: 'destructive',
 				title: 'An error occurred.',
@@ -788,16 +788,18 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 
 			let exportCount = 0;
 			let lastReset = null;
+			let userPlan = 'starter'; // Default plan if not found
 
 			if (usageSnap.exists()) {
 				const data = usageSnap.data();
 				exportCount = data.exportCount || 0;
 				lastReset = data.lastReset?.toDate() || new Date(0);
+				userPlan = data.plan || 'starter'; // Fetch the plan directly from Firestore
 			}
 
 			const now = new Date();
 			const currentMonth = now.getMonth();
-			const lastResetMonth = lastReset.getMonth();
+			const lastResetMonth = lastReset?.getMonth?.() ?? 0;
 
 			if (currentMonth !== lastResetMonth) {
 				await setDoc(
@@ -811,7 +813,6 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 				exportCount = 0;
 			}
 
-			const userPlan = userData?.plan || 'starter';
 			const planLimit = PLAN_LIMITS[userPlan as keyof typeof PLAN_LIMITS].exports;
 
 			if (exportCount >= planLimit) {
@@ -837,9 +838,10 @@ export const useFirestore = <T extends WithFieldValue<DocumentData>>() => {
 			setError(error);
 			toast({
 				variant: 'destructive',
-				title: 'An error occured.',
+				title: 'An error occurred.',
 				description: 'Something went wrong. Please try again.',
 			});
+			console.error(error);
 			return false;
 		} finally {
 			setLoading(false);
