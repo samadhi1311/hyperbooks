@@ -135,7 +135,7 @@ const useAuth = () => {
 					title: 'You are signed up successfully.',
 					description: `Welcome to hyperbooks. Let's start invoicing.`,
 				});
-				sendEmailVerification(user!);
+				sendEmailVerification(userCredentials.user!);
 				router.push('/dashboard/getting-started');
 				return userCredentials.user;
 			}
