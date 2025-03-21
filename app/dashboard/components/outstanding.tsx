@@ -4,9 +4,11 @@ import NumberFlow from '@number-flow/react';
 import { useEffect, useState } from 'react';
 import { useAnalyticsStore } from '@/store/use-analytics';
 import { cn } from '@/lib/utils';
+import { useUserStore } from '@/store/use-user';
 
 export default function Outstanding() {
 	const { analytics } = useAnalyticsStore();
+	const { userData } = useUserStore();
 	const [count, setCount] = useState(0);
 	const [amount, setAmount] = useState(0);
 
@@ -23,7 +25,7 @@ export default function Outstanding() {
 				<AlertTriangleIcon className={count > 1 ? 'size-3 md:size-4 text-orange-500 dark:text-orange-300/50' : 'size-3 md:size-4 text-muted-foreground'} />
 			</CardHeader>
 			<CardContent>
-				<NumberFlow className='text-base font-bold md:text-2xl' format={{ notation: 'standard', style: 'currency', currency: 'LKR' }} value={amount} />
+				<NumberFlow className='text-base font-bold md:text-2xl' format={{ notation: 'standard', style: 'currency', currency: userData?.currency ?? 'USD' }} value={amount} />
 				<span className='flex items-center gap-2 text-xs text-muted-foreground md:text-sm'>
 					Outstanding Invoices: <p className='text-xs text-muted-foreground md:text-sm'>{count}</p>
 					{count > 1 ? <TrendingDownIcon className='size-3 text-muted-foreground md:size-4' /> : <TrendingUpIcon className='size-3 text-muted-foreground md:size-4' />}

@@ -287,7 +287,7 @@ export default function FormView() {
 												<FormItem>
 													<FormControl>
 														<PrefixedInput
-															prefix={userData?.currency}
+															prefix={userData?.currency ?? 'USD'}
 															type='number'
 															placeholder='Unit Price'
 															step={0.01}
@@ -301,7 +301,7 @@ export default function FormView() {
 											)}
 										/>
 										<span className='flex h-10 items-center gap-2'>
-											<span className='text-muted-foreground'>{userData?.currency}</span>
+											<span className='text-muted-foreground'>{userData?.currency ?? 'USD'}</span>
 											<span>{((invoiceData.items[index]?.quantity ?? 0) * (invoiceData.items[index]?.amount ?? 0)).toFixed(2)}</span>
 										</span>
 										<Button type='button' variant='outline' className='col-start-2 lg:col-start-auto' onClick={() => remove(index)}>
@@ -369,7 +369,7 @@ export default function FormView() {
 							<span>
 								<H3 className='flex items-center gap-2'>
 									Subtotal:
-									<span className='font-normal'>{userData?.currency}</span>
+									<span className='font-normal'>{userData?.currency ?? 'USD'}</span>
 									<span className='font-normal'>{invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0).toFixed(2)}</span>
 								</H3>
 							</span>

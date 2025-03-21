@@ -28,13 +28,13 @@ export default function Revenue() {
 			className={cn('relative z-10 bg-background/60 shadow-none sm:shadow-md backdrop-blur-none sm:backdrop-blur-sm', outstandingCount > 1 ? 'border-orange-300 dark:border-orange-300/30' : '')}>
 			<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-0 md:pb-2'>
 				<CardTitle className='text-xs font-medium md:text-sm'>Revenue</CardTitle>
-				<DollarSign className='size-3 md:size-4 text-muted-foreground' />
+				<DollarSign className='size-3 text-muted-foreground md:size-4' />
 			</CardHeader>
 			<CardContent>
-				<NumberFlow className='text-base font-bold md:text-2xl' format={{ style: 'currency', currency: 'LKR' }} value={revenue} />
+				<NumberFlow className='text-base font-bold md:text-2xl' format={{ style: 'currency', currency: userData?.currency ?? 'USD' }} value={revenue} />
 				<span className='flex items-center gap-2 text-xs text-muted-foreground md:text-sm'>
-					Outstanding: {userData?.currency + ' ' + outstanding.toFixed(2)}
-					{outstandingCount > 1 ? <TrendingUpIcon className='size-3 md:size-4 text-muted-foreground' /> : <TrendingDownIcon className='size-3 md:size-4 text-muted-foreground' />}
+					Outstanding: {userData?.currency ?? 'USD' + ' ' + outstanding.toFixed(2)}
+					{outstandingCount > 1 ? <TrendingUpIcon className='size-3 text-muted-foreground md:size-4' /> : <TrendingDownIcon className='size-3 text-muted-foreground md:size-4' />}
 				</span>
 			</CardContent>
 		</Card>
