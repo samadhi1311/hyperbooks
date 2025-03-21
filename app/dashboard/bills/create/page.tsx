@@ -20,7 +20,6 @@ import { PrefixedInput } from '@/components/prefixed-input';
 import { useBillStore } from '@/store/use-bill';
 import { useFirestore } from '@/hooks/use-firestore';
 import { IconButton } from '@/components/ui/icon-button';
-import { DialogTitle } from '@/components/ui/dialog';
 import { expenseCategories } from '@/lib/constants';
 
 const FormSchema = z.object({
@@ -130,6 +129,7 @@ export default function CreateBill() {
 													<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 												</Button>
 											</PopoverTrigger>
+
 											<PopoverContent className='max-h-[--radix-popover-content-available-height] w-[--radix-popover-trigger-width]'>
 												<CategoryList setOpen={setOpen} form={form} />
 											</PopoverContent>
@@ -173,7 +173,6 @@ function CategoryList({ setOpen, form }: { setOpen: (open: boolean) => void; for
 		<Command>
 			<CommandInput placeholder='Search category...' />
 			<CommandList>
-				<DialogTitle className='sr-only'>Select category</DialogTitle>
 				<CommandEmpty>No category found.</CommandEmpty>
 				<CommandGroup>
 					{expenseCategories.map((category) => (
