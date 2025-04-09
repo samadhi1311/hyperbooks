@@ -12,23 +12,12 @@ Whether you're a freelancer, business owner, or just someone trying to get your 
 3. HonoJS for Serverless APIs.
 4. Google Firebase (Authentication, Firestore, and Cloud Storage)
 5. Cloudflare Workers and Pages (REST APIs and App Hosting)
-6. Paddle for Subscriptions
+6. Paddle Billing for Subscriptions
 
-### Road Map
+### Upcoming Features
 
-1. Create a landing website. (100%)
-2. Create a seperate <a href="https://hyperbooks.app/dashboard">workplace</a> (100%)
-3. Create identical templates in CSS and @react-pdf/renderer. (100%)
-4. Create a brand identity. (100%)
-5. Implement authentication. (100%)
-6. Implement database. (100%)
-7. Implement Cloud Storage. (100%)
-8. Implement payment processing. (100%)
-
-### Important Notes
-
-1. Use 'pt' units for best scale transfer between invoice preview and PDF renderer.
-2. Use PNPM and NodeJS in Dev environment.
+1. Export invoices to email-friendly HTML. (0%)
+2. Rule-based AI for Intelligent suggestions. (0%)
 
 <br />
 
