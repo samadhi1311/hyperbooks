@@ -31,7 +31,10 @@ const FormSchema = z.object({
 	category: z.string({
 		required_error: 'Please select a Category.',
 	}),
-	amount: z.coerce.number().min(0, 'Amount must be at least 0').optional(),
+	amount: z
+		.union([z.number({ message: 'Amount must be a number.' }), z.string().length(0)])
+		.optional()
+		.transform((e) => (e === '' ? undefined : e)),
 });
 
 export default function CreateBill() {
@@ -45,7 +48,6 @@ export default function CreateBill() {
 		defaultValues: {
 			description: bill?.description ?? '',
 			category: bill?.category ?? '',
-			//@ts-expect-error Type 'string | undefined' is not assignable to type 'string'.
 			amount: bill?.amount ?? '',
 		},
 	});
