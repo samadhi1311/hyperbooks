@@ -52,12 +52,12 @@ export default function Features() {
 			icon: <EarthIcon />,
 		},
 		{
-			title: 'Professional Invoicing Made Simple',
+			title: 'Professional invoicing made simple',
 			description: 'Create stunning, customizable invoices in seconds. Generate detailed PDF reports with ease and impress clients with a seamless billing experience.',
 			icon: <ScrollTextIcon />,
 		},
 		{
-			title: 'AI-Powered insights and suggestions (Coming soon.)',
+			title: 'AI-Powered insights and suggestions (Coming soon)',
 			description: 'Unlock smarter insights with AI-driven analytics and suggestions. Detect patterns, optimize cash flow, and get proactive recommendations tailored to your business.',
 			icon: <BrainCircuitIcon />,
 		},
