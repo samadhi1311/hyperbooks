@@ -1,11 +1,9 @@
-// @ts-nocheck
-
 'use client';
 
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Loader2Icon, SendHorizonalIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,7 +31,10 @@ const FormSchema = z.object({
 	category: z.string({
 		required_error: 'Please select a Category.',
 	}),
-	amount: z.coerce.number().min(0, 'Amount must be at least 0').optional(),
+	amount: z
+		.union([z.number(), z.string().length(0)])
+		.optional()
+		.transform((e) => (e === '' ? undefined : e)),
 });
 
 export default function CreateBill() {
@@ -47,7 +48,6 @@ export default function CreateBill() {
 		defaultValues: {
 			description: bill?.description ?? '',
 			category: bill?.category ?? '',
-			//@ts-expect-error Type 'string | undefined' is not assignable to type 'string'.
 			amount: bill?.amount ?? '',
 		},
 	});
@@ -61,13 +61,13 @@ export default function CreateBill() {
 		return () => subscription.unsubscribe();
 	}, [form]);
 
-	async function onSubmit(data: z.infer<typeof FormSchema>) {
+	const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
 		try {
 			await addBill(data);
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
 	return (
 		<PageWrapper>
