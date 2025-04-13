@@ -124,14 +124,8 @@ export default function Hero() {
 							<div className='absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-background via-transparent to-transparent' />
 						</div>
 					) : (
-						<div
-							ref={dashboardRef}
-							className='aspect-video scale-[2] transform-gpu overflow-hidden rounded-lg border border-border blur-0 transition-transform duration-300 ease-out will-change-transform'>
-							<img
-								className='transform-gpu will-change-transform'
-								src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'}
-								alt='hyperbooks desktop dashboard'
-							/>
+						<div ref={dashboardRef} className='aspect-video transform-gpu overflow-hidden rounded-lg border border-border transition-transform duration-300 ease-out will-change-transform'>
+							<img className='block h-auto w-full' src={theme === 'dark' ? 'dashboard-desktop-dark.png' : 'dashboard-desktop-light.png'} alt='hyperbooks desktop dashboard' />
 						</div>
 					)}
 				</div>
