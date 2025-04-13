@@ -1,11 +1,9 @@
-// @ts-nocheck
-
 'use client';
 
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Loader2Icon, SendHorizonalIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -61,13 +59,13 @@ export default function CreateBill() {
 		return () => subscription.unsubscribe();
 	}, [form]);
 
-	async function onSubmit(data: z.infer<typeof FormSchema>) {
+	const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
 		try {
 			await addBill(data);
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
 	return (
 		<PageWrapper>
