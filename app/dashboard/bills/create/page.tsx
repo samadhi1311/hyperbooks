@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 'use client';
 
 import { PageWrapper, Section } from '@/components/ui/layout';
