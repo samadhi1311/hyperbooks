@@ -32,7 +32,7 @@ const FormSchema = z.object({
 		required_error: 'Please select a Category.',
 	}),
 	amount: z
-		.union([z.number({ message: 'Amount must be a number.' }), z.string().length(0)])
+		.union([z.number(), z.string().length(0)])
 		.optional()
 		.transform((e) => (e === '' ? undefined : e)),
 });
