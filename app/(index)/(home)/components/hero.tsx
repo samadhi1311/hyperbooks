@@ -5,7 +5,7 @@ import AnimatedShinyText from '@/components/ui/animated-shiny-text';
 import GridPattern from '@/components/ui/grid-pattern';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { cn } from '@/lib/utils';
-import { FlaskConicalIcon, MousePointerClickIcon, PackagePlusIcon } from 'lucide-react';
+import { MousePointerClickIcon, PackagePlusIcon } from 'lucide-react';
 import { stagger, useAnimate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
