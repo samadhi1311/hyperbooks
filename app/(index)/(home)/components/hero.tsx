@@ -5,7 +5,7 @@ import AnimatedShinyText from '@/components/ui/animated-shiny-text';
 import GridPattern from '@/components/ui/grid-pattern';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { cn } from '@/lib/utils';
-import { FlaskConicalIcon, MousePointerClickIcon } from 'lucide-react';
+import { FlaskConicalIcon, MousePointerClickIcon, PackagePlusIcon } from 'lucide-react';
 import { stagger, useAnimate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -81,13 +81,13 @@ export default function Hero() {
 		<section ref={scope} className='relative grid w-full place-items-center pb-8 md:pb-12 lg:pb-16'>
 			<div className='mt-24 flex flex-col gap-8 text-center md:mt-32'>
 				<div className='mx-auto flex max-w-screen-lg flex-col gap-8'>
-					<div className='hyperbooks-hero mx-auto w-fit transform-gpu rounded-full border border-border bg-muted text-sm opacity-0 will-change-transform md:px-2 md:py-1'>
-						<AnimatedShinyText className='inline-flex items-center justify-center gap-1 px-2 py-1 text-xs text-muted-foreground md:gap-2 md:px-4'>
+					<div className='hyperbooks-hero mx-auto w-fit transform-gpu rounded-full border border-border bg-card text-sm opacity-0 will-change-transform md:px-2 md:py-1'>
+						<AnimatedShinyText shimmerWidth={200} className='inline-flex items-center justify-center gap-1 px-2 py-1 text-xs md:gap-2 md:px-4'>
 							<span>
-								<FlaskConicalIcon className='size-4' />
+								<PackagePlusIcon className='size-4' />
 							</span>
 							<hr className='mx-2 h-4 w-px shrink-0 bg-muted-foreground' />
-							Early Access
+							v1.0.2 - Newly added Azure and Midnight Themes
 						</AnimatedShinyText>
 					</div>
 
