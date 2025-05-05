@@ -80,7 +80,7 @@ const starterPerks = [
 	'20 invoice exports per month',
 	'Daily analytics for the last 30 days.',
 	'Monthly analytics for all time.',
-	'hyperbooks branding.',
+	'Includes hyperbooks branding.',
 	'No AI Powered Insights.',
 ];
 
@@ -91,7 +91,7 @@ const proPerks = [
 	'Monthly analytics for all time',
 	'AI-Powered Insights',
 	'Customize invoice templates',
-	'No hyperreal banding',
+	'No hyperreal branding',
 ];
 
 const ultimatePerks = [
@@ -101,7 +101,7 @@ const ultimatePerks = [
 	'Monthly analytics for all time',
 	'AI-Powered Insights',
 	'Customize invoice templates',
-	'No hyperreal banding',
+	'No hyperreal branding',
 ];
 
 export { PLAN_LIMITS, starterPerks, proPerks, ultimatePerks, avatars, placeholders, expenseCategories };
