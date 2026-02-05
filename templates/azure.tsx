@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
 		fontSize: '20pt',
 		fontWeight: 'bold',
 		backgroundColor: 'transparent',
+        marginBottom: '8pt',
 	},
 	profileTextSecondary: {
 		fontSize: '12pt',
@@ -276,7 +277,7 @@ export const AzureTemplate = ({
 							onChange={(e) => onEdit('billedTo.name', e.target.value)}
 						/>
 
-						{billedTo.address?.map((line, index) => (
+						{billedTo.address && billedTo.address.length > 0 && billedTo.address.map((line, index) => (
 							<input
 								type='text'
 								className='editable'
@@ -483,10 +484,10 @@ export const renderAzureTemplate = ({ data, profile, customization }: { data: In
 					<View style={customizedStyles.billedTo}>
 						<Text style={customizedStyles.billedTextSecondary}>Billed to:</Text>
 						<Text style={customizedStyles.billedTextMain}>{billedTo.name}</Text>
-						{billedTo.address?.map((line, index) => (
+						{billedTo.address && billedTo.address.filter(line => line && line.trim()).length > 0 && billedTo.address.filter(line => line && line.trim()).map((line, index, filteredAddress) => (
 							<Text style={customizedStyles.billedTextSecondary} key={index}>
 								{line}
-								{index === billedTo.address!.length - 1 ? '' : ','}
+								{filteredAddress.length > 1 && index < filteredAddress.length - 1 ? ',' : ''}
 							</Text>
 						))}
 					</View>
