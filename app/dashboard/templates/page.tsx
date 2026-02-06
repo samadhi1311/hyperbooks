@@ -14,7 +14,7 @@ export default function SelectTemplate() {
 		<PageWrapper>
 			<Suspense fallback={<Loader />}>
 				<Section>
-					<H2>Browse templatea.</H2>
+					<H2>Browse templates.</H2>
 					<P variant='sm' className='mb-2 text-muted-foreground md:mb-4 lg:mb-6'>
 						Your preferences will be saved locally.
 					</P>
