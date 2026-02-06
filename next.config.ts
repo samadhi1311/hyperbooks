@@ -3,20 +3,17 @@ import type { NextConfig } from 'next';
 const env = process.env.NEXT_CONFIG_ENV || 'production';
 
 const config: Record<string, Partial<NextConfig>> = {
-	development: {
-		output: 'export',
-		devIndicators: false,
-	},
-	production: {
-		output: 'export',
-		experimental: {
-			esmExternals: 'loose',
-		},
-	},
+    development: {
+        output: 'export',
+        devIndicators: false,
+    },
+    production: {
+        output: 'export',
+    },
 };
 
 const nextConfig: NextConfig = {
-	...config[env],
+    ...config[env],
 };
 
 export default nextConfig;
