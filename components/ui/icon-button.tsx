@@ -26,8 +26,8 @@ function IconButton({
 	asChild?: boolean;
 }) {
 	return (
-		<Button size={size} variant={variant} type={type} onClick={onClick} disabled={disabled} asChild={asChild}>
-			<span className={cn('group flex items-center gap-3', className)}>
+		<Button size={size} variant={variant} type={type} onClick={onClick} disabled={disabled} asChild={asChild} className={className}>
+			<span className={cn('group flex items-center gap-3')}>
 				<span className={clsx('size-4 transition-all duration-300', !disabled && 'group-hover:translate-x-1')}>{icon}</span>
 				{children}
 			</span>
