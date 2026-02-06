@@ -9,6 +9,7 @@ import { P } from '@/components/ui/typography';
 import { motion, AnimatePresence } from 'motion/react';
 import templates, { TemplateKey } from '@/templates';
 import { Document, pdf } from '@react-pdf/renderer';
+import { Timestamp } from 'firebase/firestore';
 
 const expandAnimation = {
 	initial: { height: 0, opacity: 0 },
@@ -149,6 +150,16 @@ export const columns = ({
 			return <div className='text-right font-medium'>LKR {total.toFixed(2)}</div>;
 		},
 	},
+	{
+            accessorKey: 'createdAt',
+            header: 'Created At',
+            cell: ({ row }) => {
+                const date = row.getValue('createdAt') as Timestamp;
+                const formattedDate = date.toDate();
+                const createdAt = new Date(formattedDate);
+                return <P>{createdAt.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</P>;
+            },
+        },
 	{
 		accessorKey: 'complete',
 		header: () => <div className='text-center'>Status</div>,
