@@ -38,7 +38,7 @@ export default function Settings() {
 	});
 
 	const appSchema = z.object({
-		currency: z.union([z.enum(['USD', 'LKR', 'EUR', 'INR']), z.string().length(3, 'Currency must be a 3-letter code').toUpperCase()]),
+		currency: z.union([z.enum(['USD', 'LKR', 'EUR', 'GBP']), z.string().length(3, 'Currency must be a 3-letter code').toUpperCase()]),
 	});
 
 	const accForm = useForm<z.infer<typeof accSchema>>({
@@ -250,9 +250,9 @@ export default function Settings() {
 												</FormControl>
 												<SelectContent>
 													<SelectItem value='LKR'>LKR</SelectItem>
-													<SelectItem value='INR'>INR</SelectItem>
 													<SelectItem value='USD'>USD</SelectItem>
 													<SelectItem value='EUR'>EUR</SelectItem>
+													<SelectItem value='GBP'>GBP</SelectItem>
 													<SelectItem value='custom'>Other (Enter manually)</SelectItem>
 												</SelectContent>
 											</Select>
