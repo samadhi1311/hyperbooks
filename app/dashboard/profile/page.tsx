@@ -45,7 +45,7 @@ export default function Profile() {
 			phone: profile?.phone || '',
 			address: profile?.address?.join(', ') || '',
 			website: profile?.website || '',
-			logo: '',
+			logo: profile?.logo || '',
 		},
 	});
 
@@ -100,9 +100,9 @@ export default function Profile() {
 			if (selectedImage) {
 				const logoUrl = await handleImageUpload();
 				if (logoUrl) values.logo = logoUrl;
-			} else {
-				delete values.logo; // Prevents overwriting logo when not updating
 			}
+			// Keep existing logo if no new image is selected
+			// Don't delete the logo field
 
 			if (user && currentUser) {
 				// Split the address by commas, trim extra spaces, and save as an array
@@ -117,7 +117,7 @@ export default function Profile() {
 					phone: values.phone,
 					address,
 					website: values.website,
-					logo: values.logo,
+					logo: values.logo || profile?.logo, // Fallback to existing logo
 				};
 
 				await updateProfile(data);
