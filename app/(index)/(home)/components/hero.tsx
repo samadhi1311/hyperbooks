@@ -87,7 +87,7 @@ export default function Hero() {
 								<PackagePlusIcon className='size-4' />
 							</span>
 							<hr className='mx-2 h-4 w-px shrink-0 bg-muted-foreground' />
-							v1.0.2 - Newly added Azure and Midnight Themes
+							v1.1.0 - Newly added Ethereal theme and bug fixes
 						</AnimatedShinyText>
 					</div>
 

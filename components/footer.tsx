@@ -18,7 +18,7 @@ export default function Footer() {
 						<A href='/terms-and-conditions'>Terms & Conditions</A>
 					</div>
 					<p>
-						&copy; 2025{' '}
+						&copy; 2026{' '}
 						<A href='https://hyperreal.cloud' className='bg-gradient-to-tr from-violet-700 to-orange-400 bg-clip-text font-medium text-transparent dark:from-violet-600 dark:to-orange-500'>
 							hyperreal
 						</A>
