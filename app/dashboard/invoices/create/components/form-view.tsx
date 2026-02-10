@@ -28,7 +28,7 @@ export default function FormView() {
 	const { invoiceData, updateInvoiceData, updateBilledToData, resetInvoiceData } = useInvoiceStore();
 	const [exporting, setExporting] = useState(false);
 	const { userData } = useUserStore();
-	const { selectedTemplate } = useTemplateStore();
+	const { selectedTemplate, selectedPageSize } = useTemplateStore();
 	const { profile } = useProfileStore();
 	const { toast } = useToast();
 
@@ -147,7 +147,7 @@ export default function FormView() {
 			if (!canExport) return;
 
 			const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
-			const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
+			const pdfDoc = <Document title="Invoice">{SelectedRenderer({ ...invoicePayload, pageSize: selectedPageSize })}</Document>;
 
 			const blob = await pdf(pdfDoc).toBlob();
 
@@ -319,7 +319,7 @@ export default function FormView() {
 						</div>
 
 						<div>
-							<H3 className='mb-6'>Tax</H3>
+							<H3 className='mb-6'>Taxes and Discounts</H3>
 							<div className='grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-4'>
 								<FormField
 									control={form.control}
@@ -365,14 +365,63 @@ export default function FormView() {
 							</div>
 						</div>
 
-						<div>
-							<span>
-								<H3 className='flex items-center gap-2'>
-									Subtotal:
-									<span className='font-normal'>{userData?.currency ?? 'USD'}</span>
-									<span className='font-normal'>{invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0).toFixed(2)}</span>
-								</H3>
-							</span>
+						<div className='space-y-2'>
+							<div className='flex justify-between'>
+								<span className='font-medium'>Subtotal:</span>
+								<span>
+									{userData?.currency ?? 'USD'} {invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0).toFixed(2)}
+								</span>
+							</div>
+							{(() => {
+								const taxValue = form.watch('tax');
+								const tax = typeof taxValue === 'string' ? parseFloat(taxValue) || 0 : taxValue || 0;
+								if (tax > 0) {
+									const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
+									const taxAmount = subtotal * tax / 100;
+									return (
+										<div className='flex justify-between text-sm text-muted-foreground'>
+											<span>Tax ({tax}%):</span>
+											<span>
+												{userData?.currency ?? 'USD'} {taxAmount.toFixed(2)}
+											</span>
+										</div>
+									);
+								}
+								return null;
+							})()}
+							{(() => {
+								const discountValue = form.watch('discount');
+								const discount = typeof discountValue === 'string' ? parseFloat(discountValue) || 0 : discountValue || 0;
+								if (discount > 0) {
+									const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
+									const discountAmount = subtotal * discount / 100;
+									return (
+										<div className='flex justify-between text-sm text-muted-foreground'>
+											<span>Discount ({discount}%):</span>
+											<span>
+												-{userData?.currency ?? 'USD'} {discountAmount.toFixed(2)}
+											</span>
+										</div>
+									);
+								}
+								return null;
+							})()}
+							<div className='flex justify-between border-t pt-2'>
+								<span className='font-semibold text-lg'>Total:</span>
+								<span className='font-semibold text-lg'>
+									{userData?.currency ?? 'USD'} {(() => {
+										const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
+										const taxValue = form.watch('tax');
+										const discountValue = form.watch('discount');
+										const tax = typeof taxValue === 'string' ? parseFloat(taxValue) || 0 : taxValue || 0;
+										const discount = typeof discountValue === 'string' ? parseFloat(discountValue) || 0 : discountValue || 0;
+										const taxAmount = subtotal * tax / 100;
+										const discountAmount = subtotal * discount / 100;
+										const total = subtotal + taxAmount - discountAmount;
+										return total.toFixed(2);
+									})()}
+								</span>
+							</div>
 						</div>
 
 						<div className='flex flex-col items-center gap-4 md:flex-row'>
