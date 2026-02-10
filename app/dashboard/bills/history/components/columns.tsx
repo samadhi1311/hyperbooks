@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { MoreHorizontal, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { expenseCategories } from '@/lib/constants';
+import { fmtPrice } from '@/lib/utils';
 
 export const columns = ({ deleteBill }: { deleteBill: (billId: string) => void }): ColumnDef<BillData>[] => [
 	{
@@ -43,7 +44,7 @@ export const columns = ({ deleteBill }: { deleteBill: (billId: string) => void }
 		header: 'Amount',
 		cell: ({ row }) => {
 			const amount = row.getValue('amount') as number;
-			return <P>LKR {amount.toFixed(2)}</P>;
+			return <P>LKR {fmtPrice(amount)}</P>;
 		},
 	},
 	{

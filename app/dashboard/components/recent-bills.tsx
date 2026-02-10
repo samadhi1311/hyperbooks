@@ -7,6 +7,7 @@ import { useUserStore } from '@/store/use-user';
 import { ListRestartIcon } from 'lucide-react';
 import { Timestamp } from 'firebase/firestore';
 import { useMemo } from 'react';
+import { fmtPrice } from '@/lib/utils';
 
 export default function RecentBills() {
 	const { userData } = useUserStore();
@@ -66,13 +67,13 @@ export default function RecentBills() {
 							</Avatar>
 							<div className='grid gap-0.5'>
 								<span className='inline-block text-sm font-medium xl:hidden'>
-									{userData?.currency ?? 'USD'} {doc.amount.toFixed(2)}
+									{userData?.currency ?? 'USD'} {fmtPrice(doc.amount)}
 								</span>
 								<p className='w-[200px] truncate pb-px text-xs font-medium leading-none text-muted-foreground md:text-sm xl:text-foreground'>{doc.description}</p>
 								<p className='text-xs text-muted-foreground'>{doc.formattedDate}</p>
 							</div>
 							<span className='ml-auto hidden font-medium xl:inline-block'>
-								{userData?.currency ?? 'USD'} {doc.amount.toFixed(2)}
+								{userData?.currency ?? 'USD'} {fmtPrice(doc.amount)}
 							</span>
 						</div>
 					))
