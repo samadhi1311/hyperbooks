@@ -10,15 +10,15 @@ import RecentBills from './components/recent-bills';
 
 export default function Dashboard() {
 	return (
-		<div className='relative flex w-full flex-col overflow-clip'>
-			<section className='flex h-full flex-1 flex-col gap-2 p-1 md:gap-8 md:p-8'>
-				<div className='grid grid-cols-2 gap-2 md:gap-8 xl:grid-cols-4'>
+		<div className='relative flex w-full flex-col overflow-clip flex-1 min-h-[calc(100svh-4rem)] p-2 md:py-0 md:pl-2 md:pr-4'>
+			<section className='flex h-full flex-1 flex-col gap-2 md:gap-4'>
+				<div className='grid grid-cols-2 gap-2 md:gap-4 xl:grid-cols-4'>
 					<Greeting />
 					<Revenue />
 					<Outstanding />
 					<Invoices />
 				</div>
-				<div className='grid grid-cols-1 grid-rows-2 gap-4 md:grid-cols-2 xl:grid-cols-5'>
+				<div className='grid grid-cols-1 grid-rows-2 gap-4 md:grid-cols-2 xl:grid-cols-5 flex-1'>
 					<div className='col-span-1 row-span-1 md:col-span-2 xl:col-span-3 xl:row-span-2'>
 						<Chart />
 					</div>
