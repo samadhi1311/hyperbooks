@@ -14,7 +14,7 @@
       "url": "https://nipuni.is-a.dev"
     }
   ],
-  "version": "1.0.2",
+  "version": "1.2.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
