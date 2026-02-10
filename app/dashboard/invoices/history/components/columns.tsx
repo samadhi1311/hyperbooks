@@ -10,6 +10,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import templates, { TemplateKey } from '@/templates';
 import { Document, pdf } from '@react-pdf/renderer';
 import { Timestamp } from 'firebase/firestore';
+import { fmtPrice } from '@/lib/utils';
+import { PageSize } from '@/templates';
+import { useUserStore } from '@/store/use-user';
 
 const expandAnimation = {
 	initial: { height: 0, opacity: 0 },
@@ -48,6 +51,7 @@ export const columns = ({
 	toggleRow,
 	profile,
 	selectedTemplate,
+	selectedPageSize,
 	toast,
 	deleteInvoice,
 	updateStatus,
@@ -55,7 +59,8 @@ export const columns = ({
 	expandedRow: string | null;
 	toggleRow: (rowId: string) => void;
 	profile: ProfileData;
-	selectedTemplate: TemplateKey;
+	selectedTemplate: string;
+	selectedPageSize: PageSize;
 	toast: any;
 	deleteInvoice: (invoiceId: string) => void;
 	updateStatus: (invoiceId: string, status: boolean) => void;
@@ -116,8 +121,8 @@ export const columns = ({
 								<div key={index} className='grid w-full grid-cols-4'>
 									<span className='text-muted-foreground'>{item.description}</span>
 									<span className='text-muted-foreground'> x {item.quantity}</span>
-									<span className='text-muted-foreground'> LKR {item.amount?.toFixed(2)}</span>
-									<span>Subtotal: LKR {item.amount && item.quantity ? parseFloat((item.amount * item.quantity).toFixed(2)) : 0}</span>
+									<span className='text-muted-foreground'> LKR {item.amount && fmtPrice(item.amount)}</span>
+									<span>LKR {item.amount && item.quantity ? fmtPrice(item.amount * item.quantity) : 0}</span>
 								</div>
 							))}
 						</div>
@@ -147,7 +152,7 @@ export const columns = ({
 
 			const total = subtotal * (1 - discount / 100) * (1 + tax / 100);
 
-			return <div className='text-right font-medium'>LKR {total.toFixed(2)}</div>;
+			return <div className='text-right font-medium'>LKR {fmtPrice(total)}</div>;
 		},
 	},
 	{
@@ -185,6 +190,7 @@ export const columns = ({
 	{
 		id: 'actions',
 		cell: ({ row }) => {
+			const { userData } = useUserStore();
 			const handleExportPDF = async () => {
 				try {
 					const invoicePayload = {
@@ -192,7 +198,7 @@ export const columns = ({
 						profile: profile as ProfileData,
 					};
 					const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
-					const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
+					const pdfDoc = <Document title="Invoice">{SelectedRenderer({ ...invoicePayload, pageSize: selectedPageSize, userData })}</Document>;
 
 					const blob = await pdf(pdfDoc).toBlob();
 

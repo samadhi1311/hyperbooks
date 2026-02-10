@@ -13,7 +13,7 @@ import { useViewStore } from '@/store/use-view';
 
 export default function Menu() {
 	const { invoiceData, resetInvoiceData } = useInvoiceStore();
-	const { selectedTemplate } = useTemplateStore();
+	const { selectedTemplate, selectedPageSize } = useTemplateStore();
 	const { profile } = useProfileStore();
 	const { addInvoice, loading, incrementExportCount } = useFirestore<Partial<InvoiceData>>();
 	const { toast } = useToast();
@@ -34,7 +34,7 @@ export default function Menu() {
 			if (!canExport) return;
 
 			const SelectedRenderer = templates[selectedTemplate as TemplateKey].render;
-			const pdfDoc = <Document>{SelectedRenderer(invoicePayload)}</Document>;
+			const pdfDoc = <Document title="Invoice">{SelectedRenderer({ ...invoicePayload, pageSize: selectedPageSize })}</Document>;
 
 			const blob = await pdf(pdfDoc).toBlob();
 
@@ -65,7 +65,7 @@ export default function Menu() {
 	};
 
 	return (
-		<div className='sticky top-8 z-50'>
+		<div className='sticky top-10 lg:top-8 z-50'>
 			<DropdownMenu modal>
 				<DropdownMenuTrigger asChild>
 					<Button variant='default' className='flex items-center gap-3'>

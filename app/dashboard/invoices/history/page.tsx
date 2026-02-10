@@ -25,7 +25,7 @@ export default function History() {
 		pageSize: 10,
 	});
 	const { profile } = useProfileStore();
-	const { selectedTemplate } = useTemplateStore();
+	const { selectedTemplate, selectedPageSize } = useTemplateStore();
 	const { deleteInvoice, updateStatus, loading: invoiceLoading } = useFirestore();
 	const { toast } = useToast();
 	if (authLoading || !user || !profile) return <Loader />;
@@ -38,7 +38,7 @@ export default function History() {
 			<Section>
 				<H2 className='mb-4'>Your past income</H2>
 				<DataTable
-					columns={columns({ expandedRow, toggleRow, profile, selectedTemplate, toast, updateStatus, deleteInvoice })}
+					columns={columns({ expandedRow, toggleRow, profile, selectedTemplate, selectedPageSize, toast, updateStatus, deleteInvoice })}
 					data={data}
 					fetchNextPage={fetchNextPage}
 					hasMore={hasMore}

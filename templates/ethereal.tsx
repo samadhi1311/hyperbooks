@@ -5,6 +5,8 @@ import { placeholders } from '@/lib/constants';
 import { InvoiceData, ProfileData, Template } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
 import { PlusCircleIcon, XCircleIcon } from 'lucide-react';
+import { PageSize, PageSizeConfig, getPageSizeConfig } from './index';
+import { fmtPrice } from '@/lib/utils';
 
 const styles = StyleSheet.create({
     page: {
@@ -22,7 +24,7 @@ const styles = StyleSheet.create({
         padding: '16pt',
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: '12pt',
+        borderRadius: '10pt',
         width: '100%',
     },
     headerRow: {
@@ -128,20 +130,24 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
     itemdesc: {
+        fontSize: '10pt',
         textAlign: 'left',
         display: 'flex',
         flexDirection: 'row',
         gap: '8pt',
     },
     itemqty: {
+        fontSize: '10pt',
         width: '10%',
         textAlign: 'center',
     },
     itemunit: {
+        fontSize: '10pt',
         width: '20%',
         textAlign: 'right',
     },
     itemtotal: {
+        fontSize: '10pt',
         width: '20%',
         textAlign: 'right',
     },
@@ -178,9 +184,16 @@ const styles = StyleSheet.create({
         gap: '32pt',
         justifyContent: 'space-between',
     },
+    totalsText: {
+        fontSize: '10pt',
+    },
+    totalsTextMain: {
+        fontSize: '12pt',
+        fontWeight: 'bold',
+    },
     footer: {
         position: 'absolute',
-        backgroundColor: '#9B8A79',
+        backgroundColor: '#9B8A79CC',
         color: '#d6c5b4',
         fontSize: '10pt',
         padding: '8pt',
@@ -192,14 +205,65 @@ const styles = StyleSheet.create({
     },
 });
 
-const applyCustomStyles = (baseStyles: any, customization?: Template) => {
-    if (!customization || !customization.colors) return baseStyles;
-
-    // Create a deep copy of the styles to avoid modifying the original
+const applyCustomStyles = (baseStyles: any, customization?: Template, pageSizeConfig?: PageSizeConfig) => {
+    // Create a deep copy of styles to avoid modifying the original
     const customizedStyles = JSON.parse(JSON.stringify(baseStyles));
 
-    // Apply color customizations
-    if (customization.colors) {
+    // Apply page size configurations (always apply if provided)
+    if (pageSizeConfig) {
+        // Apply font sizes
+        customizedStyles.page.fontSize = pageSizeConfig.fontSize.page;
+        customizedStyles.profileTextMain.fontSize = pageSizeConfig.fontSize.profileMain;
+        customizedStyles.profileTextSecondary.fontSize = pageSizeConfig.fontSize.profileSecondary;
+        customizedStyles.billedTextMain.fontSize = pageSizeConfig.fontSize.billedMain;
+        customizedStyles.billedTextSecondary.fontSize = pageSizeConfig.fontSize.billedSecondary;
+        customizedStyles.theading.fontSize = pageSizeConfig.fontSize.heading;
+        customizedStyles.items.fontSize = pageSizeConfig.fontSize.items;
+        customizedStyles.trow.fontSize = pageSizeConfig.fontSize.trow;
+        customizedStyles.trow.lineHeight = pageSizeConfig.lineHeight.trow;
+        customizedStyles.itemdesc.fontSize = pageSizeConfig.fontSize.itemdesc;
+        customizedStyles.itemqty.fontSize = pageSizeConfig.fontSize.itemqty;
+        customizedStyles.itemunit.fontSize = pageSizeConfig.fontSize.itemunit;
+        customizedStyles.itemtotal.fontSize = pageSizeConfig.fontSize.itemtotal;
+        customizedStyles.headdesc.fontSize = pageSizeConfig.fontSize.headdesc;
+        customizedStyles.headqty.fontSize = pageSizeConfig.fontSize.headqty;
+        customizedStyles.headunit.fontSize = pageSizeConfig.fontSize.headunit;
+        customizedStyles.headtotal.fontSize = pageSizeConfig.fontSize.headtotal;
+        customizedStyles.addbutton.fontSize = pageSizeConfig.fontSize.button;
+        customizedStyles.removebutton.fontSize = pageSizeConfig.fontSize.button;
+        customizedStyles.footer.fontSize = pageSizeConfig.fontSize.footer;
+        customizedStyles.totalsText.fontSize = pageSizeConfig.fontSize.totalsText;
+        customizedStyles.totalsTextMain.fontSize = pageSizeConfig.fontSize.totalsTextMain;
+        customizedStyles.icon.width = pageSizeConfig.fontSize.icon;
+        customizedStyles.icon.height = pageSizeConfig.fontSize.icon;
+
+        // Apply spacing
+        customizedStyles.page.padding = pageSizeConfig.spacing.pagePadding;
+        customizedStyles.header.padding = pageSizeConfig.spacing.headerPadding;
+        customizedStyles.headerRow.gap = pageSizeConfig.spacing.headerGap;
+        customizedStyles.billedTo.marginTop = pageSizeConfig.spacing.marginTop;
+        customizedStyles.logo.width = pageSizeConfig.spacing.logoSize;
+        customizedStyles.logo.height = pageSizeConfig.spacing.logoSize;
+        customizedStyles.items.gap = pageSizeConfig.spacing.itemsGap;
+        customizedStyles.totalField.gap = pageSizeConfig.spacing.totalGap;
+        customizedStyles.footer.padding = pageSizeConfig.spacing.footerPadding;
+        customizedStyles.items.marginTop = pageSizeConfig.spacing.itemsMarginTop;
+        customizedStyles.items.marginBottom = pageSizeConfig.spacing.itemsMarginBottom;
+        customizedStyles.tbody.marginTop = pageSizeConfig.spacing.tbodyMarginTop;
+        customizedStyles.profile.marginLeft = pageSizeConfig.spacing.profileMarginLeft;
+        customizedStyles.profile.gap = pageSizeConfig.spacing.profileGap;
+        customizedStyles.billedTo.gap = pageSizeConfig.spacing.billedToGap;
+        customizedStyles.billedField.gap = pageSizeConfig.spacing.billedFieldGap;
+        customizedStyles.totalColumn.gap = pageSizeConfig.spacing.totalColumnGap;
+        customizedStyles.addbutton.marginTop = pageSizeConfig.spacing.addButtonMargin;
+        customizedStyles.addbutton.marginBottom = pageSizeConfig.spacing.addButtonMargin;
+
+        // Apply layout
+        customizedStyles.billedToRow.flexDirection = pageSizeConfig.layout.billedToDirection;
+    }
+
+    // Apply color customizations (only if customization exists)
+    if (customization && customization.colors) {
         if (customization.colors.foreground) {
             customizedStyles.page.color = customization.colors.foreground;
         }
@@ -230,6 +294,7 @@ export const EtherealTemplate = ({
     onEdit,
     onArrayEdit,
     customization,
+    userData,
 }: {
     data: InvoiceData;
     profile: ProfileData;
@@ -237,6 +302,7 @@ export const EtherealTemplate = ({
     onEdit: (field: keyof InvoiceData | string | keyof ProfileData, value: any) => void;
     onArrayEdit: (path: string, index: number, value: any, field?: string) => void;
     customization?: Template;
+    userData?: any;
 }) => {
     const { billedTo, items, discount, tax, total } = data;
 
@@ -368,7 +434,7 @@ export const EtherealTemplate = ({
                                         onChange={(e) => onArrayEdit('items', index, e.target.value ? +e.target.value : undefined, 'amount')}
                                     />
                                 </td>
-                                <td style={customizedStyles.itemtotal}>{item.quantity && item.amount ? (item.quantity * item.amount).toFixed(2) : ''}</td>
+                                <td style={customizedStyles.itemtotal}>{item.quantity && item.amount ? fmtPrice(item.quantity * item.amount) : ''}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -382,7 +448,7 @@ export const EtherealTemplate = ({
                     <div style={customizedStyles.totalColumn}>
                         <div style={customizedStyles.totalField}>
                             <p>Subtotal:</p>
-                            <p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0).toFixed(2)}</p>
+                            <p>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0))}</p>
                         </div>
                         <div style={customizedStyles.totalField}>
                             <p>{'Tax: '}</p>
@@ -401,7 +467,7 @@ export const EtherealTemplate = ({
                                 <span className='suffix'>%</span>
                             </div>
 
-                            <p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</p>
+                            <p>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0))}</p>
                         </div>
                         <div style={customizedStyles.totalField}>
                             <p>{'Discount: '}</p>
@@ -419,14 +485,14 @@ export const EtherealTemplate = ({
                                 />
                                 <span className='suffix'>%</span>
                             </div>
-                            <p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0).toFixed(2)}</p>
+                            <p>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0))}</p>
                         </div>
                         <div>
                             <hr />
                         </div>
                         <div style={customizedStyles.totalField}>
                             <p>{'Total: '}</p>
-                            <p>{total.toFixed(2)}</p>
+                            <p>{userData?.currency ?? 'USD'} {fmtPrice(total)}</p>
                         </div>
                     </div>
                 </div>
@@ -441,10 +507,11 @@ export const EtherealTemplate = ({
 };
 
 // PDF View
-export const renderEtherealTemplate = ({ data, profile, customization }: { data: InvoiceData; profile: ProfileData | null; customization?: Template }) => {
+export const renderEtherealTemplate = ({ data, profile, customization, pageSize, userData }: { data: InvoiceData; profile: ProfileData | null; customization?: Template; pageSize?: PageSize; userData?: any }) => {
     const { billedTo, items, tax, discount, total } = data;
 
-    const customizedStyles = applyCustomStyles(styles, customization);
+    const pageSizeConfig = pageSize ? getPageSizeConfig(pageSize) : undefined;
+    const customizedStyles = applyCustomStyles(styles, customization, pageSizeConfig);
 
     const fontFamily = 'Inter';
     const regularFontUrl = customization?.font?.regular || 'https://cdn.jsdelivr.net/npm/inter-font@3.19.0/ttf/Inter-Medium.ttf';
@@ -465,7 +532,7 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
     });
 
     return (
-        <Page size='A4' style={customizedStyles.page}>
+        <Page size={pageSize || 'A5'} style={customizedStyles.page}>
             {/* Header */}
             <View style={customizedStyles.header}>
                 <View style={customizedStyles.headerRow}>
@@ -512,7 +579,7 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                 <View style={{ ...customizedStyles.theading, flexDirection: 'row', width: '100%' }}>
                     <Text
                         style={{
-                            ...styles.headdesc,
+                            ...customizedStyles.headdesc,
                             flex: 5,
                             color: customizedStyles.theading?.color ?? styles.theading.color,
                         }}>
@@ -520,7 +587,7 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                     </Text>
                     <Text
                         style={{
-                            ...styles.headqty,
+                            ...customizedStyles.headqty,
                             flex: 1,
                             color: customizedStyles.theading?.color ?? styles.theading.color,
                         }}>
@@ -528,7 +595,7 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                     </Text>
                     <Text
                         style={{
-                            ...styles.headunit,
+                            ...customizedStyles.headunit,
                             flex: 2,
                             color: customizedStyles.theading?.color ?? styles.theading.color,
                         }}>
@@ -536,7 +603,7 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                     </Text>
                     <Text
                         style={{
-                            ...styles.headtotal,
+                            ...customizedStyles.headtotal,
                             flex: 2,
                             color: customizedStyles.theading?.color ?? styles.theading.color,
                         }}>
@@ -547,11 +614,11 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                 {/* Table Body */}
                 <View style={customizedStyles.tbody}>
                     {items.map((item, index) => (
-                        <View key={index} style={{ ...styles.trow, flexDirection: 'row', width: '100%' }}>
-                            <Text style={{ ...styles.itemdesc, flex: 5, textAlign: 'left' }}>{item.description}</Text>
-                            <Text style={{ ...styles.itemqty, flex: 1, textAlign: 'center' }}>{item.quantity}</Text>
-                            <Text style={{ ...styles.itemunit, flex: 2, textAlign: 'right' }}>{item.amount}</Text>
-                            <Text style={{ ...styles.itemtotal, flex: 2, textAlign: 'right' }}>{item.quantity && item.amount ? item.quantity * item.amount : ''}</Text>
+                        <View key={index} style={{ ...customizedStyles.trow, flexDirection: 'row', width: '100%' }}>
+                            <Text style={{ ...customizedStyles.itemdesc, flex: 5, textAlign: 'left' }}>{item.description}</Text>
+                            <Text style={{ ...customizedStyles.itemqty, flex: 1, textAlign: 'center' }}>{item.quantity}</Text>
+                            <Text style={{ ...customizedStyles.itemunit, flex: 2, textAlign: 'right' }}>{item.amount ? fmtPrice(item.amount) : ''}</Text>
+                            <Text style={{ ...customizedStyles.itemtotal, flex: 2, textAlign: 'right' }}>{item.quantity && item.amount ? fmtPrice(item.quantity * item.amount) : ''}</Text>
                         </View>
                     ))}
                 </View>
@@ -560,18 +627,18 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                     <View></View>
                     <View style={customizedStyles.totalColumn}>
                         <View style={customizedStyles.totalField}>
-                            <Text>Subtotal:</Text>
-                            <Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0).toFixed(2)}</Text>
+                            <Text style={customizedStyles.totalsText}>Subtotal:</Text>
+                            <Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0))}</Text>
                         </View>
 
                         <View style={customizedStyles.totalField}>
-                            <Text>{`Tax: ${tax}%`}</Text>
-                            <Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</Text>
+                            <Text style={customizedStyles.totalsText}>{`Tax: ${tax}%`}</Text>
+                            <Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0))}</Text>
                         </View>
 
                         <View style={customizedStyles.totalField}>
-                            <Text>{`Discount: ${discount}%`}</Text>
-                            <Text>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0).toFixed(2)}</Text>
+                            <Text style={customizedStyles.totalsText}>{`Discount: ${discount}%`}</Text>
+                            <Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0))}</Text>
                         </View>
 
                         <Svg viewBox='0 0 200% 1%' height='1%' width='100%'>
@@ -579,8 +646,8 @@ export const renderEtherealTemplate = ({ data, profile, customization }: { data:
                         </Svg>
 
                         <View style={customizedStyles.totalField}>
-                            <Text>Total: </Text>
-                            <Text>{total.toFixed(2)}</Text>
+                            <Text style={customizedStyles.totalsTextMain}>Total: </Text>
+                            <Text style={customizedStyles.totalsTextMain}>{userData?.currency ?? 'USD'} {fmtPrice(total)}</Text>
                         </View>
                     </View>
                 </View>
