@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Bricolage_Grotesque, Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 		capable: true,
 		startupImage: 'https://hyperbooks.app/logo-512.png',
 		statusBarStyle: 'black-translucent',
-		title: 'hyperbooks. | Smart, simple & stress-free bookkeeping.',
+        title: 'hyperbooks. | Smart, simple & stress-free bookkeeping.',
 	},
 	openGraph: {
 		title: 'hyperbooks. | Smart, simple & stress-free bookkeeping.',
@@ -66,15 +66,35 @@ export const metadata: Metadata = {
 		title: 'hyperbooks. | Smart, simple & stress-free bookkeeping.',
 		description: 'Simplify your bookkeeping with real-time insights, secure data storage, and professional invoicing. Access your finances anytime, anywhere.',
 		images: ['https://hyperbooks.app/og-image.jpng'],
-	},
+    },
 };
+
+export const viewport: Viewport = {
+    themeColor: '#252525',
+    colorScheme: 'dark',
+    maximumScale: 1,
+    minimumScale: 1,
+    initialScale: 1,
+    userScalable: false,
+    viewportFit: 'contain',
+    width: 'device-width',
+    height: 'device-height',
+}
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang='en'>
-			<Script src='https://cdn.peasy.so/peasy.js' data-website-id='01jpf4qvbw89v1aa172pr8dfrm' async></Script>
+			{/* <Script src='https://cdn.peasy.so/peasy.js' data-website-id='01jpf4qvbw89v1aa172pr8dfrm' async></Script> */}
 			<body className={`${sans.className} ${display.variable} antialiased`}>
-				<ThemeProvider attribute='class' defaultTheme='dark'>
+                <ThemeProvider attribute='class' defaultTheme='dark'>
+                    <div
+                        className="
+                            fixed left-0 right-0 -top-[80px] h-[80px] overflow-hidden z-[100]
+                            before:content-[''] before:absolute before:left-0 before:right-0 before:top-0
+                            before:h-[150%] before:backdrop-blur-md
+                            before:bg-transparent
+                        "
+                    />
 					<Splash />
 					{children}
 					<CookieConsent />
