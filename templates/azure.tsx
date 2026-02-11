@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { placeholders } from '@/lib/constants';
-import { InvoiceData, ProfileData, Template } from '@/lib/types';
+import { InvoiceData, ProfileData, Template, AdditionalCharge } from '@/lib/types';
 import { Page, View, Text, Font, Image, StyleSheet, Svg, Line } from '@react-pdf/renderer';
 import { PlusCircleIcon, XCircleIcon } from 'lucide-react';
 import { PageSize, PageSizeConfig, getPageSizeConfig } from './index';
@@ -193,7 +193,6 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		position: 'absolute',
-		backgroundColor: '#458cd1',
 		color: '#ffffff',
 		fontSize: '10pt',
 		padding: '8pt',
@@ -208,6 +207,9 @@ const styles = StyleSheet.create({
 const applyCustomStyles = (baseStyles: any, customization?: Template, pageSizeConfig?: PageSizeConfig) => {
 	// Create a deep copy of styles to avoid modifying the original
 	const customizedStyles = JSON.parse(JSON.stringify(baseStyles));
+
+    // Set default border color from template defaults
+    customizedStyles.border = customization?.colors?.border || '#C4C4C4';
 
     // Apply page size configurations (always apply if provided)
 	if (pageSizeConfig) {
@@ -274,14 +276,18 @@ const applyCustomStyles = (baseStyles: any, customization?: Template, pageSizeCo
 
 		if (customization.colors.foregroundMuted) {
 			customizedStyles.header.color = customization.colors.foregroundMuted;
-			customizedStyles.footer.color = customization.colors.foregroundMuted;
-			customizedStyles.theading.color = customization.colors.foregroundMuted;
+			customizedStyles.footer.color = customization.colors.backgroundMuted;
+			customizedStyles.theading.color = customization.colors.backgroundMuted;
 		}
 
 		if (customization.colors.backgroundMuted) {
 			customizedStyles.header.backgroundColor = customization.colors.backgroundMuted;
-			customizedStyles.footer.backgroundColor = customization.colors.backgroundMuted;
 		}
+
+        if (customization.colors.border) {
+            customizedStyles.page.border = customization.colors.border;
+            customizedStyles.border = customization.colors.border;
+        }
 	}
 
 	return customizedStyles;
@@ -304,7 +310,7 @@ export const AzureTemplate = ({
 	customization?: Template;
 	userData?: any;
 }) => {
-	const { billedTo, items, discount, tax, total } = data;
+	const { billedTo, items, additionalCharges, discount, tax, total } = data;
 
 	const customizedStyles = applyCustomStyles(styles, customization);
 
@@ -313,7 +319,7 @@ export const AzureTemplate = ({
 	return (
 		<div
 			className='editor-light'
-			style={{ ...customizedStyles.page, width: '595pt', height: '842pt', borderStyle: 'dashed', borderWidth: '1pt', borderColor: '#afafaf', borderRadius: '12pt', fontFamily: fontFamily }}>
+			style={{ ...customizedStyles.page, width: '595pt', height: '842pt', borderStyle: 'dashed', borderWidth: '1pt', border: '#afafaf', borderRadius: '12pt', fontFamily: fontFamily }}>
 			{/* Header */}
 			<div style={customizedStyles.header}>
 				<div style={customizedStyles.headerRow}>
@@ -333,7 +339,7 @@ export const AzureTemplate = ({
 				{/* BilledTo */}
 				<div style={customizedStyles.billedToRow}>
 					<div style={customizedStyles.billedTo}>
-						<p className='editable'>Billed to:</p>
+						<p className='editable'>Billed to</p>
 
 						<input
 							className='editable'
@@ -442,64 +448,141 @@ export const AzureTemplate = ({
 					<PlusCircleIcon />
 					Add Item
 				</Button>
-				<div style={customizedStyles.total}>
-					<div></div>
-					<div style={customizedStyles.totalColumn}>
-						<div style={customizedStyles.totalField}>
-							<p>Subtotal:</p>
-							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0).toFixed(2)}</p>
-						</div>
-						<div style={customizedStyles.totalField}>
-							<p>{'Tax: '}</p>
-							<div className='input-wrapper'>
-								<input
-									className='editable'
-									type='number'
-									style={{ textAlign: 'right' }}
-									min={0}
-									step='.1'
-									max={100}
-									placeholder={placeholders.tax}
-									value={tax}
-									onChange={(e) => onEdit('tax', e.target.value)}
-								/>
-								<span className='suffix'>%</span>
-							</div>
 
-							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0).toFixed(2)}</p>
-						</div>
-						<div style={customizedStyles.totalField}>
-							<p>{'Discount: '}</p>
-							<div className='input-wrapper'>
-								<input
-									className='editable'
-									type='number'
-									style={{ textAlign: 'right' }}
-									min={0}
-									step='.1'
-									max={100}
-									placeholder={placeholders.discount}
-									value={discount}
-									onChange={(e) => onEdit('discount', e.target.value)}
-								/>
-								<span className='suffix'>%</span>
-							</div>
-							<p>{items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0).toFixed(2)}</p>
-						</div>
-						<div>
-							<hr />
-						</div>
-						<div style={customizedStyles.totalField}>
-							<p>{'Total: '}</p>
-							<p>{userData?.currency ?? 'USD'} {total.toFixed(2)}</p>
-						</div>
-					</div>
-				</div>
+				{/* Additional Charges */}
+				{additionalCharges && additionalCharges.length > 0 && (
+                    <table style={{ width: '100%', tableLayout: 'fixed', marginTop: '16pt' }}>
+                        <thead style={customizedStyles.theading}>
+                            <tr>
+                                <th style={customizedStyles.headdesc}>DESCRIPTION</th>
+                                <th style={customizedStyles.headqty}>TYPE</th>
+                                <th style={customizedStyles.headtotal}>AMOUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody style={customizedStyles.tbody}>
+                            {additionalCharges.map((charge, index) => (
+                                <tr key={index} style={customizedStyles.trow}>
+                                    <td style={customizedStyles.itemdesc}>
+                                        <Button variant='outline' size='icon' style={customizedStyles.removebutton} className='shadow-md hover:shadow-xl' onClick={() => onArrayEdit('additionalCharges', index, null, 'remove')}>
+                                            <XCircleIcon />
+                                        </Button>
+                                        <input
+                                            style={{ width: '100%' }}
+                                            className='editable'
+                                            value={charge.description ?? ''}
+                                            placeholder='Description (e.g., Courier charges)'
+                                            onChange={(e) => onArrayEdit('additionalCharges', index, e.target.value, 'description')}
+                                        />
+                                    </td>
+                                    <td style={customizedStyles.itemqty}>
+                                        <select
+                                            style={{ width: '100%', textAlign: 'center' }}
+                                            className='editable'
+                                            value={charge.type ?? 'expense'}
+                                            onChange={(e) => onArrayEdit('additionalCharges', index, e.target.value, 'type')}
+                                        >
+                                            <option value='income'>Income</option>
+                                            <option value='expense'>Expense</option>
+                                        </select>
+                                    </td>
+                                    <td style={customizedStyles.itemqty}>
+                                        <input
+                                            style={{ width: '100%', textAlign: 'right' }}
+                                            type='number'
+                                            step='.01'
+                                            pattern='[0-9]*'
+                                            inputMode='numeric'
+                                            className='editable'
+                                            value={charge.amount ?? ''}
+                                            placeholder='0.00'
+                                            onChange={(e) => onArrayEdit('additionalCharges', index, e.target.value ? +e.target.value : undefined, 'amount')}
+                                        />
+                                    </td>
+                                    
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+				
+				<Button style={customizedStyles.addbutton} className='shadow-md hover:shadow-xl' onClick={() => onArrayEdit('additionalCharges', -1, { description: '', amount: 0, type: 'expense' })}>
+					<PlusCircleIcon />
+					Add Charge
+				</Button>
+
+				<div style={customizedStyles.total}>
+                    <div></div>
+                    <div style={customizedStyles.totalColumn}>
+                        <div style={customizedStyles.totalField}>
+                            <p>Subtotal</p>
+                            <p>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0))}</p>
+                        </div>
+                        <div style={customizedStyles.totalField}>
+                            <p>{'Discount: '}</p>
+                            <div className='input-wrapper'>
+                                <input
+                                    className='editable'
+                                    type='number'
+                                    style={{ textAlign: 'right' }}
+                                    min={0}
+                                    step='.1'
+                                    max={100}
+                                    placeholder={placeholders.discount}
+                                    value={discount}
+                                    onChange={(e) => onEdit('discount', e.target.value)}
+                                />
+                                <span className='suffix'>%</span>
+                            </div>
+                            <p>-{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0))}</p>
+                        </div>
+                        <div style={customizedStyles.totalField}>
+                            <p>{'Tax: '}</p>
+                            <div className='input-wrapper'>
+                                <input
+                                    className='editable'
+                                    type='number'
+                                    style={{ textAlign: 'right' }}
+                                    min={0}
+                                    step='.1'
+                                    max={100}
+                                    placeholder={placeholders.tax}
+                                    value={tax}
+                                    onChange={(e) => onEdit('tax', e.target.value)}
+                                />
+                                <span className='suffix'>%</span>
+                            </div>
+                            <p>{fmtPrice(((discount && discount > 0) ? (items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0) - items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0)) : items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0)) * ((tax ?? 0) / 100))}</p>
+                        </div>
+                        <div style={customizedStyles.totalField}>
+                            <p style={{ fontWeight: 'bold' }}>Items Total</p>
+                            <p style={{ fontWeight: 'bold' }}>{fmtPrice(((discount && discount > 0) ? (items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0) - items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0)) : items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0)) * (1 + ((tax ?? 0) / 100)))}</p>
+                        </div>
+                        
+                        {additionalCharges && additionalCharges.length > 0 ? (
+                            <>
+                                <div style={{ marginTop: customizedStyles.items.gap }}></div>
+                                {additionalCharges.map((charge, index) => (
+                                    <div style={customizedStyles.totalField} key={index}>
+                                        <p>{charge.description}</p>
+                                        <p>{fmtPrice(charge.amount)}</p>
+                                    </div>
+                                ))}
+                            </>
+                        ) : null}
+
+                        <div style={{ marginTop: customizedStyles.items.gap }}></div>
+                        
+                        <div style={customizedStyles.totalField}>
+                            <p style={{ fontWeight: 'bold' }}>Total</p>
+                            <p style={{ fontWeight: 'bold' }}>{userData?.currency ?? 'LKR'} {fmtPrice(total)}</p>
+                        </div>
+                    </div>
+                </div>
 			</div>
 
 			{/* Footer */}
 			<div style={customizedStyles.footer}>
-				<p>Invoice generated by hyperbooks.</p>
+				<p>hyperbooks.</p>
 			</div>
 		</div>
 	);
@@ -507,7 +590,7 @@ export const AzureTemplate = ({
 
 // PDF View
 export const renderAzureTemplate = ({ data, profile, customization, pageSize, userData }: { data: InvoiceData; profile: ProfileData | null; customization?: Template; pageSize?: PageSize; userData?: any }) => {
-	const { billedTo, items, tax, discount, total } = data;
+	const { billedTo, items, additionalCharges, tax, discount, total } = data;
 
 	const pageSizeConfig = pageSize ? getPageSizeConfig(pageSize) : undefined;
 	const customizedStyles = applyCustomStyles(styles, customization, pageSizeConfig);
@@ -549,7 +632,7 @@ export const renderAzureTemplate = ({ data, profile, customization, pageSize, us
 				{/* Billed To */}
 				<View style={customizedStyles.billedToRow}>
 					<View style={customizedStyles.billedTo}>
-						<Text style={customizedStyles.billedTextSecondary}>Billed to:</Text>
+						<Text style={customizedStyles.billedTextSecondary}>Billed to</Text>
 						<Text style={customizedStyles.billedTextMain}>{billedTo.name}</Text>
 						{billedTo.address && billedTo.address.filter(line => line && line.trim()).length > 0 && billedTo.address.filter(line => line && line.trim()).map((line, index, filteredAddress) => (
 							<Text style={customizedStyles.billedTextSecondary} key={index}>
@@ -594,38 +677,53 @@ export const renderAzureTemplate = ({ data, profile, customization, pageSize, us
 				</View>
 
 				<View style={customizedStyles.total}>
-					<View></View>
-					<View style={customizedStyles.totalColumn}>
-						<View style={customizedStyles.totalField}>
-							<Text style={customizedStyles.totalsText}>Subtotal:</Text>
-							<Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0))}</Text>
-						</View>
+                    <View></View>
+                    <View style={customizedStyles.totalColumn}>
+                        <View style={customizedStyles.totalField}>
+                            <Text style={customizedStyles.totalsText}>Subtotal</Text>
+                            <Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0))}</Text>
+                        </View>
+                        
+                        <View style={customizedStyles.totalField}>
+                            <Text style={customizedStyles.totalsText}>Discount ({discount ?? 0}%)</Text>
+                            <Text style={customizedStyles.totalsText}>-{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0))}</Text>
+                        </View>
+                        
+                        <View style={customizedStyles.totalField}>
+                            <Text style={customizedStyles.totalsText}>Tax ({tax ?? 0}%)</Text>
+                            <Text style={customizedStyles.totalsText}>{fmtPrice(((discount && discount > 0) ? (items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0) - items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0)) : items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0)) * ((tax ?? 0) / 100))}</Text>
+                        </View>
+                        
+                        <View style={customizedStyles.totalField}>
+                            <Text style={{ ...customizedStyles.totalsText, fontWeight: 'bold' }}>Items Total</Text>
+                            <Text style={{ ...customizedStyles.totalsText, fontWeight: 'bold' }}>{fmtPrice(((discount && discount > 0) ? (items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0) - items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0)) : items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0), 0)) * (1 + ((tax ?? 0) / 100)))}</Text>
+                        </View>
 
-						<View style={customizedStyles.totalField}>
-							<Text style={customizedStyles.totalsText}>{`Tax: ${tax}%`}</Text>
-							<Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((tax ?? 0) / 100), 0))}</Text>
-						</View>
+                        {additionalCharges && additionalCharges.length > 0 ? (
+                            <>
+                                <View style={{ marginTop: customizedStyles.items.gap }}></View>
+                                {additionalCharges.map((charge, index) => (
+                                    <View style={customizedStyles.totalField} key={index}>
+                                        <Text style={customizedStyles.totalsText}>{charge.description}</Text>
+                                        <Text style={customizedStyles.totalsText}>{fmtPrice(charge.amount)}</Text>
+                                    </View>
+                                ))}
+                            </>
+                        ) : null}
 
-						<View style={customizedStyles.totalField}>
-							<Text style={customizedStyles.totalsText}>{`Discount: ${discount}%`}</Text>
-							<Text style={customizedStyles.totalsText}>{fmtPrice(items.reduce((acc, item) => acc + (item.quantity || 0) * (item.amount || 0) * ((discount ?? 0) / 100), 0))}</Text>
-						</View>
+                        <View style={{ marginTop: customizedStyles.items.gap }}></View>
 
-						<Svg viewBox='0 0 200% 1%' height='1%' width='100%'>
-							<Line x1='0%' y1='1' x2='100%' y2='1' strokeWidth={1} stroke='#252525' />
-						</Svg>
-
-						<View style={customizedStyles.totalField}>
-							<Text style={customizedStyles.totalsTextMain}>Total: </Text>
-							<Text style={customizedStyles.totalsTextMain}>{userData?.currency ?? 'USD'} {fmtPrice(total)}</Text>
-						</View>
-					</View>
-				</View>
+                        <View style={customizedStyles.totalField}>
+                            <Text style={{ ...customizedStyles.totalsTextMain, fontWeight: 'bold' }}>Total</Text>
+                            <Text style={{ ...customizedStyles.totalsTextMain, fontWeight: 'bold' }}>{userData?.currency ?? 'LKR'} {fmtPrice(total)}</Text>
+                        </View>
+                    </View>
+                </View>
 			</View>
 
 			{/* Footer */}
 			<View style={customizedStyles.footer} fixed>
-				<Text>Invoice generated by hyperbooks.</Text>
+				<Text>hyperbooks.</Text>
 			</View>
 		</Page>
 	);
