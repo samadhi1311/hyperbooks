@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { InvoiceData } from '@/lib/types';
+import { InvoiceData, AdditionalCharge } from '@/lib/types';
 
 interface InvoiceStore {
 	invoiceData: InvoiceData;
@@ -9,6 +9,9 @@ interface InvoiceStore {
 	updateItemData: (index: number, updates: Partial<InvoiceData['items'][0]>) => void;
 	addItem: (item?: InvoiceData['items'][0]) => void;
 	removeItem: (index: number) => void;
+	updateAdditionalCharge: (index: number, updates: Partial<AdditionalCharge>) => void;
+	addAdditionalCharge: (charge?: AdditionalCharge) => void;
+	removeAdditionalCharge: (index: number) => void;
 	resetInvoiceData: () => void;
 }
 
@@ -20,6 +23,7 @@ const defaultInvoiceData: InvoiceData = {
 		phone: '',
 	},
 	items: [],
+	additionalCharges: [],
 	discount: 0,
 	tax: 0,
 	total: 0,
@@ -29,7 +33,8 @@ const calculateTotal = (invoiceData: InvoiceData) => {
 	const subtotal = invoiceData.items.reduce((sum, item) => sum + (item.quantity || 0) * (item.amount || 0), 0);
 	const discountAmount = invoiceData.discount !== undefined ? (subtotal * invoiceData.discount) / 100 : 0;
 	const taxAmount = invoiceData.tax !== undefined ? ((subtotal - discountAmount) * invoiceData.tax) / 100 : 0;
-	const total = subtotal - discountAmount + taxAmount;
+	const additionalChargesTotal = invoiceData.additionalCharges?.reduce((sum, charge) => sum + charge.amount, 0) || 0;
+	const total = subtotal - discountAmount + taxAmount + additionalChargesTotal;
 	return parseFloat(total.toFixed(2));
 };
 
@@ -75,6 +80,32 @@ export const useInvoiceStore = create<InvoiceStore>()(
 					const updatedInvoice = {
 						...state.invoiceData,
 						items: state.invoiceData.items.filter((_, i) => i !== index),
+					};
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
+
+			updateAdditionalCharge: (index, updates) =>
+				set((state) => {
+					const newCharges = [...(state.invoiceData.additionalCharges || [])];
+					newCharges[index] = { ...newCharges[index], ...updates };
+					const updatedInvoice = { ...state.invoiceData, additionalCharges: newCharges };
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
+
+			addAdditionalCharge: (charge = { description: '', amount: 0, type: 'expense' }) =>
+				set((state) => {
+					const updatedInvoice = {
+						...state.invoiceData,
+						additionalCharges: [...(state.invoiceData.additionalCharges || []), charge],
+					};
+					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
+				}),
+
+			removeAdditionalCharge: (index) =>
+				set((state) => {
+					const updatedInvoice = {
+						...state.invoiceData,
+						additionalCharges: (state.invoiceData.additionalCharges || []).filter((_, i) => i !== index),
 					};
 					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
 				}),

@@ -42,6 +42,26 @@ const expenseCategories = [
 	{ label: 'Other', value: 'other', description: 'Any other expenses' },
 ];
 
+const additionalChargeTypes = [
+	{ label: 'Income', value: 'income', description: 'Charges that bring money to you (e.g., courier fees charged to customers)' },
+	{ label: 'Expense', value: 'expense', description: 'Charges that cost you money (e.g., courier fees paid to providers)' },
+];
+
+const additionalChargeDefaults = {
+	courier: {
+		description: 'Courier charges',
+		type: 'expense' as const,
+	},
+	handling: {
+		description: 'Handling fees',
+		type: 'income' as const,
+	},
+	packaging: {
+		description: 'Packaging materials',
+		type: 'expense' as const,
+	},
+};
+
 const placeholders = {
 	company: {
 		name: 'Company Name',
@@ -104,4 +124,4 @@ const ultimatePerks = [
 	'No hyperreal branding',
 ];
 
-export { PLAN_LIMITS, starterPerks, proPerks, ultimatePerks, avatars, placeholders, expenseCategories };
+export { PLAN_LIMITS, starterPerks, proPerks, ultimatePerks, avatars, placeholders, expenseCategories, additionalChargeTypes, additionalChargeDefaults };

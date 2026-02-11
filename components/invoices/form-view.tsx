@@ -12,7 +12,7 @@ import { CirclePlusIcon, DeleteIcon, Loader2Icon, RocketIcon } from 'lucide-reac
 import { useFirestore } from '@/hooks/use-firestore';
 import { useInvoiceStore } from '@/store/use-invoice';
 import { useEffect, useState } from 'react';
-import { InvoiceData, ProfileData } from '@/lib/types';
+import { InvoiceData, ProfileData, AdditionalCharge } from '@/lib/types';
 import { Textarea } from '@/components/ui/textarea';
 import { PrefixedInput } from '@/components/prefixed-input';
 import { useUserStore } from '@/store/use-user';
@@ -58,6 +58,15 @@ export default function FormView() {
 				})
 			)
 			.min(1, { message: 'At least one item is required' }),
+		additionalCharges: z
+			.array(
+				z.object({
+					description: z.string().min(1, { message: 'Description is required' }),
+					amount: z.number().min(0, 'Amount must be at least 0'),
+					type: z.enum(['income', 'expense']),
+				})
+			)
+			.optional(),
 		discount: z
 			.union([z.number().min(0).max(100, { message: 'Discount must be between 0 and 100' }), z.string().length(0)])
 			.optional()
@@ -80,6 +89,7 @@ export default function FormView() {
 				quantity: item?.quantity ?? 0,
 				amount: item?.amount ?? 0,
 			})) ?? [{ description: '', quantity: 0, amount: 0 }],
+			additionalCharges: invoiceData.additionalCharges ?? [],
 			discount: invoiceData.discount ?? 0,
 			tax: invoiceData.tax ?? 0,
 		},
@@ -96,6 +106,7 @@ export default function FormView() {
 			});
 			updateInvoiceData({
 				items: values.items as InvoiceData['items'],
+				additionalCharges: values.additionalCharges as AdditionalCharge[],
 				discount: values.discount as number,
 				tax: values.tax as number,
 			});
@@ -105,6 +116,7 @@ export default function FormView() {
 	}, [form, updateInvoiceData, updateBilledToData]);
 
 	const { fields, append, remove } = useFieldArray({ control: form.control, name: 'items' });
+	const { fields: chargeFields, append: appendCharge, remove: removeCharge } = useFieldArray({ control: form.control, name: 'additionalCharges' });
 
 	const addNewItem = () => {
 		append({ description: '', quantity: '' as unknown as number, amount: '' as unknown as number });
@@ -114,7 +126,9 @@ export default function FormView() {
 		try {
 			const subtotal = values.items.reduce((sum, item) => sum + (item.quantity || 0) * (item.amount || 0), 0);
 			const afterTax = subtotal + (subtotal * ((values.tax as number) ?? 0)) / 100;
-			const total = parseFloat((afterTax - (afterTax * ((values.discount as number) ?? 0)) / 100).toFixed(2));
+			const afterDiscount = afterTax - (afterTax * ((values.discount as number) ?? 0)) / 100;
+			const additionalChargesTotal = values.additionalCharges?.reduce((sum, charge) => sum + charge.amount, 0) || 0;
+			const total = parseFloat((afterDiscount + additionalChargesTotal).toFixed(2));
 			const formattedAddress = values.address ? values.address.split(', ') : [''];
 
 			const formData = {
@@ -125,6 +139,7 @@ export default function FormView() {
 					phone: values.phone ?? '',
 				},
 				items: values.items,
+				additionalCharges: values.additionalCharges || [],
 				discount: (values.discount as number) ?? 0,
 				tax: (values.tax as number) ?? 0,
 				total: total,
@@ -287,7 +302,7 @@ export default function FormView() {
 												<FormItem>
 													<FormControl>
 														<PrefixedInput
-															prefix={userData?.currency ?? 'USD'}
+															prefix={userData?.currency ?? 'LKR'}
 															type='number'
 															placeholder='Unit Price'
 															step={0.01}
@@ -301,7 +316,7 @@ export default function FormView() {
 											)}
 										/>
 										<span className='flex h-10 items-center gap-2'>
-											<span className='text-muted-foreground'>{userData?.currency ?? 'USD'}</span>
+											<span className='text-muted-foreground'>{userData?.currency ?? 'LKR'}</span>
 											<span>{((invoiceData.items[index]?.quantity ?? 0) * (invoiceData.items[index]?.amount ?? 0)).toFixed(2)}</span>
 										</span>
 										<Button type='button' variant='outline' className='col-start-2 lg:col-start-auto' onClick={() => remove(index)}>
@@ -365,6 +380,78 @@ export default function FormView() {
 							</div>
 						</div>
 
+						{/* Additional Charges */}
+						<div className='space-y-4'>
+							<H3 className='mb-6'>Additional Charges</H3>
+							{chargeFields.map((field, index) => (
+								<div key={field.id}>
+									<div key={field.id} className='grid grid-cols-2 gap-4 lg:grid-cols-[4fr_2fr_1fr_auto]'>
+										<FormField
+											control={form.control}
+											name={`additionalCharges.${index}.description`}
+											render={({ field }) => (
+												<FormItem className='col-span-2 lg:col-span-1'>
+													<FormControl>
+														<Input placeholder='Description (e.g., Courier charges)' {...field} value={field.value ?? ''} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name={`additionalCharges.${index}.amount`}
+											render={({ field }) => (
+												<FormItem>
+													<FormControl>
+														<PrefixedInput
+															prefix={userData?.currency ?? 'LKR'}
+															type='number'
+															placeholder='Amount'
+															step={0.01}
+															{...field}
+															value={field.value ?? ''}
+															onChange={(e) => field.onChange(e.target.value ? +e.target.value : 0)}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name={`additionalCharges.${index}.type`}
+											render={({ field }) => (
+												<FormItem>
+													<FormControl>
+														<select 
+															{...field} 
+															value={field.value ?? 'expense'}
+															onChange={(e) => field.onChange(e.target.value)}
+															className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+														>
+															<option value='income'>Income</option>
+															<option value='expense'>Expense</option>
+														</select>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<Button type='button' variant='outline' onClick={() => removeCharge(index)}>
+											<DeleteIcon className='size-5' />
+										</Button>
+									</div>
+								</div>
+							))}
+
+							<div>
+								<IconButton type='button' icon={<CirclePlusIcon />} variant='outline' onClick={() => appendCharge({ description: '', amount: 0, type: 'expense' })}>
+									Add Charge
+								</IconButton>
+							</div>
+						</div>
+
 						<div className='space-y-2'>
 							<div className='flex justify-between'>
 								<span className='font-medium'>Subtotal:</span>
@@ -373,52 +460,110 @@ export default function FormView() {
 								</span>
 							</div>
 							{(() => {
-								const taxValue = form.watch('tax');
-								const tax = typeof taxValue === 'string' ? parseFloat(taxValue) || 0 : taxValue || 0;
-								if (tax > 0) {
-									const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
-									const taxAmount = subtotal * tax / 100;
-									return (
-										<div className='flex justify-between text-sm text-muted-foreground'>
-											<span>Tax ({tax}%):</span>
-											<span>
-												{userData?.currency ?? 'USD'} {taxAmount.toFixed(2)}
-											</span>
-										</div>
-									);
-								}
-								return null;
-							})()}
-							{(() => {
 								const discountValue = form.watch('discount');
 								const discount = typeof discountValue === 'string' ? parseFloat(discountValue) || 0 : discountValue || 0;
 								if (discount > 0) {
 									const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
 									const discountAmount = subtotal * discount / 100;
+									const subtotalAfterDiscount = subtotal - discountAmount;
 									return (
-										<div className='flex justify-between text-sm text-muted-foreground'>
-											<span>Discount ({discount}%):</span>
-											<span>
-												-{userData?.currency ?? 'USD'} {discountAmount.toFixed(2)}
-											</span>
-										</div>
+										<>
+											<div className='flex justify-between text-sm text-muted-foreground'>
+												<span>Discount ({discount}%):</span>
+												<span>
+													-{userData?.currency ?? 'USD'} {discountAmount.toFixed(2)}
+												</span>
+											</div>
+											<div className='flex justify-between border-t pt-2 mt-2'>
+												<span className='font-medium'>Subtotal After Discount:</span>
+												<span className='font-medium'>
+													{userData?.currency ?? 'USD'} {subtotalAfterDiscount.toFixed(2)}
+												</span>
+											</div>
+										</>
 									);
 								}
 								return null;
 							})()}
-							<div className='flex justify-between border-t pt-2'>
-								<span className='font-semibold text-lg'>Total:</span>
-								<span className='font-semibold text-lg'>
+							{(() => {
+								const taxValue = form.watch('tax');
+								const tax = typeof taxValue === 'string' ? parseFloat(taxValue) || 0 : taxValue || 0;
+								if (tax > 0) {
+									const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
+									const discountValue = form.watch('discount');
+									const discount = typeof discountValue === 'string' ? parseFloat(discountValue) || 0 : discountValue || 0;
+									const discountAmount = subtotal * discount / 100;
+									const subtotalAfterDiscount = subtotal - discountAmount;
+									const taxAmount = subtotalAfterDiscount * tax / 100;
+									const itemsTotal = subtotalAfterDiscount + taxAmount;
+									return (
+										<>
+											<div className='flex justify-between text-sm text-muted-foreground'>
+												<span>Tax ({tax}%):</span>
+												<span>
+													{userData?.currency ?? 'USD'} {taxAmount.toFixed(2)}
+												</span>
+											</div>
+											<div className='flex justify-between border-t pt-2 mt-2'>
+												<span className='font-semibold'>Items Total:</span>
+												<span className='font-semibold'>
+													{userData?.currency ?? 'USD'} {itemsTotal.toFixed(2)}
+												</span>
+											</div>
+										</>
+									);
+								}
+								return null;
+							})()}
+							{(() => {
+								const additionalCharges = invoiceData.additionalCharges || [];
+								if (additionalCharges.length > 0) {
+									const additionalChargesTotal = additionalCharges.reduce((sum, charge) => sum + charge.amount, 0);
+									return (
+										<>
+											<div className='mt-4 pt-4 border-t'>
+												<div className='font-medium mb-2'>Additional Charges</div>
+												<div className='border-b pb-2 mb-2'>
+													<div className='border-b pb-2 mb-2'></div>
+													{additionalCharges.map((charge, index) => (
+														<div key={index} className='flex justify-between text-sm text-muted-foreground'>
+															<span>{charge.description}:</span>
+															<span>
+																{userData?.currency ?? 'USD'} {charge.amount.toFixed(2)}
+															</span>
+														</div>
+													))}
+													<div className='border-t pt-2 mt-2'>
+														<div className='flex justify-between font-medium'>
+															<span>Additional Charges Total:</span>
+															<span>
+																{userData?.currency ?? 'USD'} {additionalChargesTotal.toFixed(2)}
+															</span>
+														</div>
+													</div>
+												</div>
+											</div>
+										</>
+									);
+								}
+								return null;
+							})()}
+							<div className='flex justify-between border-t pt-2 mt-4'>
+								<span className='font-bold text-lg'>Grand Total:</span>
+								<span className='font-bold text-lg'>
 									{userData?.currency ?? 'USD'} {(() => {
 										const subtotal = invoiceData.items.reduce((acc, item) => acc + (item.quantity ?? 0) * (item.amount ?? 0), 0);
 										const taxValue = form.watch('tax');
 										const discountValue = form.watch('discount');
 										const tax = typeof taxValue === 'string' ? parseFloat(taxValue) || 0 : taxValue || 0;
 										const discount = typeof discountValue === 'string' ? parseFloat(discountValue) || 0 : discountValue || 0;
-										const taxAmount = subtotal * tax / 100;
 										const discountAmount = subtotal * discount / 100;
-										const total = subtotal + taxAmount - discountAmount;
-										return total.toFixed(2);
+										const subtotalAfterDiscount = subtotal - discountAmount;
+										const taxAmount = subtotalAfterDiscount * tax / 100;
+										const itemsTotal = subtotalAfterDiscount + taxAmount;
+										const additionalChargesTotal = (invoiceData.additionalCharges || []).reduce((sum, charge) => sum + charge.amount, 0);
+										const grandTotal = itemsTotal + additionalChargesTotal;
+										return grandTotal.toFixed(2);
 									})()}
 								</span>
 							</div>

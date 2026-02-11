@@ -21,7 +21,7 @@ export default function InvoiceView() {
 	const [profile, setProfile] = useState<ProfileData | null>(null);
 	const [customization, setCustomization] = useState<Template | undefined>(undefined);
 
-	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem, removeItem } = useInvoiceStore();
+	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem, removeItem, updateAdditionalCharge, addAdditionalCharge, removeAdditionalCharge } = useInvoiceStore();
 	const { userData } = useUserStore();
 
 	useEffect(() => {
@@ -53,6 +53,14 @@ export default function InvoiceView() {
 			} else {
 				// Update existing item
 				updateItemData(index, { [field || 'description']: value });
+			}
+		} else if (path === 'additionalCharges') {
+			if (index === -1) {
+				// Add new charge
+				addAdditionalCharge();
+			} else {
+				// Update existing charge
+				updateAdditionalCharge(index, { [field || 'description']: value });
 			}
 		} else if (path === 'billedTo.address') {
 			const newAddress = invoiceData.billedTo.address ? [...invoiceData.billedTo.address] : [];

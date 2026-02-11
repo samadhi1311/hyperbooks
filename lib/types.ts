@@ -22,6 +22,12 @@ type UserData = {
 	template?: string;
 };
 
+type AdditionalCharge = {
+	description: string;
+	amount: number;
+	type: 'income' | 'expense';
+};
+
 type InvoiceData = {
 	id?: string;
 	billedTo: {
@@ -31,6 +37,7 @@ type InvoiceData = {
 		phone?: string;
 	};
 	items: { description: string; quantity: number | undefined; amount: number | undefined }[];
+	additionalCharges?: AdditionalCharge[];
 	discount?: number;
 	tax?: number;
 	createdAt?: Timestamp;
@@ -61,7 +68,8 @@ type Template = {
 		foreground?: string;
 		background?: string;
 		backgroundMuted?: string;
-		foregroundMuted?: string;
+        foregroundMuted?: string;
+        border?: string;
 	};
 	font?: {
 		regular?: string;
@@ -69,4 +77,4 @@ type Template = {
 	};
 };
 
-export { type InvoiceData, type ProfileData, type UserData, type Plan, type SubscriptionStatus, type BillData, type Template };
+export { type InvoiceData, type ProfileData, type UserData, type Plan, type SubscriptionStatus, type BillData, type Template, type AdditionalCharge };
