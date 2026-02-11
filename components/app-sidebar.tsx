@@ -143,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarMenu>
 				</SidebarGroup>
 			</SidebarContent>
-			<SidebarFooter>
+			<SidebarFooter className='mb-4 sm:mb-0'>
 				<UserMenu />
 			</SidebarFooter>
 		</Sidebar>
