@@ -25,7 +25,7 @@ export default function Outstanding() {
 				<AlertTriangleIcon className={count > 1 ? 'size-3 md:size-4 text-orange-500 dark:text-orange-300/50' : 'size-3 md:size-4 text-muted-foreground'} />
 			</CardHeader>
 			<CardContent>
-				<NumberFlow className='text-base font-bold md:text-2xl' format={{ notation: 'standard', style: 'currency', currency: userData?.currency ?? 'USD' }} value={amount} />
+				<NumberFlow className='text-base font-bold md:text-2xl' format={{ notation: 'standard', style: 'currency', currency: userData?.currency ?? 'LKR' }} value={amount} />
 				<span className='flex items-center gap-2 text-xs text-muted-foreground md:text-sm'>
 					Outstanding Invoices: <p className='text-xs text-muted-foreground md:text-sm'>{count}</p>
 					{count > 1 ? <TrendingDownIcon className='size-3 text-muted-foreground md:size-4' /> : <TrendingUpIcon className='size-3 text-muted-foreground md:size-4' />}

@@ -31,9 +31,9 @@ export default function Revenue() {
 				<DollarSign className='size-3 text-muted-foreground md:size-4' />
 			</CardHeader>
 			<CardContent>
-				<NumberFlow className='text-base font-bold md:text-2xl' format={{ style: 'currency', currency: userData?.currency ?? 'USD' }} value={revenue} />
+				<NumberFlow className='text-base font-bold md:text-2xl' format={{ style: 'currency', currency: userData?.currency ?? 'LKR' }} value={revenue} />
 				<span className='flex items-center gap-2 text-xs text-muted-foreground md:text-sm'>
-					Outstanding: {userData?.currency ?? 'USD' + ' ' + outstanding.toFixed(2)}
+					Outstanding: {userData?.currency ?? 'LKR' + ' ' + outstanding.toFixed(2)}
 					{outstandingCount > 1 ? <TrendingUpIcon className='size-3 text-muted-foreground md:size-4' /> : <TrendingDownIcon className='size-3 text-muted-foreground md:size-4' />}
 				</span>
 			</CardContent>

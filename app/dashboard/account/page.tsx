@@ -52,7 +52,7 @@ export default function Settings() {
 	const appForm = useForm<z.infer<typeof appSchema>>({
 		resolver: zodResolver(appSchema),
 		defaultValues: {
-			currency: userData?.currency || 'USD',
+			currency: userData?.currency || 'LKR',
 		},
 	});
 
