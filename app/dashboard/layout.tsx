@@ -64,7 +64,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 			<SidebarProvider className='relative min-h-svh overflow-hidden'>
 				<AppSidebar variant='floating' collapsible='offcanvas' />
 				<SidebarInset>
-					<header className='fixed lg:static top-0 z-50 flex w-full h-10 shrink-0 items-center gap-2 border-b bg-sidebar/50 backdrop-blur-md'>
+					<header className='fixed lg:static top-0 z-50 flex w-full h-10 shrink-0 items-center gap-2 border-b bg-sidebar'>
 						<div className='flex items-center gap-2 px-4'>
 							<SidebarTrigger className='-ml-1' />
 							<Separator orientation='vertical' className='mr-2 h-4' />
