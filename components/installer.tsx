@@ -66,9 +66,9 @@ export function Installer() {
 		}
 	};
 
-	const handleDismiss = () => {
-		setShowBanner(false);
-	};
+	// const handleDismiss = () => {
+	// 	setShowBanner(false);
+	// };
 
 	const handleDontAskAgain = () => {
 		localStorage.setItem('hyperbooks-pwa-never-show', 'true');
@@ -93,16 +93,18 @@ export function Installer() {
 					? "Add hyperbooks to your home screen for quick access. Tap the share button and select 'Add to Home Screen'."
 					: 'Install hyperbooks on your device for quick and easy access to your bookkeeping.'}
 			</p>
-			<div className='flex justify-end gap-2'>
-				<Button variant='ghost' onClick={handleDontAskAgain}>
+            <div className='flex flex-col justify-end gap-2'>
+                <IconButton icon={isIOS ? <Share2Icon /> : <HardDriveDownloadIcon />} onClick={handleInstallClick}>
+					{isIOS ? 'Show me how' : 'Install'}
+                </IconButton>
+                
+				<Button variant='outline' onClick={handleDontAskAgain}>
 					Don&apos;t ask again
 				</Button>
-				<Button variant='ghost' onClick={handleDismiss}>
+				{/* <Button variant='ghost' onClick={handleDismiss}>
 					Not now
-				</Button>
-				<IconButton icon={isIOS ? <Share2Icon /> : <HardDriveDownloadIcon />} onClick={handleInstallClick}>
-					{isIOS ? 'Show me how' : 'Install'}
-				</IconButton>
+				</Button> */}
+				
 			</div>
 		</motion.div>
 	);
