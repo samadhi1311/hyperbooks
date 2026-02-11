@@ -1,12 +1,12 @@
 'use client';
 
-import Chart from './components/revenue-chart';
-import Greeting from './components/greeting';
-import Revenue from './components/revenue';
-import Invoices from './components/invoices';
-import Outstanding from './components/outstanding';
-import RecentInvoices from './components/recent-invoices';
-import RecentBills from './components/recent-bills';
+import Chart from '@/components/dashboard/revenue-chart';
+import Greeting from '@/components/dashboard/greeting';
+import Revenue from '@/components/dashboard/revenue';
+import Invoices from '@/components/dashboard/invoices';
+import Outstanding from '@/components/dashboard/outstanding';
+import RecentInvoices from '@/components/dashboard/recent-invoices';
+import RecentBills from '@/components/dashboard/recent-bills';
 
 export default function Dashboard() {
 	return (

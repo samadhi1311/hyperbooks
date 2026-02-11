@@ -1,7 +1,7 @@
 'use client';
 
-import FormView from './components/form-view';
-import InvoiceView from './components/invoice-view';
+import FormView from '@/components/invoices/form-view';
+import InvoiceView from '@/components/invoices/invoice-view';
 import Menu from '@/components/menu';
 import { useViewStore } from '@/store/use-view';
 

@@ -2,8 +2,8 @@
 
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { H2 } from '@/components/ui/typography';
-import { DataTable } from './components/data-table';
-import { columns } from './components/columns';
+import { DataTable } from '@/components/invoices/data-table';
+import { columns } from '@/components/invoices/columns';
 import useInvoicePagination from '@/hooks/use-invoice-pagination';
 import { useAuth } from '@/hooks/use-auth';
 import Loader from '@/components/ui/loader';

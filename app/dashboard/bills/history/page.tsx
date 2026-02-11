@@ -2,8 +2,8 @@
 
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { H2 } from '@/components/ui/typography';
-import { DataTable } from './components/data-table';
-import { columns } from './components/columns';
+import { DataTable } from '@/components/bills/data-table';
+import { columns } from '@/components/bills/columns';
 import { useAuth } from '@/hooks/use-auth';
 import Loader from '@/components/ui/loader';
 import { BillData } from '@/lib/types';

@@ -3,8 +3,8 @@
 import { PageWrapper, Section } from '@/components/ui/layout';
 import { AnimatePresence } from 'motion/react';
 import { useState } from 'react';
-import Step1 from './components/step-1';
-import Step2 from './components/step-2';
+import Step1 from '@/components/getting-started/step-1';
+import Step2 from '@/components/getting-started/step-2';
 
 export default function GettingStarted() {
 	const [currentStep, setCurrentStep] = useState(0);

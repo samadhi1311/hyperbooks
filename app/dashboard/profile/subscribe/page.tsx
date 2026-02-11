@@ -1,7 +1,7 @@
 'use client';
 
 import { Section } from '@/components/ui/layout';
-import Payment from './components/payment';
+import Payment from '@/components/profile/payment';
 import { useUserStore } from '@/store/use-user';
 import { Button } from '@/components/ui/button';
 
