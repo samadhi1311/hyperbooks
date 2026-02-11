@@ -66,14 +66,13 @@ export const columns = ({
 	updateStatus: (invoiceId: string, status: boolean) => void;
 }): ColumnDef<InvoiceData>[] => [
 	{
-		accessorKey: 'id',
-		header: '#',
-		size: 70,
+		accessorKey: 'ref',
+		header: 'Reference',
 		cell: ({ row }) => (
 			<div className='text-muted-foreground'>
-				<Button variant='ghost' size='icon' onClick={() => toggleRow(row.id)}>
+				<Button variant='ghost' size='sm' onClick={() => toggleRow(row.id)}>
 					<ChevronRightIcon className={`transition-transform duration-200 ${expandedRow === row.id ? 'rotate-90' : ''}`} />
-					{row.index + 1}
+					<span className='text-xs font-mono'>{row.original.ref || 'N/A'}</span>
 				</Button>
 			</div>
 		),
@@ -81,7 +80,6 @@ export const columns = ({
 	{
 		accessorKey: 'billedTo',
 		header: 'Billed to',
-		size: 300,
 		cell: ({ row }) => {
 			const { name, address, email, phone } = row.original.billedTo;
 			return (
@@ -192,7 +190,12 @@ export const columns = ({
 		cell: ({ row }) => {
 			const { userData } = useUserStore();
 			const handleExportPDF = async () => {
-				try {
+                try {
+                    toast({
+						variant: 'default',
+						title: 'Please Wait',
+						description: `Your invoice is being processed.`,
+					});
 					const invoicePayload = {
 						data: row.original,
 						profile: profile as ProfileData,
@@ -204,7 +207,9 @@ export const columns = ({
 
 					const link = document.createElement('a');
 					link.href = URL.createObjectURL(blob);
-					link.download = 'invoice.pdf';
+					const recipientName = row.original.billedTo.name || 'Unknown';
+					const invoiceRef = row.original.ref || 'INV';
+					link.download = `${recipientName} - ${invoiceRef}.pdf`;
 					document.body.appendChild(link);
 					link.click();
 					document.body.removeChild(link);

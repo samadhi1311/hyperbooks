@@ -15,6 +15,7 @@ export interface PageSizeConfig {
 		profileSecondary: string;
 		billedMain: string;
 		billedSecondary: string;
+		invoiceRef: string;
 		heading: string;
 		items: string;
 		trow: string;
@@ -54,6 +55,10 @@ export interface PageSizeConfig {
 		billedFieldGap: string;
 		totalColumnGap: string;
 		addButtonMargin: string;
+		invoiceRefTop: string;
+		invoiceRefLeft: string;
+		invoiceRefRight: string;
+		invoiceRefMarginTop: string;
 	};
 	layout: {
 		billedToDirection: 'row' | 'column';
@@ -69,6 +74,7 @@ const PAGE_SIZE_CONFIGS: Record<PageSize, PageSizeConfig> = {
 			profileSecondary: '10pt',
 			billedMain: '10pt',
 			billedSecondary: '10pt',
+			invoiceRef: '10pt',
 			heading: '8pt',
 			items: '10pt',
 			trow: '10pt',
@@ -108,6 +114,10 @@ const PAGE_SIZE_CONFIGS: Record<PageSize, PageSizeConfig> = {
 			billedFieldGap: '8pt',
 			totalColumnGap: '8pt',
 			addButtonMargin: '16pt',
+			invoiceRefTop: '16pt',
+			invoiceRefLeft: 'auto',
+			invoiceRefRight: '0pt',
+			invoiceRefMarginTop: '-12pt',
 		},
 		layout: {
 			billedToDirection: 'row',
@@ -121,6 +131,7 @@ const PAGE_SIZE_CONFIGS: Record<PageSize, PageSizeConfig> = {
 			profileSecondary: '10pt',
 			billedMain: '10pt',
 			billedSecondary: '10pt',
+			invoiceRef: '8pt',
 			heading: '8pt',
 			items: '8pt',
 			trow: '8pt',
@@ -160,6 +171,10 @@ const PAGE_SIZE_CONFIGS: Record<PageSize, PageSizeConfig> = {
 			billedFieldGap: '8pt',
 			totalColumnGap: '8pt',
 			addButtonMargin: '16pt',
+			invoiceRefTop: '10pt',
+			invoiceRefLeft: 'auto',
+			invoiceRefRight: '0pt',
+			invoiceRefMarginTop: '-10pt',
 		},
 		layout: {
 			billedToDirection: 'row',
@@ -173,6 +188,7 @@ const PAGE_SIZE_CONFIGS: Record<PageSize, PageSizeConfig> = {
 			profileSecondary: '8pt',
 			billedMain: '8pt',
 			billedSecondary: '8pt',
+			invoiceRef: '6pt',
 			heading: '6pt',
 			items: '6pt',
 			trow: '6pt',
@@ -212,6 +228,10 @@ const PAGE_SIZE_CONFIGS: Record<PageSize, PageSizeConfig> = {
 			billedFieldGap: '6pt',
 			totalColumnGap: '6pt',
 			addButtonMargin: '12pt',
+			invoiceRefTop: '8pt',
+			invoiceRefLeft: 'auto',
+			invoiceRefRight: '0pt',
+			invoiceRefMarginTop: '-8pt',
 		},
 		layout: {
 			billedToDirection: 'row',

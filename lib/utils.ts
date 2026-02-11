@@ -56,3 +56,33 @@ export function getChargeAnalytics(charges: AdditionalCharge[]): { totalIncome: 
     netAmount: totalIncome - totalExpense
   };
 }
+
+export function generatePrefix(name: string): string {
+  const clean = name.replace(/[^a-zA-Z ]/g, "").trim()
+  const words = clean.split(/\s+/)
+
+  if (words.length === 1) {
+    return words[0].slice(0, 3).toUpperCase()
+  }
+
+  return words
+    .map(w => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 4)
+}
+
+export function generateRandomString(length: number): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let result = ''
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
+}
+
+export function generateInvoiceRef(name: string): string {
+  const prefix = generatePrefix(name)
+  const randomPart = generateRandomString(5)
+  return `${prefix}-${randomPart}`
+}

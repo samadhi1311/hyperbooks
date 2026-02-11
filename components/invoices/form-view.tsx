@@ -22,15 +22,24 @@ import { useToast } from '@/hooks/use-toast';
 import { Document, pdf } from '@react-pdf/renderer';
 import templates, { TemplateKey } from '@/templates';
 import { IconButton } from '@/components/ui/icon-button';
+import { generateInvoiceRef } from '@/lib/utils';
 
 export default function FormView() {
 	const { addInvoice, loading, incrementExportCount } = useFirestore();
-	const { invoiceData, updateInvoiceData, updateBilledToData, resetInvoiceData } = useInvoiceStore();
+	const { invoiceData, updateInvoiceData, updateBilledToData, updateRef, resetInvoiceData } = useInvoiceStore();
 	const [exporting, setExporting] = useState(false);
 	const { userData } = useUserStore();
 	const { selectedTemplate, selectedPageSize } = useTemplateStore();
 	const { profile } = useProfileStore();
 	const { toast } = useToast();
+
+	// Generate invoice ref when component mounts and profile is available
+	useEffect(() => {
+		if (profile?.name && (!invoiceData.ref || invoiceData.ref.trim() === '')) {
+			const newRef = generateInvoiceRef(profile.name);
+			updateRef(newRef);
+		}
+	}, [profile?.name, invoiceData.ref, updateRef]);
 
 	const formSchema = z.object({
 		name: z.string().min(3, { message: 'Recipient should be at least 3 characters long.' }),
@@ -168,7 +177,9 @@ export default function FormView() {
 
 			const link = document.createElement('a');
 			link.href = URL.createObjectURL(blob);
-			link.download = 'invoice.pdf';
+			const recipientName = invoiceData.billedTo.name || 'Unknown';
+			const invoiceRef = invoiceData.ref || 'INV';
+			link.download = `${recipientName} - ${invoiceRef}.pdf`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -195,6 +206,17 @@ export default function FormView() {
 			<Section className='mx-auto max-w-screen-sm'>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-16'>
+						{/* Invoice Reference */}
+						<div className='space-y-4'>
+							<div className='flex items-center gap-2'>
+								<H3>Invoice Reference</H3>
+								<span className='text-sm text-muted-foreground'>(Auto-generated)</span>
+							</div>
+							<div className='text-lg font-mono font-bold text-primary'>
+								{invoiceData.ref || 'Generating...'}
+							</div>
+						</div>
+
 						{/* Recepient */}
 						<div className='space-y-8'>
 							<H3 className='mb-6'>Recepient Information</H3>

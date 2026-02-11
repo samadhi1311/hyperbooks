@@ -30,6 +30,7 @@ type AdditionalCharge = {
 
 type InvoiceData = {
 	id?: string;
+	ref?: string;
 	billedTo: {
 		name: string;
 		address?: string[];

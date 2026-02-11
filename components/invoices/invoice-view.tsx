@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { TemplateCustomizer } from '@/components/template-customizer';
 import { canCustomizeTemplates } from '@/templates';
 import { useUserStore } from '@/store/use-user';
+import { generateInvoiceRef } from '@/lib/utils';
 
 export default function InvoiceView() {
 	const { user, authLoading } = useAuth();
@@ -21,7 +22,7 @@ export default function InvoiceView() {
 	const [profile, setProfile] = useState<ProfileData | null>(null);
 	const [customization, setCustomization] = useState<Template | undefined>(undefined);
 
-	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem, removeItem, updateAdditionalCharge, addAdditionalCharge, removeAdditionalCharge } = useInvoiceStore();
+	const { invoiceData, updateInvoiceData, updateBilledToData, updateItemData, addItem, removeItem, updateAdditionalCharge, addAdditionalCharge, removeAdditionalCharge, updateRef } = useInvoiceStore();
 	const { userData } = useUserStore();
 
 	useEffect(() => {
@@ -81,6 +82,14 @@ export default function InvoiceView() {
 			fetchProfile();
 		}
 	}, [authLoading]);
+
+	// Generate invoice reference when profile is loaded and ref is empty
+	useEffect(() => {
+		if (profile?.name && (!invoiceData.ref || invoiceData.ref.trim() === '')) {
+			const newRef = generateInvoiceRef(profile.name);
+			updateRef(newRef);
+		}
+	}, [profile?.name, invoiceData.ref, updateRef]);
 
 	if (!selectedTemplate || !profile?.name) return <Loader />;
 

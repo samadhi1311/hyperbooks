@@ -26,12 +26,13 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         borderRadius: '12pt',
         width: '100%',
+        position: 'relative',
     },
     headerRow: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
         width: '100%',
         gap: '16pt',
     },
@@ -56,6 +57,14 @@ const styles = StyleSheet.create({
     profileTextSecondary: {
         fontSize: '12pt',
         backgroundColor: 'transparent',
+    },
+    invoiceRef: {
+        fontSize: '14pt',
+        fontWeight: 'bold',
+        color: '#f5f5f5',
+        textAlign: 'right',
+        backgroundColor: 'transparent',
+        marginLeft: 'auto',
     },
     billedTo: {
         marginTop: '16pt',
@@ -219,6 +228,7 @@ const applyCustomStyles = (baseStyles: any, customization?: Template, pageSizeCo
         customizedStyles.profileTextSecondary.fontSize = pageSizeConfig.fontSize.profileSecondary;
         customizedStyles.billedTextMain.fontSize = pageSizeConfig.fontSize.billedMain;
         customizedStyles.billedTextSecondary.fontSize = pageSizeConfig.fontSize.billedSecondary;
+        customizedStyles.invoiceRef.fontSize = pageSizeConfig.fontSize.invoiceRef;
         customizedStyles.theading.fontSize = pageSizeConfig.fontSize.heading;
         customizedStyles.items.fontSize = pageSizeConfig.fontSize.items;
         customizedStyles.trow.fontSize = pageSizeConfig.fontSize.trow;
@@ -259,6 +269,10 @@ const applyCustomStyles = (baseStyles: any, customization?: Template, pageSizeCo
         customizedStyles.totalColumn.gap = pageSizeConfig.spacing.totalColumnGap;
         customizedStyles.addbutton.marginTop = pageSizeConfig.spacing.addButtonMargin;
         customizedStyles.addbutton.marginBottom = pageSizeConfig.spacing.addButtonMargin;
+        customizedStyles.invoiceRef.top = pageSizeConfig.spacing.invoiceRefTop;
+        customizedStyles.invoiceRef.left = pageSizeConfig.spacing.invoiceRefLeft;
+        customizedStyles.invoiceRef.right = pageSizeConfig.spacing.invoiceRefRight;
+        customizedStyles.invoiceRef.marginTop = pageSizeConfig.spacing.invoiceRefMarginTop;
 
         // Apply layout
         customizedStyles.billedToRow.flexDirection = pageSizeConfig.layout.billedToDirection;
@@ -334,6 +348,11 @@ export const MidnightTemplate = ({
                             </p>
                         ))}
                     </div>
+                    {data.ref && (
+                        <div style={customizedStyles.invoiceRef}>
+                            {data.ref}
+                        </div>
+                    )}
                 </div>
 
                 {/* BilledTo */}
@@ -628,6 +647,11 @@ export const renderMidnightTemplate = ({ data, profile, customization, pageSize,
                             </Text>
                         ))}
                     </View>
+                    {data.ref && (
+                        <View style={customizedStyles.invoiceRef}>
+                            <Text style={customizedStyles.invoiceRef}>{data.ref}</Text>
+                        </View>
+                    )}
                 </View>
 
                 {/* Billed To */}

@@ -1,4 +1,4 @@
-import { CloudUploadIcon, DownloadIcon, FilePlus2Icon, FullscreenIcon, Loader2Icon, MenuIcon } from 'lucide-react';
+import { CloudUploadIcon, DownloadIcon, FilePlus2Icon, FullscreenIcon, Loader2Icon, MenuIcon, RocketIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { useInvoiceStore } from '@/store/use-invoice';
@@ -28,8 +28,18 @@ export default function Menu() {
 		profile: profile as ProfileData,
 	};
 
-	const handleExportPDF = async () => {
-		try {
+	const handleSaveExportAndReset = async () => {
+        try {
+            toast({
+				variant: 'default',
+				title: 'Please',
+				description: `Your invoice is being processed.`,
+            });
+            
+			// Step 1: Save to cloud
+			await addInvoice(invoiceData);
+			
+			// Step 2: Export to PDF
 			const canExport = await incrementExportCount();
 			if (!canExport) return;
 
@@ -40,28 +50,31 @@ export default function Menu() {
 
 			const link = document.createElement('a');
 			link.href = URL.createObjectURL(blob);
-			link.download = 'invoice.pdf';
+			const recipientName = invoiceData.billedTo.name || 'Unknown';
+			const invoiceRef = invoiceData.ref || 'INV';
+			link.download = `${recipientName} - ${invoiceRef}.pdf`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
 			URL.revokeObjectURL(link.href);
+			
+			// Step 3: Reset for new invoice
+			resetInvoiceData();
+			
+			// Show success message
 			toast({
 				variant: 'default',
-				title: 'Invoice ready to share!',
-				description: `Your invoice has been exported successfully as PDF!`,
+				title: 'Invoice saved, exported, and ready for new entry!',
+				description: `Your invoice has been saved to cloud, exported as PDF, and a new invoice form is ready.`,
 			});
 		} catch (error) {
 			toast({
 				variant: 'destructive',
 				title: 'An error occurred.',
-				description: `Couldn't export to PDF. Please try again.`,
+				description: `Couldn't complete the save, export, and reset process. Please try again.`,
 			});
 			console.error(error);
 		}
-	};
-
-	const handleUpload = async () => {
-		await addInvoice(invoiceData);
 	};
 
 	return (
@@ -78,28 +91,25 @@ export default function Menu() {
 						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={handleView}>
 							<FullscreenIcon />
 							Switch View
-						</DropdownMenuItem>
-
-						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={resetInvoiceData}>
+                        </DropdownMenuItem>
+                        
+                        <DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={resetInvoiceData}>
 							<FilePlus2Icon />
 							New Invoice
 						</DropdownMenuItem>
-						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={handleUpload}>
+
+						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={handleSaveExportAndReset}>
 							{loading ? (
 								<>
 									<Loader2Icon className='animate-spin' />
-									Uploading
+									Processing...
 								</>
 							) : (
 								<>
-									<CloudUploadIcon />
-									Save to cloud
+									<RocketIcon />
+									Save & Export
 								</>
 							)}
-						</DropdownMenuItem>
-						<DropdownMenuItem className='flex cursor-pointer items-center gap-3' onClick={handleExportPDF}>
-							<DownloadIcon />
-							Export to PDF
 						</DropdownMenuItem>
 					</div>
 				</DropdownMenuContent>

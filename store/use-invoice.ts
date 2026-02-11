@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { InvoiceData, AdditionalCharge } from '@/lib/types';
+import { generateInvoiceRef } from '@/lib/utils';
 
 interface InvoiceStore {
 	invoiceData: InvoiceData;
@@ -12,10 +13,12 @@ interface InvoiceStore {
 	updateAdditionalCharge: (index: number, updates: Partial<AdditionalCharge>) => void;
 	addAdditionalCharge: (charge?: AdditionalCharge) => void;
 	removeAdditionalCharge: (index: number) => void;
+	updateRef: (ref: string) => void;
 	resetInvoiceData: () => void;
 }
 
 const defaultInvoiceData: InvoiceData = {
+	ref: '',
 	billedTo: {
 		name: '',
 		address: ['', '', ''],
@@ -109,6 +112,11 @@ export const useInvoiceStore = create<InvoiceStore>()(
 					};
 					return { invoiceData: { ...updatedInvoice, total: calculateTotal(updatedInvoice) } };
 				}),
+
+			updateRef: (ref) =>
+				set((state) => ({
+					invoiceData: { ...state.invoiceData, ref },
+				})),
 
 			resetInvoiceData: () => set({ invoiceData: defaultInvoiceData }),
 		}),
